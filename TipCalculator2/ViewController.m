@@ -64,7 +64,6 @@
     self.segmentedControl.selectedSegmentIndex = 1;
     self.currentTipIndex = 1;
     self.tipAmounts = @[@(0.1), @(0.15), @(0.2)];
-    [self updateTipAndTotal];
 }
 
 - (void)didReceiveMemoryWarning

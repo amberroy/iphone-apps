@@ -460,6 +460,7 @@
 				96461BC31888F35B006BF1F5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		96461BC41888F35B006BF1F5 /* Build configuration list for PBXNativeTarget "TipCalculator2Tests" */ = {
 			isa = XCConfigurationList;
@@ -468,6 +469,7 @@
 				96461BC61888F35B006BF1F5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

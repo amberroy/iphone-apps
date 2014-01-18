@@ -31,8 +31,8 @@
     return YES;
 }
 
-- (IBAction)editingDidBegin:(id)sender {
-    self.billTextField.text = @"";
+- (IBAction)editingChanged:(id)sender {
+    [self updateTipAndTotal];
 }
 
 - (IBAction)changeTipPercent:(id)sender {

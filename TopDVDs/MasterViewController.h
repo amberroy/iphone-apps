@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MovieCell.h"
 
 @interface MasterViewController : UITableViewController
 

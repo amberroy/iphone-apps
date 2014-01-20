@@ -36,6 +36,12 @@
         // Update the view.
         [self configureView];
     }
+    
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]
+                           initWithTitle:@"Done"
+                           style:UIBarButtonItemStyleDone
+                           target:self.navigationController
+                           action:@selector(popViewControllerAnimated:)];
 }
 
 - (void)configureView
@@ -44,6 +50,10 @@
 
     if (self.movieDigest) {
         self.navItem.title = self.movieDigest[@"title"];
+        
+        // Add right nav item Done
+        //self.navItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonItemStyleDone target:self action:@selector(done:)];
+        
         self.synopsisLabel.text = self.movieDigest[@"synopsis"];
         self.castLabel.text = self.movieDigest[@"cast"];
         [self fetchImageData:self.movieDigest[@"detailed_image_url"]];
@@ -53,8 +63,13 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
+    
     [self configureView];
+}
+
+- (void)done
+{
+    
 }
 
 - (void)didReceiveMemoryWarning

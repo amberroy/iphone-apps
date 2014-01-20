@@ -21,6 +21,7 @@
 
 - (void)fetchMovieData;
 - (void)extractMovieDigests:(NSDictionary *)dict;
+- (void)refreshView:(UIRefreshControl *)refresh;
 
 @end
 
@@ -35,11 +36,20 @@
 {
     [super viewDidLoad];
 
+    // Add loading indicator.
     self.spinner = [[UIActivityIndicatorView alloc]
                     initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     self.spinner.center = self.view.center;
     self.spinner.hidesWhenStopped = YES;
     [self.view addSubview:self.spinner];
+    
+    // Add pull-to-refresh.
+    UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
+    refresh.attributedTitle = [[NSAttributedString alloc] initWithString:@"Pull to Refresh"];
+    [refresh addTarget:self
+              action:@selector(refreshView:)
+              forControlEvents:UIControlEventValueChanged];
+    self.refreshControl = refresh;
     
     [self fetchMovieData];
 }
@@ -204,6 +214,14 @@
                                    failure:^(NSURLRequest *req, NSHTTPURLResponse *res, NSError *error) {
                                        self.networkingError = error;
                                    }];
+}
+
+-(void)refreshView:(UIRefreshControl *)refresh
+{
+    refresh.attributedTitle = [[NSAttributedString alloc] initWithString:@"Refreshing data..."];
+    [self fetchMovieData];
+    refresh.attributedTitle = [[NSAttributedString alloc] initWithString:@"Updating Top DVDs"];
+    [refresh endRefreshing];
 }
 
 /*********************************************************

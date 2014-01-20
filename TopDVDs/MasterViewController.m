@@ -118,7 +118,6 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    // HERE
     if ([[segue identifier] isEqualToString:@"showDetail"]) {
         NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
         NSDictionary *movieDigest = self.movieDigests[indexPath.row];
@@ -180,6 +179,7 @@
                                @"cast": actors_concat,
                                //@"image_url": movieDict[@"posters"][@"thumbnail"],
                                @"image_url": movieDict[@"posters"][@"profile"],
+                               @"detailed_image_url": movieDict[@"posters"][@"detailed"],
                                };
         [movie_digests addObject:dict];
         

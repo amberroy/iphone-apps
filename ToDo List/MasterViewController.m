@@ -7,11 +7,12 @@
 //
 
 #import "MasterViewController.h"
-
-#import "DetailViewController.h"
+#import "TodoCell.h"
 
 @interface MasterViewController () {
-    NSMutableArray *_objects;
+    NSMutableArray *_todoStrings;
+    NSURL *_plist_url;
+    NSNumber *_row_being_added;
 }
 @end
 
@@ -25,11 +26,21 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
+    
     self.navigationItem.leftBarButtonItem = self.editButtonItem;
 
-    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject:)];
+    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewTodo:)];
     self.navigationItem.rightBarButtonItem = addButton;
+    
+    UIApplication *app = [UIApplication sharedApplication];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(applicationWillTerminate:)
+                                                 name:UIApplicationWillTerminateNotification
+                                               object:app];
+    
+    _plist_url = [[NSBundle mainBundle] URLForResource:@"todo" withExtension:@"plist"];
+    _todoStrings = [[NSMutableArray alloc] initWithContentsOfURL:_plist_url];
+    NSLog(@"Loaded Todo List %@ from %@", _todoStrings, _plist_url);
 }
 
 - (void)didReceiveMemoryWarning
@@ -38,15 +49,20 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)insertNewObject:(id)sender
+- (void)viewWillDisappear:(BOOL)animated
 {
-    if (!_objects) {
-        _objects = [[NSMutableArray alloc] init];
+}
+
+- (void)insertNewTodo:(id)sender
+{
+    if (!_todoStrings) {
+        _todoStrings = [[NSMutableArray alloc] init];
     }
-    [_objects insertObject:[NSDate date] atIndex:0];
+    [_todoStrings insertObject:@"" atIndex:0];
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
     [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
+
 
 #pragma mark - Table View
 
@@ -57,15 +73,15 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return _objects.count;
+    return _todoStrings.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
+    TodoCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
 
-    NSDate *object = _objects[indexPath.row];
-    cell.textLabel.text = [object description];
+    cell.textField.text = _todoStrings[indexPath.row];
+    [cell.textField becomeFirstResponder];
     return cell;
 }
 
@@ -78,36 +94,46 @@
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        [_objects removeObjectAtIndex:indexPath.row];
+        [_todoStrings removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     } else if (editingStyle == UITableViewCellEditingStyleInsert) {
         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
     }
 }
 
-/*
-// Override to support rearranging the table view.
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
 {
+    [_todoStrings insertObject:_todoStrings[fromIndexPath.row] atIndex:toIndexPath.row];
+    int newIndex = (toIndexPath.row > fromIndexPath.row) ? fromIndexPath.row : fromIndexPath.row + 1;
+    [_todoStrings removeObjectAtIndex:newIndex];
 }
-*/
 
-/*
-// Override to support conditional rearranging of the table view.
 - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Return NO if you do not want the item to be re-orderable.
     return YES;
 }
-*/
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+-(void)applicationWillTerminate:(UIApplication *)application
 {
-    if ([[segue identifier] isEqualToString:@"showDetail"]) {
-        NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-        NSDate *object = _objects[indexPath.row];
-        [[segue destinationViewController] setDetailItem:object];
-    }
+    NSLog(@"Saving Todo List %@ to %@", _todoStrings, _plist_url);
+    [_todoStrings writeToURL:_plist_url atomically:YES];
 }
+
+#pragma mark - UITextFieldDelegate
+
+-(BOOL) textFieldShouldReturn:(UITextField *)textField
+{
+    [textField resignFirstResponder];
+    return YES;
+}
+
+-(BOOL) textFieldShouldEndEditing:(UITextField *)textField
+{
+    _todoStrings[0] = textField.text;
+    NSLog(@"After editing array is %@", _todoStrings);
+    return YES;
+}
+
 
 @end

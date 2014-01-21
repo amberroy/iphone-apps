@@ -15,13 +15,14 @@
 		96E1DBF0188EE85F000172F1 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 96E1DBEF188EE85F000172F1 /* AppDelegate.m */; };
 		96E1DBF3188EE85F000172F1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 96E1DBF1188EE85F000172F1 /* Main.storyboard */; };
 		96E1DBF6188EE85F000172F1 /* MasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 96E1DBF5188EE85F000172F1 /* MasterViewController.m */; };
-		96E1DBF9188EE85F000172F1 /* DetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 96E1DBF8188EE85F000172F1 /* DetailViewController.m */; };
 		96E1DBFB188EE85F000172F1 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 96E1DBFA188EE85F000172F1 /* Images.xcassets */; };
 		96E1DC02188EE85F000172F1 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96E1DC01188EE85F000172F1 /* XCTest.framework */; };
 		96E1DC03188EE85F000172F1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96E1DBDF188EE85F000172F1 /* Foundation.framework */; };
 		96E1DC04188EE85F000172F1 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96E1DBE3188EE85F000172F1 /* UIKit.framework */; };
 		96E1DC0C188EE85F000172F1 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 96E1DC0A188EE85F000172F1 /* InfoPlist.strings */; };
 		96E1DC0E188EE85F000172F1 /* ToDo_ListTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 96E1DC0D188EE85F000172F1 /* ToDo_ListTests.m */; };
+		96E1DC19188F0186000172F1 /* TodoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 96E1DC18188F0186000172F1 /* TodoCell.m */; };
+		96E1DC1B188F1B14000172F1 /* todo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 96E1DC1A188F1B14000172F1 /* todo.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,14 +49,15 @@
 		96E1DBF2188EE85F000172F1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		96E1DBF4188EE85F000172F1 /* MasterViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MasterViewController.h; sourceTree = "<group>"; };
 		96E1DBF5188EE85F000172F1 /* MasterViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MasterViewController.m; sourceTree = "<group>"; };
-		96E1DBF7188EE85F000172F1 /* DetailViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetailViewController.h; sourceTree = "<group>"; };
-		96E1DBF8188EE85F000172F1 /* DetailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetailViewController.m; sourceTree = "<group>"; };
 		96E1DBFA188EE85F000172F1 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		96E1DC00188EE85F000172F1 /* ToDo ListTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ToDo ListTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		96E1DC01188EE85F000172F1 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		96E1DC09188EE85F000172F1 /* ToDo ListTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ToDo ListTests-Info.plist"; sourceTree = "<group>"; };
 		96E1DC0B188EE85F000172F1 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		96E1DC0D188EE85F000172F1 /* ToDo_ListTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ToDo_ListTests.m; sourceTree = "<group>"; };
+		96E1DC17188F0186000172F1 /* TodoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TodoCell.h; sourceTree = "<group>"; };
+		96E1DC18188F0186000172F1 /* TodoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TodoCell.m; sourceTree = "<group>"; };
+		96E1DC1A188F1B14000172F1 /* todo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = todo.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,8 +122,8 @@
 				96E1DBF1188EE85F000172F1 /* Main.storyboard */,
 				96E1DBF4188EE85F000172F1 /* MasterViewController.h */,
 				96E1DBF5188EE85F000172F1 /* MasterViewController.m */,
-				96E1DBF7188EE85F000172F1 /* DetailViewController.h */,
-				96E1DBF8188EE85F000172F1 /* DetailViewController.m */,
+				96E1DC17188F0186000172F1 /* TodoCell.h */,
+				96E1DC18188F0186000172F1 /* TodoCell.m */,
 				96E1DBFA188EE85F000172F1 /* Images.xcassets */,
 				96E1DBE6188EE85F000172F1 /* Supporting Files */,
 			);
@@ -135,6 +137,7 @@
 				96E1DBE8188EE85F000172F1 /* InfoPlist.strings */,
 				96E1DBEB188EE85F000172F1 /* main.m */,
 				96E1DBED188EE85F000172F1 /* ToDo List-Prefix.pch */,
+				96E1DC1A188F1B14000172F1 /* todo.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -235,6 +238,7 @@
 			files = (
 				96E1DBFB188EE85F000172F1 /* Images.xcassets in Resources */,
 				96E1DBEA188EE85F000172F1 /* InfoPlist.strings in Resources */,
+				96E1DC1B188F1B14000172F1 /* todo.plist in Resources */,
 				96E1DBF3188EE85F000172F1 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -257,7 +261,7 @@
 				96E1DBF0188EE85F000172F1 /* AppDelegate.m in Sources */,
 				96E1DBF6188EE85F000172F1 /* MasterViewController.m in Sources */,
 				96E1DBEC188EE85F000172F1 /* main.m in Sources */,
-				96E1DBF9188EE85F000172F1 /* DetailViewController.m in Sources */,
+				96E1DC19188F0186000172F1 /* TodoCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

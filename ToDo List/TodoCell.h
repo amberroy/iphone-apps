@@ -1,5 +1,5 @@
 //
-//  MasterViewController.h
+//  TodoCell.h
 //  ToDo List
 //
 //  Created by Amber Roy on 1/21/14.
@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@interface MasterViewController : UITableViewController <UITextFieldDelegate, UIApplicationDelegate>
+@interface TodoCell : UITableViewCell
+
+@property (weak, nonatomic) IBOutlet UITextField *textField;
 
 @end

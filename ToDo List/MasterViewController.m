@@ -12,7 +12,7 @@
 @interface MasterViewController () {
     NSMutableArray *_todoStrings;
     NSURL *_plist_url;
-    NSNumber *_row_being_added;
+    BOOL _user_clicked_add;
 }
 @end
 
@@ -55,6 +55,7 @@
 
 - (void)insertNewTodo:(id)sender
 {
+    _user_clicked_add = YES;
     if (!_todoStrings) {
         _todoStrings = [[NSMutableArray alloc] init];
     }
@@ -81,13 +82,15 @@
     TodoCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
 
     cell.textField.text = _todoStrings[indexPath.row];
-    [cell.textField becomeFirstResponder];
+    if (_user_clicked_add) {
+        [cell.textField becomeFirstResponder];
+    }
+    _user_clicked_add = NO;
     return cell;
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    // Return NO if you do not want the specified item to be editable.
     return YES;
 }
 
@@ -97,7 +100,7 @@
         [_todoStrings removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
+        // Insert not needed, since user can add new todo item at top of list and then reorder the list.
     }
 }
 
@@ -110,7 +113,6 @@
 
 - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    // Return NO if you do not want the item to be re-orderable.
     return YES;
 }
 
@@ -131,7 +133,7 @@
 -(BOOL) textFieldShouldEndEditing:(UITextField *)textField
 {
     _todoStrings[0] = textField.text;
-    NSLog(@"After editing array is %@", _todoStrings);
+    NSLog(@"After editing Todo List is %@", _todoStrings);
     return YES;
 }
 

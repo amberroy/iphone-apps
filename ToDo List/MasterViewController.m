@@ -14,6 +14,9 @@
     NSURL *_plist_url;
     BOOL _user_clicked_add;
 }
+
+-(int) getParentRow:(UITextField *)textField;
+
 @end
 
 @implementation MasterViewController
@@ -132,9 +135,24 @@
 
 -(BOOL) textFieldShouldEndEditing:(UITextField *)textField
 {
-    _todoStrings[0] = textField.text;
+    int row = [self getParentRow:textField];
+    _todoStrings[row] = textField.text;
     NSLog(@"After editing Todo List is %@", _todoStrings);
     return YES;
+}
+
+-(int) getParentRow:(UITextField *)textField
+{
+    NSArray *indexPaths = [self.tableView indexPathsForVisibleRows];
+    for (NSIndexPath *indexPath in indexPaths) {
+        TodoCell *cell = (TodoCell *)[self.tableView cellForRowAtIndexPath:indexPath];
+        if (cell.textField == textField) {
+            NSLog(@"User edited Row %i", indexPath.row);
+            return indexPath.row;
+        }
+    }
+    NSLog(@"Warning, Failed to find row for textField %@", textField);
+    return 0;
 }
 
 

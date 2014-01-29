@@ -19,6 +19,7 @@
 		9620846B1899B915006AD8E9 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 962084531899B915006AD8E9 /* UIKit.framework */; };
 		962084731899B915006AD8E9 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 962084711899B915006AD8E9 /* InfoPlist.strings */; };
 		962084751899B915006AD8E9 /* XboxBuddyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 962084741899B915006AD8E9 /* XboxBuddyTests.m */; };
+		9620847F1899B9C1006AD8E9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9620847E1899B9C1006AD8E9 /* Main.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +49,7 @@
 		962084701899B915006AD8E9 /* XboxBuddyTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "XboxBuddyTests-Info.plist"; sourceTree = "<group>"; };
 		962084721899B915006AD8E9 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		962084741899B915006AD8E9 /* XboxBuddyTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XboxBuddyTests.m; sourceTree = "<group>"; };
+		9620847E1899B9C1006AD8E9 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,6 +113,7 @@
 				9620845F1899B915006AD8E9 /* AppDelegate.m */,
 				962084611899B915006AD8E9 /* Images.xcassets */,
 				962084561899B915006AD8E9 /* Supporting Files */,
+				9620847E1899B9C1006AD8E9 /* Main.storyboard */,
 			);
 			path = XboxBuddy;
 			sourceTree = "<group>";
@@ -219,6 +222,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9620847F1899B9C1006AD8E9 /* Main.storyboard in Resources */,
 				9620845A1899B915006AD8E9 /* InfoPlist.strings in Resources */,
 				962084621899B915006AD8E9 /* Images.xcassets in Resources */,
 			);

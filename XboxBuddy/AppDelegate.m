@@ -7,6 +7,12 @@
 //
 
 #import "AppDelegate.h"
+#import "XboxLiveClient.h"
+
+@interface AppDelegate ()
+ -(void)xboxLiveClientInitCompleted:(NSString *)errorMessage;
+@end
+
 
 @implementation AppDelegate
 
@@ -22,23 +28,22 @@
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     
-    ////////// TEMPORARY //////////
-    // Fetch date from XboxLiveAPI.
-    XboxLiveAPI *xboxLiveAPI = [[XboxLiveAPI alloc] init];
-    [xboxLiveAPI setDelegate:self];
-    [xboxLiveAPI accessXboxLiveAPI:XboxLiveProfile parameters:@{@"gamertag": @"ambroy"}];
-    ///////////////////////////////
+    // Fetch date from Xbox Live.
+    [[XboxLiveClient instance] initWithGamertag:@"ambroy" completion: ^(NSString *errorMessage) {
+        [self xboxLiveClientInitCompleted:errorMessage]; }];
     
     return YES;
 }
 
-////////// TEMPORARY //////////
--(void)xboxLiveDidReturn:(NSArray *)data operation:(XboxLiveOperation)operation errorMessage:(NSString *)errorMessage
+ -(void)xboxLiveClientInitCompleted:(NSString *)errorMessage;
 {
-    NSLog(@"XboxLiveAPI returned:\n%@", data);
+    if (errorMessage) {
+        NSLog(@"Failed to initialize XboxLiveClient: %@", errorMessage);
+    } else {
+        NSLog(@"Initialized XboxLiveClient.");
+        NSLog(@"Current user profile: %@", [XboxLiveClient instance].currentUserProfile);
+    }
 }
-///////////////////////////////
-
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {

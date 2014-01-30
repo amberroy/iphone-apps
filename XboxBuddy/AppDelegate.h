@@ -7,9 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "XboxLiveAPI.h"
+#import "XboxLiveClient.h"
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate, XboxLiveAPIDelegate>
+@interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
 

@@ -21,8 +21,24 @@
     
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
+    
+    ////////// TEMPORARY //////////
+    // Fetch date from XboxLiveAPI.
+    XboxLiveAPI *xboxLiveAPI = [[XboxLiveAPI alloc] init];
+    [xboxLiveAPI setDelegate:self];
+    [xboxLiveAPI accessXboxLiveAPI:XboxLiveProfile parameters:@{@"gamertag": @"ambroy"}];
+    ///////////////////////////////
+    
     return YES;
 }
+
+////////// TEMPORARY //////////
+-(void)xboxLiveDidReturn:(NSArray *)data operation:(XboxLiveOperation)operation errorMessage:(NSString *)errorMessage
+{
+    NSLog(@"XboxLiveAPI returned:\n%@", data);
+}
+///////////////////////////////
+
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {

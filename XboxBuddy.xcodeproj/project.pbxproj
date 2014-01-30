@@ -20,6 +20,7 @@
 		962084731899B915006AD8E9 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 962084711899B915006AD8E9 /* InfoPlist.strings */; };
 		962084751899B915006AD8E9 /* XboxBuddyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 962084741899B915006AD8E9 /* XboxBuddyTests.m */; };
 		9620847F1899B9C1006AD8E9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9620847E1899B9C1006AD8E9 /* Main.storyboard */; };
+		9664566A1899E49600E5C691 /* XboxLiveAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 966456691899E49600E5C691 /* XboxLiveAPI.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,6 +51,8 @@
 		962084721899B915006AD8E9 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		962084741899B915006AD8E9 /* XboxBuddyTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XboxBuddyTests.m; sourceTree = "<group>"; };
 		9620847E1899B9C1006AD8E9 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		966456681899E49600E5C691 /* XboxLiveAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XboxLiveAPI.h; sourceTree = "<group>"; };
+		966456691899E49600E5C691 /* XboxLiveAPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XboxLiveAPI.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,8 +112,10 @@
 		962084551899B915006AD8E9 /* XboxBuddy */ = {
 			isa = PBXGroup;
 			children = (
-				9620845E1899B915006AD8E9 /* AppDelegate.h */,
-				9620845F1899B915006AD8E9 /* AppDelegate.m */,
+				966456641899E3B100E5C691 /* AppDelegate */,
+				966456651899E40C00E5C691 /* Controllers */,
+				966456661899E42000E5C691 /* Models */,
+				966456671899E42F00E5C691 /* Helpers */,
 				962084611899B915006AD8E9 /* Images.xcassets */,
 				962084561899B915006AD8E9 /* Supporting Files */,
 				9620847E1899B9C1006AD8E9 /* Main.storyboard */,
@@ -145,6 +150,38 @@
 				962084711899B915006AD8E9 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		966456641899E3B100E5C691 /* AppDelegate */ = {
+			isa = PBXGroup;
+			children = (
+				9620845E1899B915006AD8E9 /* AppDelegate.h */,
+				9620845F1899B915006AD8E9 /* AppDelegate.m */,
+			);
+			name = AppDelegate;
+			sourceTree = "<group>";
+		};
+		966456651899E40C00E5C691 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Controllers;
+			sourceTree = "<group>";
+		};
+		966456661899E42000E5C691 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
+		966456671899E42F00E5C691 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				966456681899E49600E5C691 /* XboxLiveAPI.h */,
+				966456691899E49600E5C691 /* XboxLiveAPI.m */,
+			);
+			name = Helpers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -244,6 +281,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				962084601899B915006AD8E9 /* AppDelegate.m in Sources */,
+				9664566A1899E49600E5C691 /* XboxLiveAPI.m in Sources */,
 				9620845C1899B915006AD8E9 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -445,6 +483,7 @@
 				9620847A1899B915006AD8E9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		9620847B1899B915006AD8E9 /* Build configuration list for PBXNativeTarget "XboxBuddyTests" */ = {
 			isa = XCConfigurationList;
@@ -453,6 +492,7 @@
 				9620847D1899B915006AD8E9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

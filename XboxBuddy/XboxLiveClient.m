@@ -12,9 +12,14 @@
 
 @property (nonatomic, copy) void (^completionBlock)(NSString *errorDescription);
 
--(void)sendRequestWithURL:(NSURL *)url completion:(void(^)(NSDictionary *responseDictionary, NSString *errorMessage))completion;
+@property NSMutableArray *pendingRequests;
+@property BOOL isInitializationError;
 
--(void)processProfileResponse:(NSDictionary *)responseData errorMessage:(NSString *)errorMessage;
+-(void)sendRequestWithURL:(NSURL *)url success:(void(^)(NSDictionary *responseDictionary))success;
+-(void)checkPendingRequests;
+
+-(void)processProfileResponse:(NSDictionary *)responseData;
+-(void)processFriendsResponse:(NSDictionary *)responseData;
 
 @end
 
@@ -37,6 +42,8 @@
 {
     self.currentUserGamertag = currentUserGamertag;
     self.completionBlock = completion;
+    self.pendingRequests = [[NSMutableArray alloc] init];
+    self.isInitializationError = NO;
     
     // Send Profile request.
     NSString *profile_url_str = [NSString stringWithFormat:
@@ -44,51 +51,68 @@
                                  self.currentUserGamertag];
     NSURL *profile_url = [NSURL URLWithString:profile_url_str];
     [self sendRequestWithURL:profile_url
-                  completion:^(NSDictionary *responseData, NSString *errorMessage) {
-                      [self processProfileResponse:responseData errorMessage:errorMessage];
+                  success:^(NSDictionary *responseData) {
+                      [self processProfileResponse:responseData];
                   }];
     
+    // Send Friends request.
+    NSString *friends_url_str = [NSString stringWithFormat:
+                                 @"http://xboxleaders.com/api/friends.json?gamertag=%@",
+                                 self.currentUserGamertag];
+    NSURL *friends_url = [NSURL URLWithString:friends_url_str];
+    [self sendRequestWithURL:friends_url
+                  success:^(NSDictionary *responseData) {
+                      [self processFriendsResponse:responseData];
+                  }];
     
 }
 
--(void)processProfileResponse:(NSDictionary *)responseData errorMessage:(NSString *)errorMessage
+-(void)checkPendingRequests
 {
-    if (errorMessage) {
-        NSLog(@"Failed to get Profile: %@", errorMessage);
+    if ([self.pendingRequests count] == 0) {
+    
+        // All requests complete, notify caller.
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.completionBlock(errorMessage);
+            self.completionBlock(nil);
         });
-        return;
     }
-    
-    self.currentUserProfile = responseData;
-    self.currentUserGamertag = responseData[@"gamertag"];
-    
-    // Initialization complete.
-    dispatch_async(dispatch_get_main_queue(), ^{
-        self.completionBlock(nil);
-    });
 }
 
--(void)sendRequestWithURL:(NSURL *)url completion:(void(^)(NSDictionary *responseDictionary, NSString *errorMessage))completion
+-(void)processProfileResponse:(NSDictionary *)responseData
 {
+    self.profile = responseData;
+    self.currentUserGamertag = responseData[@"gamertag"];
+}
+
+-(void)processFriendsResponse:(NSDictionary *)responseData
+{
+    self.friends = responseData;
+    
+    // TODO: Fetch achievements for games in each friend's Recent Activity list.
+}
+
+-(void)sendRequestWithURL:(NSURL *)url success:(void(^)(NSDictionary *responseDictionary))success
+{
+    NSString *myRequestKey = [url absoluteString];
+    [self.pendingRequests addObject:myRequestKey];
+    
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     NSLog(@"Sending request: %@", url);
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue]
                            completionHandler: ^(NSURLResponse *urlResponse, NSData *responseData, NSError *connectionError)
      {
-         NSString *myErrorMessage = nil;
+         NSString *errorMessage = nil;
          NSDictionary *myResponseDictionary = nil;
          if (connectionError) {
-             myErrorMessage = [NSString stringWithFormat:@"ERROR connecting to %@", url];
+             errorMessage = [NSString stringWithFormat:@"ERROR connecting to %@", url];
          } else {
              
              NSDictionary *response = [NSJSONSerialization JSONObjectWithData:responseData options:0 error:nil];
              if (!response) {
-                 myErrorMessage = [NSString stringWithFormat:@"Empty response from %@", url];
+                 errorMessage = [NSString stringWithFormat:@"Empty response from %@", url];
              } else {
                  if ([response[@"status"] isEqualToString:@"error"]) {
-                     myErrorMessage = response[@"data"][@"message"];
+                     errorMessage = response[@"data"][@"message"];
                  } else {
                      NSLog(@"Request successful. Freshness: '%@'  Runtime: %@",
                            response[@"data"][@"freshness"], response[@"runtime"]);
@@ -97,7 +121,17 @@
                  }
              }
          }
-         completion(myResponseDictionary, myErrorMessage);
+         if (errorMessage) {
+             NSLog(@"Request failed at %@: %@", myRequestKey, errorMessage);
+             dispatch_async(dispatch_get_main_queue(), ^{
+                 self.completionBlock(errorMessage);
+             });
+         } else {
+             
+             success(myResponseDictionary);
+             [self.pendingRequests removeObject:myRequestKey];
+             [self checkPendingRequests];
+         }
      }];
     
 }

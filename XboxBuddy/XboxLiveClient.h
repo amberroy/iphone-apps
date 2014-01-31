@@ -13,7 +13,8 @@
 @interface XboxLiveClient : NSObject
 
 @property NSString *currentUserGamertag;
-@property NSDictionary *currentUserProfile;
+@property NSDictionary *profile;
+@property NSDictionary *friends;
 
 +(XboxLiveClient*)instance;
 

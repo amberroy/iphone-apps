@@ -40,7 +40,7 @@
     if (errorMessage) {
         NSLog(@"Failed to initialize XboxLiveClient: %@", errorMessage);
     } else {
-        NSLog(@"Initialized XboxLiveClient.");
+        NSLog(@"XboxLiveClient initialization complete.");
     }
 }
 

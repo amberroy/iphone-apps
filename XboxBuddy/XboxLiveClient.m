@@ -15,6 +15,10 @@
 @property NSMutableArray *pendingRequests;
 @property BOOL isInitializationError;
 
+@property NSDate *startInit;
+@property NSDate *endInit;
+@property NSTimeInterval secondsToInit;
+
 -(void)sendRequestWithURL:(NSString *)url retries:(int)retries success:(void(^)(NSDictionary *responseDictionary))success;
 -(void)checkPendingRequests;
 
@@ -46,11 +50,11 @@
     self.pendingRequests = [[NSMutableArray alloc] init];
     self.isInitializationError = NO;
     
-    NSLog(@"Initializing XboxLiveClient for %@", userGamertag);
+    NSLog(@"XboxLiveClient initializing with %@", userGamertag);
+    self.startInit = [NSDate date];
     
     // Send Friends request.
     NSString *friends_url_str = [NSString stringWithFormat:
-                                 //@"http://xboxleaders.com/api/friends.json?gamertag=%@",
                                  @"http://xboxapi.com/v1/friends/%@",
                                  self.userGamertag];
     [self sendRequestWithURL:friends_url_str retries:3
@@ -61,7 +65,6 @@
     
     // Send Profile request.
     NSString *profile_url_str = [NSString stringWithFormat:
-                                 //@"http://xboxleaders.com/api/profile.json?gamertag=%@",
                                  @"http://xboxapi.com/v1/profile/%@",
                                  self.userGamertag];
     [self sendRequestWithURL:profile_url_str retries:3
@@ -71,7 +74,6 @@
 
     // Send Games request.
     NSString *games_url_str = [NSString stringWithFormat:
-                                 //@"http://xboxleaders.com/api/games.json?gamertag=%@",
                                  @"http://xboxapi.com/v1/games/%@",
                                  self.userGamertag];
     [self sendRequestWithURL:games_url_str retries:3
@@ -83,8 +85,17 @@
 
 -(void)checkPendingRequests
 {
+    if (self.isInitializationError) {
+        // Error already returned to caller.
+        return;
+    }
+    
     if ([self.pendingRequests count] == 0) {
     
+        self.endInit = [NSDate date];
+        self.secondsToInit = [self.endInit timeIntervalSinceDate:self.startInit];
+        NSLog(@"XboxLiveClient initialized (%0.f seconds)", self.secondsToInit);
+        
         // All requests complete, notify caller.
         dispatch_async(dispatch_get_main_queue(), ^{
             self.completionBlock(nil);
@@ -95,18 +106,12 @@
 -(void)processProfile:(NSDictionary *)responseData
 {
     self.userProfile = responseData;
-    //self.userGamertag = responseData[@"gamertag"];
-    //NSLog(@"Added profile for current user %@", responseData[@"gamertag"]);
-    
     self.userGamertag = responseData[@"Player"][@"Gamertag"];
     NSLog(@"Added Profile for current user %@", responseData[@"Player"][@"Gamertag"]);
 }
 
 -(void)processGames:(NSDictionary *)responseData
 {
-    //self.userGames = responseData[@"games"];
-    //NSLog(@"Added games for current user %@", responseData[@"gamertag"]);
-    
     self.userGames = responseData[@"Games"];
     NSLog(@"Added Games for current user %@", responseData[@"Player"][@"Gamertag"]);
     
@@ -155,9 +160,6 @@
 
 -(void)processFriendGames:(NSDictionary *)responseData
 {
-    //NSString *friendGamertag = responseData[@"gamertag"];
-    //NSArray *friendGames = responseData[@"games"];
-    
     NSString *friendGamertag = responseData[@"Player"][@"Gamertag"];
     
     if ([responseData[@"Games"] isKindOfClass:[NSDictionary class]]) {
@@ -207,7 +209,7 @@
         }
     }
     NSLog(@"Added %i achievements for %@ for game %@", unlockedCount,
-          responseData[@"Player"][@"Gamertag"], responseData[@"Game"]);
+          responseData[@"Player"][@"Gamertag"], responseData[@"Game"][@"Name"]);
     
 }
 
@@ -233,19 +235,10 @@
              if (!response) {
                  errorMessage = [NSString stringWithFormat:@"Empty response from %@", url_encoded];
              } else {
-                 // XboxLeaders.com
-                 //if ([response[@"status"] isEqualToString:@"error"]) {
-                 //    errorMessage = response[@"data"][@"message"];
                  BOOL isSuccess = [response[@"Success"] boolValue];
                  if (!isSuccess) {
-                     //errorMessage = response[@"data"][@"message"];
                      errorMessage = response[@"Error"];
                  } else {
-                     // XboxLeaders.com
-                     //NSLog(@"Request successful. Freshness: '%@'  Runtime: %@", response[@"data"][@"freshness"], response[@"runtime"]);
-                     //myResponseDictionary = response[@"data"];
-
-                     // XboxAPI.com
                      myResponseDictionary = response;
                  }
              }
@@ -256,6 +249,7 @@
                  [self sendRequestWithURL:url retries:(retries-1) success:success];
              } else {
                  NSLog(@"Request failed at %@: %@", url_encoded, errorMessage);
+                 self.isInitializationError = YES;
                  dispatch_async(dispatch_get_main_queue(), ^{
                      self.completionBlock(errorMessage);
                  });

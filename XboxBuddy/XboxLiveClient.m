@@ -24,7 +24,6 @@
 
 -(void)processProfile:(NSDictionary *)responseData;
 -(void)processFriends:(NSDictionary *)responseData;
--(void)processFriendProfile:(NSDictionary *)responseData;
 
 @end
 
@@ -71,16 +70,6 @@
                   success:^(NSDictionary *responseData) {
                       [self processProfile:responseData];
                   }];
-
-    // Send Games request.
-    NSString *games_url_str = [NSString stringWithFormat:
-                                 @"http://xboxapi.com/v1/games/%@",
-                                 self.userGamertag];
-    [self sendRequestWithURL:games_url_str retries:3
-                  success:^(NSDictionary *responseData) {
-                      [self processGames:responseData];
-                  }];
-    
 }
 
 -(void)checkPendingRequests
@@ -103,121 +92,86 @@
     }
 }
 
--(void)processProfile:(NSDictionary *)responseData
-{
-    self.userProfile = responseData;
-    self.userGamertag = responseData[@"Player"][@"Gamertag"];
-    NSLog(@"Added Profile for current user %@", responseData[@"Player"][@"Gamertag"]);
-}
-
--(void)processGames:(NSDictionary *)responseData
-{
-    self.userGames = responseData[@"Games"];
-    NSLog(@"Added Games for current user %@", responseData[@"Player"][@"Gamertag"]);
-    
-    // Get my own Achievements.
-    [self processFriendGames:responseData];
-}
-
 -(void)processFriends:(NSDictionary *)responseData
 {
-    //self.friends = responseData[@"friends"];
-    
     self.userFriends = responseData[@"Friends"];
-    NSLog(@"Added Friends for current user %@", responseData[@"Player"][@"Gamertag"]);
+    NSLog(@"Added %lu Friends for current user %@",
+          (unsigned long)[self.userFriends count], responseData[@"Player"][@"Gamertag"]);
     
     for (NSDictionary *friend in self.userFriends) {
         
         // Get profiles for all my friends.
+        NSString *friendGamertag = friend[@"GamerTag"];
         NSString *profile_url_str = [NSString stringWithFormat:
                                      @"http://xboxapi.com/v1/profile/%@",
-                                     friend[@"GamerTag"]];
-        
+                                     friendGamertag];
         [self sendRequestWithURL:profile_url_str retries:3
                       success:^(NSDictionary *responseData) {
-                          [self processFriendProfile:responseData];
-                      }];
-        
-        // Get Games for all my friends.
-        NSString *games_url_str = [NSString stringWithFormat:
-                                     @"http://xboxapi.com/v1/games/%@",
-                                     friend[@"GamerTag"]];
-        
-        [self sendRequestWithURL:games_url_str retries:3
-                      success:^(NSDictionary *responseData) {
-                          [self processFriendGames:responseData];
+                          [self processProfile:responseData];
                       }];
     }
 }
 
--(void)processFriendProfile:(NSDictionary *)responseData
-{
-    [self.friendProfiles addObject:responseData];
-    //NSString *friendGamertag = responseData[@"gamertag"];
-    NSString *friendGamertag = responseData[@"Player"][@"Gamertag"];
-    NSLog(@"Added profile for friend %@", friendGamertag);
-}
-
--(void)processFriendGames:(NSDictionary *)responseData
+-(void)processProfile:(NSDictionary *)responseData
 {
     NSString *friendGamertag = responseData[@"Player"][@"Gamertag"];
+    if ([friendGamertag isEqualToString:self.userGamertag]) {
+        self.userProfile = responseData;
+        NSLog(@"Added profile for current user %@", self.userGamertag);
+    } else {
+        [self.friendProfiles addObject:responseData];
+        NSLog(@"Added profile for friend %@", friendGamertag);
+    }
     
-    if ([responseData[@"Games"] isKindOfClass:[NSDictionary class]]) {
+    // Get Acheivements for the Recent Games.
+    if ([responseData[@"RecentGames"] isKindOfClass:[NSArray class]]) {
+        NSArray *games = responseData[@"RecentGames"];
+        for (NSDictionary *game in games) {
+            //int achievementsEarned = [game[@"Progress"][@"Achievements"] integerValue];
+            //if (achievementsEarned == 0) {
+            //    continue;   // Skip games (or apps) with no achievements.
+            //}
+            NSString *acheivements_url_str = [NSString stringWithFormat:
+                                              @"http://xboxapi.com/v1/achievements/%@/%@",
+                                              game[@"ID"], friendGamertag];
+            
+            [self sendRequestWithURL:acheivements_url_str retries:3
+                             success:^(NSDictionary *responseData) {
+                                 [self processAchievements:responseData];
+                             }];
+        }
+    } else {
         // User has game history hidden in their privacy settings.
-        NSString *errorMessage = responseData[@"Games"][@"Error"];
-        NSLog(@"Cannot view Games for %@: %@", friendGamertag, errorMessage);
-        return;
-    }
-    
-    NSArray *friendGames = responseData[@"Games"];
-    NSLog(@"Downloaded %i games for %@", [friendGames count], friendGamertag);
-    
-    // Get Achievements for Recent Games.
-    int numberOfGames = 5;
-    for (NSDictionary *game in friendGames) {
-        if (numberOfGames == 0) {
-            break;
-        }
-        numberOfGames--;
-        
-        int achievementsEarned = [game[@"Progress"][@"Achievements"] integerValue];
-        if (achievementsEarned > 0) {
-            NSString *achievements_url_str = [NSString stringWithFormat:
-                                         @"http://xboxapi.com/v1/achievements/%@/%@",
-                                         game[@"ID"], friendGamertag];
-            [self sendRequestWithURL:achievements_url_str retries:3
-                          success:^(NSDictionary *responseData) {
-                              [self processAchievements:responseData];
-                          }];
-        }
+        NSLog(@"Cannot view Games for %@: Privacy Settings Enabled", friendGamertag);
     }
 }
-
 
 -(void)processAchievements:(NSDictionary *)responseData
 {
     int unlockedCount = 0;
-    NSArray *achievements = responseData[@"Achievements"];
-    for (NSDictionary *achievement in achievements) {
+    if ([responseData[@"Achievements"] isKindOfClass:[NSArray class]]) {
+        NSArray *achievements = responseData[@"Achievements"];
+        for (NSDictionary *achievement in achievements) {
     
-        int earnedOn = [achievement[@"EarnedOn-UNIX"] integerValue];
-        if (earnedOn != 0) {
-            [self.achievements addObject:achievement];
-            unlockedCount++;
-        } else {
-            ;;
+            long earnedOn = [achievement[@"EarnedOn-UNIX"] integerValue];
+            if (earnedOn != 0) {
+                [self.achievements addObject:achievement];
+                unlockedCount++;
+            }
         }
     }
     NSLog(@"Added %i achievements for %@ for game %@", unlockedCount,
           responseData[@"Player"][@"Gamertag"], responseData[@"Game"][@"Name"]);
     
+    if ([responseData[@"Player"][@"Gamertag"] isEqualToString:self.userGamertag]) {
+        NSLog(@"%@", responseData);
+    }
+    
 }
 
 -(void)sendRequestWithURL:(NSString *)url retries:(int)retries success:(void(^)(NSDictionary *responseDictionary))success
 {
-    
-    NSString *url_encoded = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSString *requestKey = url_encoded;
+    NSString *url_encoded = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]; NSString *requestKey = url_encoded;
     [self.pendingRequests addObject:requestKey];
     
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url_encoded]];
@@ -263,6 +217,44 @@
      }];
     
 }
+
+// Unused since we now use the Recent Games list instead of fetching Games directly.
+//-(void)processFriendGames:(NSDictionary *)responseData
+//{
+//    NSString *friendGamertag = responseData[@"Player"][@"Gamertag"];
+//
+//    if ([responseData[@"Games"] isKindOfClass:[NSDictionary class]]) {
+//        // User has game history hidden in their privacy settings.
+//        NSString *errorMessage = responseData[@"Games"][@"Error"];
+//        NSLog(@"Cannot view Games for %@: %@", friendGamertag, errorMessage);
+//        return;
+//    }
+//
+//    NSArray *friendGames = responseData[@"Games"];
+//    NSLog(@"Downloaded %i games for %@", [friendGames count], friendGamertag);
+//
+//    // Get Achievements for Recent Games.
+//    int numberOfGames = 5;
+//    for (NSDictionary *game in friendGames) {
+//        if (numberOfGames == 0) {
+//            break;
+//        }
+//
+//        int achievementsEarned = [game[@"Progress"][@"Achievements"] integerValue];
+//        if (achievementsEarned > 0) {
+//            NSString *achievements_url_str = [NSString stringWithFormat:
+//                                         @"http://xboxapi.com/v1/achievements/%@/%@",
+//                                         game[@"ID"], friendGamertag];
+//            [self sendRequestWithURL:achievements_url_str retries:3
+//                          success:^(NSDictionary *responseData) {
+//                              [self processAchievements:responseData];
+//                          }];
+//            numberOfGames--;
+//        }
+//    }
+//}
+
+
 
 @end
 

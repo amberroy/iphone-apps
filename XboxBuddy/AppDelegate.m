@@ -41,8 +41,6 @@
         NSLog(@"Failed to initialize XboxLiveClient: %@", errorMessage);
     } else {
         NSLog(@"Initialized XboxLiveClient.");
-        NSLog(@"Profile: %@", [XboxLiveClient instance].profile);
-        NSLog(@"Friends: %@", [XboxLiveClient instance].friends);
     }
 }
 

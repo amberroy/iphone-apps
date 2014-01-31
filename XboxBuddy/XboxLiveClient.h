@@ -12,13 +12,17 @@
 
 @interface XboxLiveClient : NSObject
 
-@property NSString *currentUserGamertag;
-@property NSDictionary *profile;
-@property NSDictionary *friends;
+@property NSString *userGamertag;
+@property NSDictionary *userProfile;
+@property NSArray *userGames;
+@property NSArray *userFriends;
+
+@property NSMutableArray *friendProfiles;
+@property NSMutableArray *achievements;
 
 +(XboxLiveClient*)instance;
 
--(void)initWithGamertag:(NSString *)currentUserGamertag
+-(void)initWithGamertag:(NSString *)userGamertag
              completion:(void (^)(NSString *errorDescription))completion;
 
 @end

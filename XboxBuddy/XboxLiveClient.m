@@ -10,22 +10,32 @@
 
 @interface XboxLiveClient ()
 
-@property (nonatomic, copy) void (^completionBlock)(NSString *errorDescription);
+// Interface methods return data from these properties.
+@property NSString *userGamertag;
+@property NSDictionary *userProfileFromJSON;
+@property NSArray *friendProfilesFromJSON;
+@property NSArray *achievementsFromJSON;
 
+// Used internally during initialization.
 @property NSMutableArray *pendingRequests;
 @property BOOL isInitializationError;
-
 @property NSMutableArray *achievementsUnsorted;
 @property NSMutableArray *friendProfilesUnsorted;
-
 @property NSDate *startInit;
 @property NSDate *endInit;
 @property NSTimeInterval secondsToInit;
 
+// Callback to the object that envoked our init method.
+@property (nonatomic, copy) void (^completionBlock)(NSString *errorDescription);
+
+// Only method that sends requests to the remote Xbox Live API.
 -(void)sendRequestWithURL:(NSString *)url retries:(int)retries success:(void(^)(NSDictionary *responseDictionary))success;
+
+// Methods that determine when initialization is complete.
 -(void)checkPendingRequests;
 -(void)requestsDidComplete;
 
+// Called from our async request completion block to handle received data.
 -(void)processProfile:(NSDictionary *)responseData;
 -(void)processFriends:(NSDictionary *)responseData;
 
@@ -48,6 +58,14 @@
 -(void)initWithGamertag:(NSString *)userGamertag
              completion:(void (^)(NSString *errorDescription))completion
 {
+    [self initWithGamertag:userGamertag useSavedData:NO completion:completion];
+
+}
+
+-(void)initWithGamertag:(NSString *)userGamertag
+           useSavedData:(BOOL)useSavedData
+             completion:(void (^)(NSString *errorDescription))completion
+{
     self.userGamertag = userGamertag;
     self.completionBlock = completion;
     self.pendingRequests = [[NSMutableArray alloc] init];
@@ -57,6 +75,12 @@
     
     NSLog(@"XboxLiveClient initializing with %@", userGamertag);
     self.startInit = [NSDate date];
+    
+    if (useSavedData) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.completionBlock(@"Using Saved Data not yet implemented");
+        });
+    }
     
     // Send Friends request.
     NSString *friends_url_str = [NSString stringWithFormat:
@@ -93,7 +117,7 @@
 -(void)requestsDidComplete
 {
     // Sort achievements by date earned.
-    self.achievements = [self.achievementsUnsorted sortedArrayUsingComparator:
+    self.achievementsFromJSON = [self.achievementsUnsorted sortedArrayUsingComparator:
          ^NSComparisonResult(id a, id b) {
                NSNumber *first_date = ((NSDictionary*)a)[@"Achievement"][@"EarnedOn-UNIX"];
                NSNumber *second_date = ((NSDictionary*)b)[@"Achievement"][@"EarnedOn-UNIX"];
@@ -102,7 +126,7 @@
         
     // Create list of friend gamertags, sorted by last achievement earned.
     NSMutableArray *gamertagArray = [[NSMutableArray alloc] init];
-    for (NSDictionary *achievement in self.achievements) {
+    for (NSDictionary *achievement in self.achievementsFromJSON) {
         NSString *gamertag = achievement[@"Player"][@"Gamertag"];
         if (![gamertagArray containsObject:gamertag]) {
             [gamertagArray addObject:gamertag];
@@ -110,7 +134,7 @@
     }
     
     // Sort friends by last achievement earned.
-    self.friendProfiles = [self.friendProfilesUnsorted sortedArrayUsingComparator:
+    self.friendProfilesFromJSON = [self.friendProfilesUnsorted sortedArrayUsingComparator:
            ^NSComparisonResult(id a, id b) {
                NSString *first_gamertag = ((NSDictionary *)a)[@"Player"][@"Gamertag"];
                NSString *second_gamertag = ((NSDictionary *)b)[@"Player"][@"Gamertag"];
@@ -161,7 +185,7 @@
 {
     NSString *friendGamertag = responseData[@"Player"][@"Gamertag"];
     if ([friendGamertag isEqualToString:self.userGamertag]) {
-        self.userProfile = responseData;
+        self.userProfileFromJSON = responseData;
         NSLog(@"Added profile for current user %@", self.userGamertag);
     } else {
         [self.friendProfilesUnsorted addObject:responseData];
@@ -264,43 +288,44 @@
     
 }
 
-// Unused since we now use the Recent Games list instead of fetching Games directly.
-//-(void)processFriendGames:(NSDictionary *)responseData
+
+# pragma mark - interface methods
+
+//-(Profile *) userProfile
 //{
-//    NSString *friendGamertag = responseData[@"Player"][@"Gamertag"];
-//
-//    if ([responseData[@"Games"] isKindOfClass:[NSDictionary class]]) {
-//        // User has game history hidden in their privacy settings.
-//        NSString *errorMessage = responseData[@"Games"][@"Error"];
-//        NSLog(@"Cannot view Games for %@: %@", friendGamertag, errorMessage);
-//        return;
-//    }
-//
-//    NSArray *friendGames = responseData[@"Games"];
-//    NSLog(@"Downloaded %i games for %@", [friendGames count], friendGamertag);
-//
-//    // Get Achievements for Recent Games.
-//    int numberOfGames = 5;
-//    for (NSDictionary *game in friendGames) {
-//        if (numberOfGames == 0) {
-//            break;
-//        }
-//
-//        int achievementsEarned = [game[@"Progress"][@"Achievements"] integerValue];
-//        if (achievementsEarned > 0) {
-//            NSString *achievements_url_str = [NSString stringWithFormat:
-//                                         @"http://xboxapi.com/v1/achievements/%@/%@",
-//                                         game[@"ID"], friendGamertag];
-//            [self sendRequestWithURL:achievements_url_str retries:3
-//                          success:^(NSDictionary *responseData) {
-//                              [self processAchievements:responseData];
-//                          }];
-//            numberOfGames--;
-//        }
-//    }
+//    return self.userProfile;
 //}
-
-
+//
+//-(NSArray *) friendProfiles
+//{
+//    return self.friendProfiles;
+//}
+//
+//-(Profile *) friendProfilesWithGamertag:(NSString *)gamertag
+//{
+//    for (NSDictionary *friendProfile in self.friendProfiles) {
+//        if ([friendProfile[@"Player"][@"Gamertag"] isEqualToString:gamertag]) {
+//            return friendProfile;
+//        }
+//    }
+//    return nil;
+//}
+//
+//-(NSArray *) achievements
+//{
+//    return self.achievements;
+//}
+//
+//-(NSArray *) achievementsWithGamertag:(NSString *)gamertag
+//{
+//    NSMutableArray *filtered = [[NSMutableArray init] alloc];
+//    for (NSDictionary *achievement in self.achievements) {
+//        if ([achievement[@"Player"][@"Gamertag"] isEqualToString:gamertag]) {
+//            [filtered addObject:achievement];
+//        }
+//    }
+//    return filtered;
+//}
 
 @end
 

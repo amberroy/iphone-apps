@@ -10,13 +10,21 @@
 
 @implementation Achievement
 
-- (id)initWithDictionary:(NSDictionary *)dictionary {
++(NSArray *)achievementsWithArray:(NSArray *)array
+{
+    NSMutableArray *achievementObjects = [[NSMutableArray alloc] initWithCapacity:[array count]];
+    for (NSDictionary *achievementDict in array) {
+        Achievement *object = [[Achievement alloc] initWithDictionary:achievementDict];
+        [achievementObjects addObject:object];
+    }
+    return achievementObjects;
+}
+
+- (Achievement *)initWithDictionary:(NSDictionary *)dictionary {
     self = [super init];
     if (self) {
-        /*
-        self.userName = dictionary[@"userName"];
-        self.userScreenName = dictionary[@"userScreenName"]
-        */
+        self.name = dictionary[@"Player"][@"Name"];
+        self.gamertag = dictionary[@"Player"][@"Gamertag"];
     }
     return self;
 }

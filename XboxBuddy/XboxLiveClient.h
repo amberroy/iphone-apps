@@ -7,17 +7,27 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "Achievement.h"
 
 @class XboxLiveClient;
 
 @interface XboxLiveClient : NSObject
 
-@property NSString *currentUserGamertag;
-@property NSDictionary *currentUserProfile;
++(XboxLiveClient *) instance;
 
-+(XboxLiveClient*)instance;
+-(Achievement *) achievements;
+-(NSArray *) achievementsWithGamertag:(NSString *)gamertag;
 
--(void)initWithGamertag:(NSString *)currentUserGamertag
+// TODO
+//-(Profile *) userProfile;
+//-(Profile *) friendProfiles;
+//-(NSArray *) friendProfileWithGamertag:(NSString *)gamertag;
+
+-(void)initWithGamertag:(NSString *)userGamertag
+             completion:(void (^)(NSString *errorDescription))completion;
+
+-(void)initWithGamertag:(NSString *)userGamertag
+           useSavedData:(BOOL)useSavedData
              completion:(void (^)(NSString *errorDescription))completion;
 
 @end

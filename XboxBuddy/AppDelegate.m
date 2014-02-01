@@ -38,10 +38,8 @@
  -(void)xboxLiveClientInitCompleted:(NSString *)errorMessage;
 {
     if (errorMessage) {
-        NSLog(@"Failed to initialize XboxLiveClient: %@", errorMessage);
-    } else {
-        NSLog(@"Initialized XboxLiveClient.");
-        NSLog(@"Current user profile: %@", [XboxLiveClient instance].currentUserProfile);
+        NSLog(@"Failed to initialize XboxLiveClient: %@", errorMessage); } else {
+        NSLog(@"XboxLiveClient initialization complete.");
     }
 }
 

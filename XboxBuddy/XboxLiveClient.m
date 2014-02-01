@@ -156,6 +156,9 @@
     self.secondsToInit = [self.endInit timeIntervalSinceDate:self.startInit];
     NSLog(@"XboxLiveClient initialized (%0.f seconds)", self.secondsToInit);
     
+    // TEMP TEMP
+    [self achievements];
+    
     // Done, notify caller.
     dispatch_async(dispatch_get_main_queue(), ^{
         self.completionBlock(nil);

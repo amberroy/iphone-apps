@@ -15,7 +15,7 @@
 
 +(XboxLiveClient *) instance;
 
--(Achievement *) achievements;
+-(NSArray *) achievements;
 -(NSArray *) achievementsWithGamertag:(NSString *)gamertag;
 
 // TODO

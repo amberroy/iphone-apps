@@ -14,8 +14,6 @@
 
 @property NSString *userGamertag;
 @property NSDictionary *userProfile;
-@property NSArray *userFriends;
-
 @property NSArray *friendProfiles;
 @property NSArray *achievements;
 

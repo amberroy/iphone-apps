@@ -52,7 +52,7 @@
     self.completionBlock = completion;
     self.pendingRequests = [[NSMutableArray alloc] init];
     self.achievementsUnsorted = [[NSMutableArray alloc] init];
-    self.friendProfiles = [[NSMutableArray alloc] init];
+    self.friendProfilesUnsorted = [[NSMutableArray alloc] init];
     self.isInitializationError = NO;
     
     NSLog(@"XboxLiveClient initializing with %@", userGamertag);
@@ -95,9 +95,9 @@
     // Sort achievements by date earned.
     self.achievements = [self.achievementsUnsorted sortedArrayUsingComparator:
          ^NSComparisonResult(id a, id b) {
-               NSNumber *first_date = ((NSDictionary*)a)[@"EarnedOn-UNIX"];
-               NSNumber *second_date = ((NSDictionary*)b)[@"EarnedOn-UNIX"];
-               return [first_date compare:second_date];
+               NSNumber *first_date = ((NSDictionary*)a)[@"Achievement"][@"EarnedOn-UNIX"];
+               NSNumber *second_date = ((NSDictionary*)b)[@"Achievement"][@"EarnedOn-UNIX"];
+               return [second_date compare:first_date];     // Descending.
          }];
         
     // Create list of friend gamertags, sorted by last achievement earned.
@@ -114,8 +114,17 @@
            ^NSComparisonResult(id a, id b) {
                NSString *first_gamertag = ((NSDictionary *)a)[@"Player"][@"Gamertag"];
                NSString *second_gamertag = ((NSDictionary *)b)[@"Player"][@"Gamertag"];
-               NSNumber *first_index = [NSNumber numberWithLong:[gamertagArray indexOfObject:first_gamertag]];
-               NSNumber *second_index = [NSNumber numberWithLong:[gamertagArray indexOfObject:second_gamertag]];
+               
+               // If friend doesn't have any achievements (or has hidden them with privacy settings)
+               // then their gamertag won't be in the gamertagArray, so give them the highest index.
+               NSNumber *first_index = [NSNumber numberWithLong:[gamertagArray count]];
+               NSNumber *second_index = [NSNumber numberWithLong:[gamertagArray count]];
+               if ([gamertagArray containsObject:first_gamertag]) {
+                   first_index = [NSNumber numberWithLong:[gamertagArray indexOfObject:first_gamertag]];
+               }
+               if ([gamertagArray containsObject:second_gamertag]) {
+                   second_index = [NSNumber numberWithLong:[gamertagArray indexOfObject:second_gamertag]];
+               }
                return [first_index compare:second_index];
            }];
     
@@ -131,11 +140,10 @@
 
 -(void)processFriends:(NSDictionary *)responseData
 {
-    self.userFriends = responseData[@"Friends"];
-    NSLog(@"Added %lu Friends for current user %@",
-          (unsigned long)[self.userFriends count], responseData[@"Player"][@"Gamertag"]);
+    NSLog(@"Found %lu Friends for current user %@",
+          (unsigned long)[responseData[@"Friends"] count], responseData[@"Player"][@"Gamertag"]);
     
-    for (NSDictionary *friend in self.userFriends) {
+    for (NSDictionary *friend in responseData[@"Friends"]) {
         
         // Get profiles for all my friends.
         NSString *friendGamertag = friend[@"GamerTag"];
@@ -185,24 +193,25 @@
 
 -(void)processAchievements:(NSDictionary *)responseData
 {
+    NSString *gamertag = responseData[@"Player"][@"Gamertag"];
     int unlockedCount = 0;
     if ([responseData[@"Achievements"] isKindOfClass:[NSArray class]]) {
+        
         NSArray *achievements = responseData[@"Achievements"];
         for (NSDictionary *achievement in achievements) {
     
             long earnedOn = [achievement[@"EarnedOn-UNIX"] integerValue];
             if (earnedOn != 0) {
-                [self.achievementsUnsorted addObject:achievement];
+                // Save the Player and Game info with the Achievement.
+                [self.achievementsUnsorted addObject: @{@"Player": responseData[@"Player"],
+                                                        @"Game": responseData[@"Game"],
+                                                        @"Achievement": achievement}];
                 unlockedCount++;
             }
         }
     }
     NSLog(@"Added %i achievements for %@ for game %@", unlockedCount,
-          responseData[@"Player"][@"Gamertag"], responseData[@"Game"][@"Name"]);
-    
-    if ([responseData[@"Player"][@"Gamertag"] isEqualToString:self.userGamertag]) {
-        NSLog(@"%@", responseData);
-    }
+          gamertag, responseData[@"Game"][@"Name"]);
     
 }
 

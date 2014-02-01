@@ -291,6 +291,24 @@
 
 # pragma mark - interface methods
 
+
+-(NSArray *) achievements
+{
+    return [Achievement achievementsWithArray:self.achievementsFromJSON];
+}
+
+-(NSArray *) achievementsWithGamertag:(NSString *)gamertag
+{
+    NSMutableArray *filtered = [[NSMutableArray alloc] init];
+    for (NSDictionary *achievementDict in self.achievementsFromJSON) {
+        if ([achievementDict[@"Player"][@"Gamertag"] isEqualToString:gamertag]) {
+            [filtered addObject:achievementDict];
+        }
+    }
+    return [Achievement achievementsWithArray:filtered];
+}
+
+// TODO
 //-(Profile *) userProfile
 //{
 //    return self.userProfile;
@@ -311,21 +329,7 @@
 //    return nil;
 //}
 //
-//-(NSArray *) achievements
-//{
-//    return self.achievements;
-//}
-//
-//-(NSArray *) achievementsWithGamertag:(NSString *)gamertag
-//{
-//    NSMutableArray *filtered = [[NSMutableArray init] alloc];
-//    for (NSDictionary *achievement in self.achievements) {
-//        if ([achievement[@"Player"][@"Gamertag"] isEqualToString:gamertag]) {
-//            [filtered addObject:achievement];
-//        }
-//    }
-//    return filtered;
-//}
+
 
 @end
 

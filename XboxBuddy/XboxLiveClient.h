@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "Achievement.h"
 
 @class XboxLiveClient;
 
@@ -14,12 +15,13 @@
 
 +(XboxLiveClient *) instance;
 
+-(Achievement *) achievements;
+-(NSArray *) achievementsWithGamertag:(NSString *)gamertag;
+
+// TODO
 //-(Profile *) userProfile;
 //-(Profile *) friendProfiles;
 //-(NSArray *) friendProfileWithGamertag:(NSString *)gamertag;
-//
-//-(Achievement *) achievements;
-//-(NSArray *) achievementsWithGamertag:(NSString *)gamertag;
 
 -(void)initWithGamertag:(NSString *)userGamertag
              completion:(void (^)(NSString *errorDescription))completion;

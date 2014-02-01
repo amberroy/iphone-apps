@@ -10,4 +10,10 @@
 
 @interface Achievement : NSObject
 
+@property NSString *name;
+@property NSString *gamertag;
+
++(NSArray *)achievementsWithArray:(NSArray *)array;
+
+
 @end

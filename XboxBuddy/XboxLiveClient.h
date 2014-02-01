@@ -14,11 +14,10 @@
 
 @property NSString *userGamertag;
 @property NSDictionary *userProfile;
-@property NSArray *userGames;
 @property NSArray *userFriends;
 
-@property NSMutableArray *friendProfiles;
-@property NSMutableArray *achievements;
+@property NSArray *friendProfiles;
+@property NSArray *achievements;
 
 +(XboxLiveClient*)instance;
 

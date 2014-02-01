@@ -15,12 +15,16 @@
 @property NSMutableArray *pendingRequests;
 @property BOOL isInitializationError;
 
+@property NSMutableArray *achievementsUnsorted;
+@property NSMutableArray *friendProfilesUnsorted;
+
 @property NSDate *startInit;
 @property NSDate *endInit;
 @property NSTimeInterval secondsToInit;
 
 -(void)sendRequestWithURL:(NSString *)url retries:(int)retries success:(void(^)(NSDictionary *responseDictionary))success;
 -(void)checkPendingRequests;
+-(void)requestsDidComplete;
 
 -(void)processProfile:(NSDictionary *)responseData;
 -(void)processFriends:(NSDictionary *)responseData;
@@ -47,6 +51,8 @@
     self.userGamertag = userGamertag;
     self.completionBlock = completion;
     self.pendingRequests = [[NSMutableArray alloc] init];
+    self.achievementsUnsorted = [[NSMutableArray alloc] init];
+    self.friendProfiles = [[NSMutableArray alloc] init];
     self.isInitializationError = NO;
     
     NSLog(@"XboxLiveClient initializing with %@", userGamertag);
@@ -80,16 +86,47 @@
     }
     
     if ([self.pendingRequests count] == 0) {
-    
-        self.endInit = [NSDate date];
-        self.secondsToInit = [self.endInit timeIntervalSinceDate:self.startInit];
-        NSLog(@"XboxLiveClient initialized (%0.f seconds)", self.secondsToInit);
-        
-        // All requests complete, notify caller.
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.completionBlock(nil);
-        });
+        [self requestsDidComplete];
     }
+}
+
+-(void)requestsDidComplete
+{
+    // Sort achievements by date earned.
+    self.achievements = [self.achievementsUnsorted sortedArrayUsingComparator:
+         ^NSComparisonResult(id a, id b) {
+               NSNumber *first_date = ((NSDictionary*)a)[@"EarnedOn-UNIX"];
+               NSNumber *second_date = ((NSDictionary*)b)[@"EarnedOn-UNIX"];
+               return [first_date compare:second_date];
+         }];
+        
+    // Create list of friend gamertags, sorted by last achievement earned.
+    NSMutableArray *gamertagArray = [[NSMutableArray alloc] init];
+    for (NSDictionary *achievement in self.achievements) {
+        NSString *gamertag = achievement[@"Player"][@"Gamertag"];
+        if (![gamertagArray containsObject:gamertag]) {
+            [gamertagArray addObject:gamertag];
+        }
+    }
+    
+    // Sort friends by last achievement earned.
+    self.friendProfiles = [self.friendProfilesUnsorted sortedArrayUsingComparator:
+           ^NSComparisonResult(id a, id b) {
+               NSString *first_gamertag = ((NSDictionary *)a)[@"Player"][@"Gamertag"];
+               NSString *second_gamertag = ((NSDictionary *)b)[@"Player"][@"Gamertag"];
+               NSNumber *first_index = [NSNumber numberWithLong:[gamertagArray indexOfObject:first_gamertag]];
+               NSNumber *second_index = [NSNumber numberWithLong:[gamertagArray indexOfObject:second_gamertag]];
+               return [first_index compare:second_index];
+           }];
+    
+    self.endInit = [NSDate date];
+    self.secondsToInit = [self.endInit timeIntervalSinceDate:self.startInit];
+    NSLog(@"XboxLiveClient initialized (%0.f seconds)", self.secondsToInit);
+    
+    // Done, notify caller.
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.completionBlock(nil);
+    });
 }
 
 -(void)processFriends:(NSDictionary *)responseData
@@ -119,7 +156,7 @@
         self.userProfile = responseData;
         NSLog(@"Added profile for current user %@", self.userGamertag);
     } else {
-        [self.friendProfiles addObject:responseData];
+        [self.friendProfilesUnsorted addObject:responseData];
         NSLog(@"Added profile for friend %@", friendGamertag);
     }
     
@@ -155,7 +192,7 @@
     
             long earnedOn = [achievement[@"EarnedOn-UNIX"] integerValue];
             if (earnedOn != 0) {
-                [self.achievements addObject:achievement];
+                [self.achievementsUnsorted addObject:achievement];
                 unlockedCount++;
             }
         }

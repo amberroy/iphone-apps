@@ -25,6 +25,7 @@
 		962084751899B915006AD8E9 /* XboxBuddyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 962084741899B915006AD8E9 /* XboxBuddyTests.m */; };
 		9620847F1899B9C1006AD8E9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9620847E1899B9C1006AD8E9 /* Main.storyboard */; };
 		9664566A1899E49600E5C691 /* XboxLiveClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 966456691899E49600E5C691 /* XboxLiveClient.m */; };
+		9693F762189F032B00D3C80A /* Profile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9693F761189F032B00D3C80A /* Profile.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,6 +66,8 @@
 		9620847E1899B9C1006AD8E9 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		966456681899E49600E5C691 /* XboxLiveClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XboxLiveClient.h; sourceTree = "<group>"; };
 		966456691899E49600E5C691 /* XboxLiveClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XboxLiveClient.m; sourceTree = "<group>"; };
+		9693F760189F032B00D3C80A /* Profile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Profile.h; sourceTree = "<group>"; };
+		9693F761189F032B00D3C80A /* Profile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Profile.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -199,6 +202,8 @@
 			children = (
 				26D2F6761899F2A300EFB93A /* Achievement.h */,
 				26D2F6771899F2A300EFB93A /* Achievement.m */,
+				9693F760189F032B00D3C80A /* Profile.h */,
+				9693F761189F032B00D3C80A /* Profile.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -313,6 +318,7 @@
 				26D2F6661899E8FD00EFB93A /* HomeCell.m in Sources */,
 				962084601899B915006AD8E9 /* AppDelegate.m in Sources */,
 				9664566A1899E49600E5C691 /* XboxLiveClient.m in Sources */,
+				9693F762189F032B00D3C80A /* Profile.m in Sources */,
 				26D2F6741899F27200EFB93A /* AchievementViewController.m in Sources */,
 				9620845C1899B915006AD8E9 /* main.m in Sources */,
 			);

@@ -55,6 +55,14 @@
     return instance;
 }
 
++(NSArray *)gamertagsForTesting
+{
+    return @[ @"ambroy",            // amberroy
+              @"JGailor",           // friend with 10,000+ gamerscore in 100+ games
+              @"MyRazzleDazzle",    // friend with 15+ friends
+              ];
+}
+
 -(void)initWithGamertag:(NSString *)userGamertag
              completion:(void (^)(NSString *errorDescription))completion
 {
@@ -154,7 +162,8 @@
     
     self.endInit = [NSDate date];
     self.secondsToInit = [self.endInit timeIntervalSinceDate:self.startInit];
-    NSLog(@"XboxLiveClient initialized (%0.f seconds)", self.secondsToInit);
+    NSLog(@"XboxLiveClient initialized for %@ with %lul achievements (%0.f seconds)",
+          self.userGamertag, [self.achievementsFromJSON count], self.secondsToInit);
     
     // TEMP TEMP
     [self achievements];

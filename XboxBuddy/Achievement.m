@@ -23,10 +23,15 @@
 - (Achievement *)initWithDictionary:(NSDictionary *)dict {
     self = [super init];
     if (self) {
-        self.name = dict[@"Achievement"][@"Name"];
-        self.gamertag = dict[@"Achievement"][@"Gamertag"];
-        self.imageUrl = dict[@"Achievement"][@"UnlockedTitleUrl"];
-       
+        if ([dict[@"Achievement"][@"Name"] isEqualToString:@""]) {
+            self.name = @"Secret Achievement";
+            self.description = @"This is a secret achievement. Unlock it to find out more about it.";
+        } else {
+            self.name = dict[@"Achievement"][@"Name"];
+            self.description = dict[@"Achievement"][@"Description"];
+        }
+        
+        self.imageUrl = dict[@"Achievement"][@"UnlockedTileUrl"];
         double earnedOn = [dict[@"Achievement"][@"EarnedOn-UNIX"] doubleValue];
         self.earnedOn = [NSDate dateWithTimeIntervalSince1970:earnedOn];
         self.points = [dict[@"Achievement"][@"Score"] integerValue];

@@ -317,27 +317,26 @@
     return [Achievement achievementsWithArray:filtered];
 }
 
-// TODO
-//-(Profile *) userProfile
-//{
-//    return self.userProfile;
-//}
-//
-//-(NSArray *) friendProfiles
-//{
-//    return self.friendProfiles;
-//}
-//
-//-(Profile *) friendProfilesWithGamertag:(NSString *)gamertag
-//{
-//    for (NSDictionary *friendProfile in self.friendProfiles) {
-//        if ([friendProfile[@"Player"][@"Gamertag"] isEqualToString:gamertag]) {
-//            return friendProfile;
-//        }
-//    }
-//    return nil;
-//}
-//
+-(Profile *) userProfile
+{
+    return [[Profile alloc] initWithDictionary:self.userProfileFromJSON];
+}
+
+-(NSArray *) friendProfiles
+{
+    return [Profile profilesWithArray:self.friendProfilesFromJSON];
+}
+
+-(Profile *) friendProfileWithGamertag:(NSString *)gamertag
+{
+    for (NSDictionary *friendProfile in self.friendProfilesFromJSON) {
+        if ([friendProfile[@"Player"][@"Gamertag"] isEqualToString:gamertag]) {
+            return [[Profile alloc] initWithDictionary:friendProfile];
+        }
+    }
+    return nil;
+}
+
 
 
 @end

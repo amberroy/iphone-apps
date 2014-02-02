@@ -25,6 +25,8 @@
     self.timestamp = dict[@"created_at"];
     self.favorited = [dict[@"favorited"] boolValue];
     self.retweeted = [dict[@"retweeted"] boolValue];
+    self.retweets = [dict[@"retweet_count"] integerValue];
+    self.favorites = [dict[@"favorite_count"] integerValue];
     if (dict[@"entities"][@"media"]) {
         if ([dict[@"entities"][@"media"][0][@"type"]  isEqual:@"photo"]) {
             NSString *url = dict[@"entities"][@"media"][0][@"media_url"];

@@ -14,6 +14,8 @@
 
 @interface TimelineViewController ()
 
+- (void)refreshView:(UIRefreshControl *)refresh;
+
 @end
 
 @implementation TimelineViewController
@@ -40,9 +42,25 @@
     _spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     _isAuthenticated = NO;
     _twitterAPI = [[TwitterAPI alloc] init];
+    
+    
+    UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
+    refresh.attributedTitle = [[NSAttributedString alloc] initWithString:@"Pull to Refresh"];
+    [refresh addTarget:self action:@selector(refreshView:)
+      forControlEvents:UIControlEventValueChanged];
+    self.refreshControl=refresh;
+    
     [_twitterAPI setDelegate:self];
     [_twitterAPI accessTwitterAPI:HOME_TIMELINE parameters:nil];
     [_twitterAPI accessTwitterAPI:SHOW_CURRENT_USER parameters:nil];
+}
+
+- (void)refreshView:(UIRefreshControl *)refresh;
+{
+    refresh.attributedTitle = [[NSAttributedString alloc] initWithString:@"Refreshing data..."];
+    [_twitterAPI accessTwitterAPI:HOME_TIMELINE parameters:nil];
+    refresh.attributedTitle = [[NSAttributedString alloc] initWithString:@"Updating Data"];
+    [refresh endRefreshing];
 }
 
 - (void)didReceiveMemoryWarning
@@ -173,7 +191,6 @@
     // Return NO if you do not want the specified item to be editable.
     return NO;
 }
-
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {

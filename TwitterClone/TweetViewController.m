@@ -17,6 +17,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *tweetLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *tweetImage;
 @property (weak, nonatomic) IBOutlet UILabel *timestampLabel;
+@property (weak, nonatomic) IBOutlet UILabel *retweetsLabel;
+@property (weak, nonatomic) IBOutlet UILabel *favoritesLabel;
 
 @property (weak, nonatomic) IBOutlet UIButton *replyButton;
 @property (weak, nonatomic) IBOutlet UIButton *retweetButton;
@@ -32,18 +34,23 @@
 {
     if (!self.tweet.retweeted) {
         self.tweet.retweeted = YES;
+        self.retweetsLabel.text = [NSString stringWithFormat:@"%i", ++self.tweet.retweets];
         [self.retweetButton setTintColor:[UIColor grayColor]];
-        
         [self.twitterAPI accessTwitterAPI:POST_RETWEET parameters:@{@"id": self.tweet.tweetId}];
     }
 }
 
 - (IBAction)favorite:(id)sender
 {
-    if (!self.tweet.favorited) {
+    if (self.tweet.favorited) {
+        self.tweet.favorited = NO;
+        self.favoritesLabel.text = [NSString stringWithFormat:@"%i", --self.tweet.favorites];
+        [self.favoriteButton setTintColor:self.replyButton.tintColor];
+        [self.twitterAPI accessTwitterAPI:FAVORITES_DESTROY parameters:@{@"id": self.tweet.tweetId}];
+    } else {
         self.tweet.favorited = YES;
+        self.favoritesLabel.text = [NSString stringWithFormat:@"%i", ++self.tweet.favorites];
         [self.favoriteButton setTintColor:[UIColor grayColor]];
-        
         [self.twitterAPI accessTwitterAPI:FAVORITES_CREATE parameters:@{@"id": self.tweet.tweetId}];
     }
 }
@@ -58,6 +65,9 @@
         self.usernameLabel.text = [NSString stringWithFormat:@"@%@", self.tweet.username];
         self.userImage.image = self.tweet.userImage;
         self.tweetLabel.text = self.tweet.tweet;
+        self.retweetsLabel.text = [NSString stringWithFormat:@"%i", self.tweet.retweets];
+        self.favoritesLabel.text = [NSString stringWithFormat:@"%i", self.tweet.favorites];
+      
         
         if (self.tweet.favorited) {
             [self.favoriteButton setTintColor:[UIColor grayColor]];

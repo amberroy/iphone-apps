@@ -21,6 +21,8 @@
 @property NSString *timestamp;
 @property BOOL favorited;
 @property BOOL retweeted;
+@property NSInteger retweets;
+@property NSInteger favorites;
 
 @property NSString *tweetId;
 @property NSString *userId;

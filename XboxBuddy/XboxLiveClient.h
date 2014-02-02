@@ -14,8 +14,9 @@
 @interface XboxLiveClient : NSObject
 
 +(XboxLiveClient *) instance;
++(NSArray *)gamertagsForTesting;
 
--(Achievement *) achievements;
+-(NSArray *) achievements;
 -(NSArray *) achievementsWithGamertag:(NSString *)gamertag;
 
 // TODO

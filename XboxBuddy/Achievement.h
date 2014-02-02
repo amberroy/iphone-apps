@@ -10,8 +10,28 @@
 
 @interface Achievement : NSObject
 
+// Achievement info.
 @property NSString *name;
+@property NSString *description;
+@property NSString *imageUrl;
+@property NSDate *earnedOn;
+@property NSInteger points;
+
+// Game info.
+@property NSString *gameName;
+@property NSString *gameImageUrl;
+@property NSInteger gameAchievementsPossible;
+@property NSInteger gamePointsPossible;
+
+// Player progress on this game.
+@property NSInteger gameAchievementsEarned;
+@property NSInteger gamePointsEarned;
+@property NSDate *gameLastPlayed;
+
+// Player info.
 @property NSString *gamertag;
+@property NSInteger gamerscore;
+@property NSString *gamerImageUrl;
 
 +(NSArray *)achievementsWithArray:(NSArray *)array;
 

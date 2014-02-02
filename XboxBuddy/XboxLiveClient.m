@@ -55,6 +55,14 @@
     return instance;
 }
 
++(NSArray *)gamertagsForTesting
+{
+    return @[ @"ambroy",            // amberroy
+              @"JGailor",           // friend with 10,000+ gamerscore in 100+ games
+              @"MyRazzleDazzle",    // friend with 15+ friends
+              ];
+}
+
 -(void)initWithGamertag:(NSString *)userGamertag
              completion:(void (^)(NSString *errorDescription))completion
 {
@@ -154,7 +162,8 @@
     
     self.endInit = [NSDate date];
     self.secondsToInit = [self.endInit timeIntervalSinceDate:self.startInit];
-    NSLog(@"XboxLiveClient initialized (%0.f seconds)", self.secondsToInit);
+    NSLog(@"XboxLiveClient initialized for %@ with %lu achievements (%0.f seconds)",
+          self.userGamertag, [self.achievementsFromJSON count], self.secondsToInit);
     
     // Done, notify caller.
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -165,7 +174,7 @@
 -(void)processFriends:(NSDictionary *)responseData
 {
     NSLog(@"Found %lu Friends for current user %@",
-          (unsigned long)[responseData[@"Friends"] count], responseData[@"Player"][@"Gamertag"]);
+          [responseData[@"Friends"] count], responseData[@"Player"][@"Gamertag"]);
     
     for (NSDictionary *friend in responseData[@"Friends"]) {
         

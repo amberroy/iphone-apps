@@ -9,11 +9,6 @@
 #import "AppDelegate.h"
 #import "XboxLiveClient.h"
 
-@interface AppDelegate ()
- -(void)xboxLiveClientInitCompleted:(NSString *)errorMessage;
-@end
-
-
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -29,18 +24,16 @@
     [self.window makeKeyAndVisible];
     
     // Fetch date from Xbox Live.
-    [[XboxLiveClient instance] initWithGamertag:@"ambroy" completion: ^(NSString *errorMessage) {
-        [self xboxLiveClientInitCompleted:errorMessage]; }];
+    NSString *sampleGamertag = [XboxLiveClient gamertagsForTesting][0];
+    [[XboxLiveClient instance] initWithGamertag:sampleGamertag completion: ^(NSString *errorMessage) {
+        if (errorMessage) {
+            NSLog(@"Failed to initialize XboxLiveClient: %@", errorMessage);
+        } else {
+            NSLog(@"XboxLiveClient initialization complete.");
+        }
+    }];
     
     return YES;
-}
-
- -(void)xboxLiveClientInitCompleted:(NSString *)errorMessage;
-{
-    if (errorMessage) {
-        NSLog(@"Failed to initialize XboxLiveClient: %@", errorMessage); } else {
-        NSLog(@"XboxLiveClient initialization complete.");
-    }
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application

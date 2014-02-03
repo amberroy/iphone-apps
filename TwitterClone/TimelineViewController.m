@@ -98,6 +98,7 @@
     if (tweet.retweeted) {
         tweet.retweeted = NO;
         [sender setSelected:NO];
+        [_twitterAPI accessTwitterAPI:RETWEET_DESTROY parameters:@{@"id":tweet.retweetId}];
     } else {
         tweet.retweeted = YES;
         [sender setSelected:YES];
@@ -190,6 +191,26 @@
                 
             case POST_TWEET: {
                 NSLog(@"Done posting tweet.");
+                break;
+            }
+                
+            case POST_RETWEET: {
+                NSLog(@"Done posting retweet.");
+                NSDictionary *dict = (NSDictionary *)data;
+                NSString *retweet_id = dict[@"id_str"];
+                NSString *original_id = dict[@"retweeted_status"][@"id_str"];
+                for (Tweet *t in _tweets) {
+                    if ([t.tweetId isEqualToString:original_id]) {
+                        t.retweetId = retweet_id;
+                        break;
+                    }
+                }
+                break;
+            }
+                
+                
+            case RETWEET_DESTROY: {
+                NSLog(@"Done deleting retweet.");
                 break;
             }
                 

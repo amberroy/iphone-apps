@@ -47,7 +47,7 @@
                          requestURL = [NSURL URLWithString:@"https://api.twitter.com/1.1/statuses/home_timeline.json"];
                          myRequestMethod = SLRequestMethodGET;
                          if (!myParams) {
-                             myParams = @{ @"count": @"20", @"include_entities": @"1"};
+                             myParams = @{ @"count": @"20", @"include_entities": @"1", @"include_my_retweet": @"1"};
                          }
                          break;
                          
@@ -114,6 +114,20 @@
                          }
                          break;
                          
+                     case RETWEET_DESTROY: {
+                         myRequestMethod = SLRequestMethodPOST;
+                         if (!myParams || !myParams[@"id"]) {
+                             NSLog(@"Cannot unfavorite the tweet: Failed to specify 'id' parameter.");
+                             NSString *errorMessage = @"Cannot destroy tweet due to internal error.";
+                             dispatch_async(dispatch_get_main_queue(), ^{
+                                 [self.delegate twitterDidReturn:nil operation:operation errorMessage:errorMessage];
+                             });
+                         }
+                         NSString *url_string = [NSString stringWithFormat:@"https://api.twitter.com/1.1/statuses/destroy/%@.json", myParams[@"id"]];
+                         requestURL = [NSURL URLWithString:url_string];
+                         break;
+                     }
+                         
                      default:
                          NSLog(@"Cannot access Twitter API, unrecognized opeartion: %i", operation);
                          NSString *errorMessage = @"Cannot access Twitter due to internal error.";
@@ -133,7 +147,7 @@
                       if (dataSource.count != 0) {
                           
                           // Uncomment to show respone from Twitter server.
-                          //NSLog(@"JSON Response: %@", dataSource);
+                          NSLog(@"JSON Response: %@", dataSource);
                           [self.delegate twitterDidReturn:dataSource operation:operation errorMessage:nil];
                       } else {
                           NSLog(@"Response contains no data. Error: %@", error);

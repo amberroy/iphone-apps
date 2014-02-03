@@ -23,6 +23,7 @@
 @property BOOL retweeted;
 @property NSInteger retweets;
 @property NSInteger favorites;
+@property NSString *retweetId;
 
 @property NSString *tweetId;
 @property NSString *userId;

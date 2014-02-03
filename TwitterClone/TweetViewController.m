@@ -36,6 +36,7 @@
         self.tweet.retweeted = NO;
         self.retweetsLabel.text = [NSString stringWithFormat:@"%i", --self.tweet.retweets];
         [self.retweetButton setSelected:NO];
+        [self.twitterAPI accessTwitterAPI:RETWEET_DESTROY parameters:@{@"id": self.tweet.retweetId}];
     } else {
         self.tweet.retweeted = YES;
         self.retweetsLabel.text = [NSString stringWithFormat:@"%i", ++self.tweet.retweets];

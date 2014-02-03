@@ -19,6 +19,7 @@ typedef enum {
     POST_RETWEET,
     FAVORITES_CREATE,
     FAVORITES_DESTROY,
+    RETWEET_DESTROY,
 } TwitterOperation;
 
 // ErrorMessage is nil unless we failed to get access to Twitter on this device.

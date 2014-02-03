@@ -3,12 +3,11 @@
     {
       "idiom" : "universal",
       "scale" : "1x",
-      "filename" : "available_updates-32_outline.png"
+      "filename" : "retweet_on.png"
     },
     {
       "idiom" : "universal",
-      "scale" : "2x",
-      "filename" : "available_updates-32_outline-1.png"
+      "scale" : "2x"
     }
   ],
   "info" : {

@@ -217,10 +217,9 @@
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xVI-v5-omC">
                                 <rect key="frame" x="62" y="489" width="32" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" image="undo-48">
+                                <state key="normal" image="reply">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
-                                <state key="selected" image="undo-48"/>
                                 <connections>
                                     <segue destination="yka-VW-zUf" kind="modal" identifier="showComposeWithReply" id="FZk-UI-EeD"/>
                                 </connections>
@@ -228,10 +227,10 @@
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qes-Qw-PFt">
                                 <rect key="frame" x="144" y="489" width="32" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" image="available_updates-32_outline">
+                                <state key="normal" image="retweet">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
-                                <state key="selected" image="available_updates-32"/>
+                                <state key="selected" image="retweet_on"/>
                                 <connections>
                                     <action selector="retweet:" destination="Ah7-4n-0Wa" eventType="touchUpInside" id="tUq-VH-VhP"/>
                                 </connections>
@@ -239,10 +238,10 @@
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4Cv-OK-NEh">
                                 <rect key="frame" x="198" y="489" width="97" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" image="outline_star-64">
+                                <state key="normal" image="favorite">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
-                                <state key="selected" image="star-32"/>
+                                <state key="selected" image="favorite_on"/>
                                 <connections>
                                     <action selector="favorite:" destination="Ah7-4n-0Wa" eventType="touchUpInside" id="jxt-yp-DxE"/>
                                 </connections>
@@ -314,11 +313,11 @@
         </scene>
     </scenes>
     <resources>
-        <image name="available_updates-32" width="32" height="32"/>
-        <image name="available_updates-32_outline" width="32" height="32"/>
-        <image name="outline_star-64" width="32" height="32"/>
-        <image name="star-32" width="32" height="32"/>
-        <image name="undo-48" width="48" height="48"/>
+        <image name="favorite" width="16" height="16"/>
+        <image name="favorite_on" width="16" height="16"/>
+        <image name="reply" width="16" height="16"/>
+        <image name="retweet" width="16" height="16"/>
+        <image name="retweet_on" width="16" height="16"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>

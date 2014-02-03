@@ -38,7 +38,7 @@
     self.usernameLabel.text = [NSString stringWithFormat:@"@%@", self.currentUserInfo.username];
     self.userImage.image = self.currentUserInfo.userImage;
     
-    // Return Nav Bar to Default.
+    // Return Nav Bar button text to Default color.
     UIColor *defaultBlue = [[[[UIApplication sharedApplication] delegate] window] tintColor];
     [[UIBarButtonItem appearanceWhenContainedIn:[UINavigationBar class], nil]
                          setTitleTextAttributes:[NSDictionary
@@ -51,6 +51,16 @@
     }
     
     [self.tweetField becomeFirstResponder];
+}
+
+-(void)viewWillDisappear:(BOOL)animated
+{
+    // Change Nav Bar button text to White.
+    UIColor *defaultBlue = [[[[UIApplication sharedApplication] delegate] window] tintColor];
+    [[UIBarButtonItem appearanceWhenContainedIn:[UINavigationBar class], nil]
+                         setTitleTextAttributes:[NSDictionary
+                   dictionaryWithObjectsAndKeys:[UIColor whiteColor],
+         UITextAttributeTextColor,nil] forState:UIControlStateNormal];             // Set back button color
 }
 
 - (void)didReceiveMemoryWarning

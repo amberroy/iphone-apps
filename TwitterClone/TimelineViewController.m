@@ -17,6 +17,8 @@
 
 - (void)refreshView:(UIRefreshControl *)refresh;
 
+@property NSInteger lastScroll;
+
 
 @end
 
@@ -41,6 +43,7 @@
 {
     [super viewDidLoad];
     
+    _tweets = [[NSMutableArray alloc] init];
     _spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     _isAuthenticated = NO;
     _twitterAPI = [[TwitterAPI alloc] init];
@@ -167,11 +170,12 @@
                 
             case HOME_TIMELINE: {
                 _dataFromTwitter = [[NSMutableArray alloc] initWithArray:data];
-                _tweets = [[NSMutableArray alloc] init];
+                NSMutableArray *newTweets = [[NSMutableArray alloc] init];
                 for (NSDictionary *dict in data) {
                     Tweet *tweet = [[Tweet alloc] initWithDictionary:dict];
-                    [_tweets addObject:tweet];
+                    [newTweets addObject:tweet];
                 }
+                _tweets = newTweets;
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self.tableView reloadData];
                 });
@@ -241,12 +245,13 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if ([_tweets count] == 0) {
+        return 176;
+    }
     Tweet *tweet = _tweets[indexPath.row];
     if (tweet.tweetImageURL) {
-        //return 155;         // Height of prototype cell, with tweetImage.
         return 176;         // Height of prototype cell, with tweetImage.
     } else {
-        //return 155 - 76;    // Above minus the height of the tweetImage.
         return 176 - 86;    // Above minus the height of the tweetImage.
     }
 }
@@ -339,8 +344,12 @@
     // Inifinite scrooooooooooooooooooollllliiiiiiiinnnnnnnnnngggggggg........
     CGFloat actualPosition = scrollView.contentOffset.y;
     CGFloat contentHeight = scrollView.contentSize.height - 500;
-    if (actualPosition >= contentHeight) {
-        NSString *count = [NSString stringWithFormat:@"%i", [_tweets count] + 20];
+    NSString *count = [NSString stringWithFormat:@"%i", [_tweets count] + 20];
+    if (!self.lastScroll) {
+        self.lastScroll = 0;
+    }
+    if (self.lastScroll < actualPosition - 500 && actualPosition >= contentHeight) {
+        self.lastScroll = actualPosition;
         [_twitterAPI accessTwitterAPI:HOME_TIMELINE parameters:@{@"count":count}];
     }
 }

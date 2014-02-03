@@ -11,10 +11,12 @@
 #import "TweetViewController.h"
 #import "TweetCell.h"
 #import "Tweet.h"
+#import "TwitterAPI.h"
 
 @interface TimelineViewController ()
 
 - (void)refreshView:(UIRefreshControl *)refresh;
+
 
 @end
 
@@ -86,17 +88,35 @@
 }
 
 #pragma mark - UITableViewCell buttons
--(void)replyButtonPressed:(UIButton *)sender
-{
-
-}
 -(void)retweetButtonPressed:(UIButton *)sender
 {
+    TweetCell *tweetCell = (TweetCell *)sender.superview.superview.superview;
+    Tweet *tweet = tweetCell.tweet;
+    if (tweet.retweeted) {
+        tweet.retweeted = NO;
+        [sender setSelected:NO];
+    } else {
+        tweet.retweeted = YES;
+        [sender setSelected:YES];
+        [_twitterAPI accessTwitterAPI:POST_RETWEET parameters:@{@"id":tweet.tweetId}];
+    }
+    [self retweetStatusChanged:tweet];
 
 }
 -(void)favoriteButtonPressed:(UIButton *)sender
 {
-
+    TweetCell *tweetCell = (TweetCell *)sender.superview.superview.superview;
+    Tweet *tweet = tweetCell.tweet;
+    if (tweet.favorited) {
+        tweet.favorited = NO;
+        [sender setSelected:NO];
+        [_twitterAPI accessTwitterAPI:FAVORITES_DESTROY parameters:@{@"id": tweet.tweetId}];
+    } else {
+        tweet.favorited = YES;
+        [sender setSelected:YES];
+        [_twitterAPI accessTwitterAPI:FAVORITES_CREATE parameters:@{@"id": tweet.tweetId}];
+    }
+    [self favoriteStatusChanged:tweet];
 }
 
 
@@ -230,6 +250,8 @@
     for (Tweet *t in _tweets) {
         if ([t isEqual:tweet]) {
             t.favorited = tweet.favorited;
+            [self.tableView reloadData];
+            break;
         }
     }
     
@@ -240,6 +262,8 @@
     for (Tweet *t in _tweets) {
         if ([t isEqual:tweet]) {
             t.retweeted = tweet.retweeted;
+            [self.tableView reloadData];
+            break;
         }
     }
     
@@ -257,6 +281,12 @@
     } else if ([segue.identifier isEqualToString:@"showCompose"]) {
         [segue.destinationViewController setCurrentUserInfo:_currentUserInfo];
         [segue.destinationViewController setReplyTo:nil];
+        [segue.destinationViewController setDelegate:self];
+    } else if ([segue.identifier isEqualToString:@"showComposeWithReply"]) {
+        UIButton *replyButton = (UIButton *)sender;
+        TweetCell *tweetCell = (TweetCell *)replyButton.superview.superview.superview;
+        [segue.destinationViewController setCurrentUserInfo:_currentUserInfo];
+        [segue.destinationViewController setReplyTo:tweetCell.tweet];
         [segue.destinationViewController setDelegate:self];
     } else {
         NSLog(@"Unrecognized segue.identifier: %@", segue.identifier);

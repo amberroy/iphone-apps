@@ -39,7 +39,6 @@
     } else {
         self.tweet.retweeted = YES;
         self.retweetsLabel.text = [NSString stringWithFormat:@"%i", ++self.tweet.retweets];
-        //[self.retweetButton setTintColor:[UIColor grayColor]];
         [self.retweetButton setSelected:YES];
         [self.twitterAPI accessTwitterAPI:POST_RETWEET parameters:@{@"id": self.tweet.tweetId}];
     }
@@ -76,12 +75,8 @@
         self.favoritesLabel.text = [NSString stringWithFormat:@"%i", self.tweet.favorites];
       
         
-        if (self.tweet.favorited) {
-            [self.favoriteButton setSelected:YES];
-        }
-        if (self.tweet.retweeted) {
-            [self.retweetButton setSelected:YES];
-        }
+        self.retweetButton.selected = (self.tweet.retweeted) ? YES : NO;
+        self.favoriteButton.selected = (self.tweet.favorited) ? YES : NO;
         
         NSDateFormatter *df = [[NSDateFormatter alloc] init];
         [df setDateFormat:@"eee MMM dd HH:mm:ss ZZZZ yyyy"];// Sun Jan 26 10:33:03 +0000 2014

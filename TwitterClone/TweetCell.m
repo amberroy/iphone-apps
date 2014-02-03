@@ -11,11 +11,6 @@
 #import "TimelineViewController.h"
 #import "UIImageView+AFNetworking.h"
 
-@interface TweetCell ()
-
-@property (weak) Tweet *tweet;
-
-@end
 
 @implementation TweetCell
 
@@ -30,9 +25,10 @@
     // Set up buttons.
     UITableView *tv = (UITableView *) self.superview.superview;
     TimelineViewController *vc = (TimelineViewController *) tv.dataSource;
-    [self.replyButton addTarget:vc action:@selector(replyButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.retweetButton addTarget:vc action:@selector(retweetButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.favoriteButton addTarget:vc action:@selector(favoriteButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    self.retweetButton.selected = (tweet.retweeted) ? YES : NO;
+    self.favoriteButton.selected = (tweet.favorited) ? YES : NO;
     
     // Asynchronous loading of tweet image, if we have one.
     __weak TweetCell *weakCell = self; // Use weak ref in callback.

@@ -196,9 +196,11 @@
 {
     Tweet *tweet = _tweets[indexPath.row];
     if (tweet.tweetImageURL) {
-        return 155;         // Height of prototype cell, with tweetImage.
+        //return 155;         // Height of prototype cell, with tweetImage.
+        return 176;         // Height of prototype cell, with tweetImage.
     } else {
-        return 155 - 76;    // Above minus the height of the tweetImage.
+        //return 155 - 76;    // Above minus the height of the tweetImage.
+        return 176 - 86;    // Above minus the height of the tweetImage.
     }
 }
 

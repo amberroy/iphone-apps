@@ -43,6 +43,17 @@
     _isAuthenticated = NO;
     _twitterAPI = [[TwitterAPI alloc] init];
     
+    // Custom Nav Bar colors.
+    [self.navigationController.navigationBar setBarTintColor:
+         [UIColor colorWithRed:121.0/255.0 green:184.0/255.0 blue:2350.0/255.0 alpha:1.0]];
+    [self.navigationController.navigationBar setTranslucent:NO];
+    [self.navigationController.navigationBar setTitleTextAttributes:[NSDictionary
+           dictionaryWithObject:[UIColor whiteColor] forKey:UITextAttributeTextColor]];
+    [[UIBarButtonItem appearanceWhenContainedIn:[UINavigationBar class], nil]
+         setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor whiteColor],
+         UITextAttributeTextColor,nil] forState:UIControlStateNormal];             // Set back button color
+    [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];  // Set back button arrow color
+    
     
     UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
     refresh.attributedTitle = [[NSAttributedString alloc] initWithString:@"Pull to Refresh"];
@@ -88,6 +99,9 @@
         [_spinner stopAnimating];
     }
     
+    if ([data isKindOfClass:[NSDictionary class]] && ((NSDictionary *)data)[@"errors"][0][@"message"]) {
+        errorMessage = ((NSDictionary *)data)[@"errors"][0][@"message"];
+    }
     if (errorMessage) {
         _isAuthenticated = NO;
         NSLog(@"TwitterDidReturn with error.");
@@ -96,7 +110,9 @@
                                               cancelButtonTitle:@"Retry"
                                               otherButtonTitles:nil, nil
         ];
-        [alertView show];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [alertView show];
+        });
     } else {
         _isAuthenticated = YES;
         

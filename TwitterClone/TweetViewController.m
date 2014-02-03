@@ -111,6 +111,7 @@
         self.twitterAPI = [[TwitterAPI alloc] init];
         self.twitterAPI.delegate = self;
     }
+    
     [self configureView];
 }
 

@@ -38,6 +38,13 @@
     self.usernameLabel.text = [NSString stringWithFormat:@"@%@", self.currentUserInfo.username];
     self.userImage.image = self.currentUserInfo.userImage;
     
+    // Return Nav Bar to Default.
+    UIColor *defaultBlue = [[[[UIApplication sharedApplication] delegate] window] tintColor];
+    [[UIBarButtonItem appearanceWhenContainedIn:[UINavigationBar class], nil]
+                         setTitleTextAttributes:[NSDictionary
+                   dictionaryWithObjectsAndKeys:defaultBlue,
+         UITextAttributeTextColor,nil] forState:UIControlStateNormal];             // Set back button color
+    
     // Start the tweet with @recipient
     if (self.replyTo) {
         self.tweetField.text = [NSString stringWithFormat:@"@%@ ", self.replyTo.username];

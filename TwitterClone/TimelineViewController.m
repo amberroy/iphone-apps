@@ -135,8 +135,20 @@
     }
     
     if ([data isKindOfClass:[NSDictionary class]] && ((NSDictionary *)data)[@"errors"][0][@"message"]) {
-        errorMessage = ((NSDictionary *)data)[@"errors"][0][@"message"];
+        // Happens when we hit our API Rate Limit.
+        NSString *rateLimitMessage = ((NSDictionary *)data)[@"errors"][0][@"message"];
+        NSLog(@"TwitterDidReturn with error.");
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:rateLimitMessage
+                                              message:@"Try again in a few minutes." delegate:self
+                                              cancelButtonTitle:@"Retry"
+                                              otherButtonTitles:nil, nil
+        ];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [alertView show];
+        });
+        return;
     }
+    
     if (errorMessage) {
         _isAuthenticated = NO;
         NSLog(@"TwitterDidReturn with error.");
@@ -318,6 +330,19 @@
         }
     }
     [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+#pragma mark - UIScrollViewDelegate
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    // Inifinite scrooooooooooooooooooollllliiiiiiiinnnnnnnnnngggggggg........
+    CGFloat actualPosition = scrollView.contentOffset.y;
+    CGFloat contentHeight = scrollView.contentSize.height - 500;
+    if (actualPosition >= contentHeight) {
+        NSString *count = [NSString stringWithFormat:@"%i", [_tweets count] + 20];
+        [_twitterAPI accessTwitterAPI:HOME_TIMELINE parameters:@{@"count":count}];
+    }
 }
 
 @end

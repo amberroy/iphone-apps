@@ -85,6 +85,21 @@
     [_twitterAPI accessTwitterAPI:HOME_TIMELINE parameters:nil];
 }
 
+#pragma mark - UITableViewCell buttons
+-(void)replyButtonPressed:(UIButton *)sender
+{
+
+}
+-(void)retweetButtonPressed:(UIButton *)sender
+{
+
+}
+-(void)favoriteButtonPressed:(UIButton *)sender
+{
+
+}
+
+
 #pragma mark - UIAlertViewDelegate
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {

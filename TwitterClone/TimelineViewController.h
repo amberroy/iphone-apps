@@ -16,4 +16,8 @@
 -(void)favoriteStatusChanged:(Tweet *)tweet;
 -(void)retweetStatusChanged:(Tweet *)tweet;
 
+-(void)replyButtonPressed:(UIButton *)sender;
+-(void)retweetButtonPressed:(UIButton *)sender;
+-(void)favoriteButtonPressed:(UIButton *)sender;
+
 @end

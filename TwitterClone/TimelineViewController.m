@@ -210,6 +210,26 @@
     return NO;
 }
 
+-(void)favoriteStatusChanged:(Tweet *)tweet
+{
+    for (Tweet *t in _tweets) {
+        if ([t isEqual:tweet]) {
+            t.favorited = tweet.favorited;
+        }
+    }
+    
+}
+
+-(void)retweetStatusChanged:(Tweet *)tweet
+{
+    for (Tweet *t in _tweets) {
+        if ([t isEqual:tweet]) {
+            t.retweeted = tweet.retweeted;
+        }
+    }
+    
+}
+
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([[segue identifier] isEqualToString:@"showTweet"]) {

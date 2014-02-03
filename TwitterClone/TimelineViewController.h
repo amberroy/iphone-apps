@@ -13,4 +13,7 @@
 
 @interface TimelineViewController : UITableViewController <TwitterAPIDelegate, ComposeViewControllerDelegate, UIAlertViewDelegate>
 
+-(void)favoriteStatusChanged:(Tweet *)tweet;
+-(void)retweetStatusChanged:(Tweet *)tweet;
+
 @end

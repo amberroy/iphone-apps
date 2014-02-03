@@ -35,7 +35,6 @@
     if (self.tweet.retweeted) {
         self.tweet.retweeted = NO;
         self.retweetsLabel.text = [NSString stringWithFormat:@"%i", --self.tweet.retweets];
-        //[self.favoriteButton setTintColor:self.replyButton.tintColor];
         [self.retweetButton setSelected:NO];
     } else {
         self.tweet.retweeted = YES;
@@ -44,6 +43,7 @@
         [self.retweetButton setSelected:YES];
         [self.twitterAPI accessTwitterAPI:POST_RETWEET parameters:@{@"id": self.tweet.tweetId}];
     }
+    [self.timelineViewController retweetStatusChanged:self.tweet];
 }
 
 - (IBAction)favorite:(id)sender
@@ -51,16 +51,15 @@
     if (self.tweet.favorited) {
         self.tweet.favorited = NO;
         self.favoritesLabel.text = [NSString stringWithFormat:@"%i", --self.tweet.favorites];
-        //[self.favoriteButton setTintColor:self.replyButton.tintColor];
         [self.favoriteButton setSelected:NO];
         [self.twitterAPI accessTwitterAPI:FAVORITES_DESTROY parameters:@{@"id": self.tweet.tweetId}];
     } else {
         self.tweet.favorited = YES;
         self.favoritesLabel.text = [NSString stringWithFormat:@"%i", ++self.tweet.favorites];
-        //[self.favoriteButton setTintColor:[UIColor grayColor]];
         [self.favoriteButton setSelected:YES];
         [self.twitterAPI accessTwitterAPI:FAVORITES_CREATE parameters:@{@"id": self.tweet.tweetId}];
     }
+    [self.timelineViewController favoriteStatusChanged:self.tweet];
 }
 
 #pragma mark - Managing the detail item
@@ -78,10 +77,10 @@
       
         
         if (self.tweet.favorited) {
-            [self.favoriteButton setTintColor:[UIColor grayColor]];
+            [self.favoriteButton setSelected:YES];
         }
         if (self.tweet.retweeted) {
-            [self.retweetButton setTintColor:[UIColor grayColor]];
+            [self.retweetButton setSelected:YES];
         }
         
         NSDateFormatter *df = [[NSDateFormatter alloc] init];

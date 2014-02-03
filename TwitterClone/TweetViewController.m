@@ -32,10 +32,16 @@
 
 - (IBAction)retweet:(id)sender
 {
-    if (!self.tweet.retweeted) {
+    if (self.tweet.retweeted) {
+        self.tweet.retweeted = NO;
+        self.retweetsLabel.text = [NSString stringWithFormat:@"%i", --self.tweet.retweets];
+        //[self.favoriteButton setTintColor:self.replyButton.tintColor];
+        [self.retweetButton setSelected:NO];
+    } else {
         self.tweet.retweeted = YES;
         self.retweetsLabel.text = [NSString stringWithFormat:@"%i", ++self.tweet.retweets];
-        [self.retweetButton setTintColor:[UIColor grayColor]];
+        //[self.retweetButton setTintColor:[UIColor grayColor]];
+        [self.retweetButton setSelected:YES];
         [self.twitterAPI accessTwitterAPI:POST_RETWEET parameters:@{@"id": self.tweet.tweetId}];
     }
 }
@@ -45,12 +51,14 @@
     if (self.tweet.favorited) {
         self.tweet.favorited = NO;
         self.favoritesLabel.text = [NSString stringWithFormat:@"%i", --self.tweet.favorites];
-        [self.favoriteButton setTintColor:self.replyButton.tintColor];
+        //[self.favoriteButton setTintColor:self.replyButton.tintColor];
+        [self.favoriteButton setSelected:NO];
         [self.twitterAPI accessTwitterAPI:FAVORITES_DESTROY parameters:@{@"id": self.tweet.tweetId}];
     } else {
         self.tweet.favorited = YES;
         self.favoritesLabel.text = [NSString stringWithFormat:@"%i", ++self.tweet.favorites];
-        [self.favoriteButton setTintColor:[UIColor grayColor]];
+        //[self.favoriteButton setTintColor:[UIColor grayColor]];
+        [self.favoriteButton setSelected:YES];
         [self.twitterAPI accessTwitterAPI:FAVORITES_CREATE parameters:@{@"id": self.tweet.tweetId}];
     }
 }

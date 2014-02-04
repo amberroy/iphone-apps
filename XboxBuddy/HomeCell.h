@@ -10,10 +10,9 @@
 
 @interface HomeCell : UITableViewCell
 
-@property (strong, nonatomic) IBOutlet UIImageView *userImage;
-@property (strong, nonatomic) IBOutlet UILabel *userName;
-@property (strong, nonatomic) IBOutlet UILabel *userScreenName;
-@property (strong, nonatomic) IBOutlet UILabel *gameAchievement;
-@property (strong, nonatomic) IBOutlet UILabel *timestamp;
+@property (strong, nonatomic) IBOutlet UIImageView *gamerImage;
+@property (strong, nonatomic) IBOutlet UILabel *gamerTag;
+@property (strong, nonatomic) IBOutlet UILabel *achievementName;
+@property (strong, nonatomic) IBOutlet UILabel *achievementEarnedOn;
 
 @end

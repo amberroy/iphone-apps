@@ -30,6 +30,10 @@
             NSLog(@"Failed to initialize XboxLiveClient: %@", errorMessage);
         } else {
             NSLog(@"XboxLiveClient initialization complete.");
+
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"InitialDataLoaded"
+                                                                object:nil
+                                                              userInfo:nil];
         }
     }];
     

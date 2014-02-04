@@ -10,11 +10,11 @@
 #import "AchievementViewController.h"
 #import "Achievement.h"
 #import "HomeCell.h"
+#import "XboxLiveClient.h"
 
 @interface HomeTableViewController ()
 
 @property (nonatomic, strong) NSArray *achievements;
-@property (nonatomic, strong) NSMutableArray *achievementObjects;
 
 @end
 
@@ -24,7 +24,7 @@
 {
     self = [super initWithStyle:style];
     if (self) {
-        // Custom initialization
+        //self.achievements = [[XboxLiveClient instance] achievements];
     }
     return self;
 }
@@ -38,16 +38,22 @@
 
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(reloadTable:)
+                                                 name:@"InitialDataLoaded"
+                                               object:nil];
+
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"showAchievementDetail"]) {
         UITableViewCell *selectedCell = (UITableViewCell *)sender;
         NSIndexPath *indexPath = [self.tableView indexPathForCell:selectedCell];
-        Achievement *achievementObj = self.achievementObjects[indexPath.row];
+        Achievement *achievement = self.achievements[indexPath.row];
 
         AchievementViewController *achieveViewController = (AchievementViewController *)segue.destinationViewController;
-        //achieveViewController.achievement = achievementObj;
+        achieveViewController.achievement = achievement;
     }
 }
 
@@ -66,8 +72,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    // return [achievementObjects count]
-    return 5;
+    return [self.achievements count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -75,11 +80,19 @@
     static NSString *CellIdentifier = @"HomeCell";
     HomeCell *cell = (HomeCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
 
+    Achievement *achievementObj = self.achievements[indexPath.row];
+
     // Configure the cell...
-    cell.userName.text = @"First Last";
-    cell.userScreenName.text = @"ScreenName";
+    cell.gamerTag.text = achievementObj.gamertag;
+    cell.achievementName.text = achievementObj.name;
+    cell.achievementEarnedOn.text = [Achievement timeAgoWithDate:achievementObj.earnedOn];
 
     return cell;
+}
+
+- (void)reloadTable:(NSNotification *)notification {
+    self.achievements = [[XboxLiveClient instance] achievements];
+    [self.tableView reloadData];
 }
 
 /*
@@ -131,5 +144,9 @@
     // Pass the selected object to the new view controller.
 }
 */
+
+-(void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
 
 @end

@@ -53,4 +53,26 @@
     return self;
 }
 
++(NSString *)timeAgoWithDate:(NSDate *)date {
+
+    NSInteger timeAgoInSeconds = abs(floor([date timeIntervalSinceNow]));
+
+    if (timeAgoInSeconds == 0) {
+        return @"Just Now";
+    } else if (timeAgoInSeconds < 60) {
+        return [NSString stringWithFormat:@"%lis", timeAgoInSeconds];
+    } else if (timeAgoInSeconds < 3600) {
+        return [NSString stringWithFormat:@"%lim", timeAgoInSeconds/60];
+    } else if (timeAgoInSeconds < 86400) {
+        return [NSString stringWithFormat:@"%lih", timeAgoInSeconds/3600];
+    } else if (timeAgoInSeconds < 86400 * 7) {
+        return [NSString stringWithFormat:@"%lid", timeAgoInSeconds/86400];
+    } else {
+        NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+        [dateFormat setDateFormat:@"MM/dd/yy"];
+        return [dateFormat stringFromDate:date];
+    }
+}
+
+
 @end

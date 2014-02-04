@@ -22,7 +22,7 @@
 @property TwitterAPI *twitterAPI;
 @property NSMutableArray *dataFromTwitter;
 
-@property Tweet *currentUserInfo;  // CHECK
+@property Tweet *currentUserInfo;
 @property NSMutableArray *tweets;
 
 @property BOOL isAuthenticated;

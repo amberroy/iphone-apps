@@ -33,6 +33,9 @@
 @property NSInteger gamerscore;
 @property NSString *gamerImageUrl;
 
+// TODO: move this to util file
++(NSString *)timeAgoWithDate:(NSDate *)date;
+
 +(NSArray *)achievementsWithArray:(NSArray *)array;
 
 

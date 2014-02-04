@@ -147,7 +147,7 @@
                       if (dataSource.count != 0) {
                           
                           // Uncomment to show respone from Twitter server.
-                          NSLog(@"JSON Response: %@", dataSource);
+                          //NSLog(@"JSON Response: %@", dataSource);
                           [self.delegate twitterDidReturn:dataSource operation:operation errorMessage:nil];
                       } else {
                           NSLog(@"Response contains no data. Error: %@", error);

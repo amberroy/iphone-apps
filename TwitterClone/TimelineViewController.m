@@ -19,19 +19,21 @@
 
 @property NSInteger lastScroll;
 
+@property TwitterAPI *twitterAPI;
+@property NSMutableArray *dataFromTwitter;
+
+@property Tweet *currentUserInfo;  // CHECK
+@property NSMutableArray *tweets;
+
+@property BOOL isAuthenticated;
+@property UIActivityIndicatorView *spinner;
 
 @end
 
 @implementation TimelineViewController
 {
-    TwitterAPI *_twitterAPI;
-    NSMutableArray *_tweets;
-    NSMutableArray *_dataFromTwitter;
     
-    Tweet *_currentUserInfo;
     
-    BOOL _isAuthenticated;
-    UIActivityIndicatorView *_spinner;
 }
 
 - (void)awakeFromNib
@@ -43,10 +45,10 @@
 {
     [super viewDidLoad];
     
-    _tweets = [[NSMutableArray alloc] init];
-    _spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    _isAuthenticated = NO;
-    _twitterAPI = [[TwitterAPI alloc] init];
+    self.tweets = [[NSMutableArray alloc] init];
+    self.spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    self.isAuthenticated = NO;
+    self.twitterAPI = [[TwitterAPI alloc] init];
     
     // Custom Nav Bar colors.
     [self.navigationController.navigationBar setBarTintColor:
@@ -66,15 +68,15 @@
       forControlEvents:UIControlEventValueChanged];
     self.refreshControl=refresh;
     
-    [_twitterAPI setDelegate:self];
-    [_twitterAPI accessTwitterAPI:HOME_TIMELINE parameters:nil];
-    [_twitterAPI accessTwitterAPI:SHOW_CURRENT_USER parameters:nil];
+    [self.twitterAPI setDelegate:self];
+    [self.twitterAPI accessTwitterAPI:HOME_TIMELINE parameters:nil];
+    [self.twitterAPI accessTwitterAPI:SHOW_CURRENT_USER parameters:nil];
 }
 
 - (void)refreshView:(UIRefreshControl *)refresh;
 {
     refresh.attributedTitle = [[NSAttributedString alloc] initWithString:@"Refreshing data..."];
-    [_twitterAPI accessTwitterAPI:HOME_TIMELINE parameters:nil];
+    [self.twitterAPI accessTwitterAPI:HOME_TIMELINE parameters:nil];
     refresh.attributedTitle = [[NSAttributedString alloc] initWithString:@"Updating Data"];
     [refresh endRefreshing];
 }
@@ -86,8 +88,8 @@
 }
 
 - (IBAction)didPushRefresh:(id)sender {
-    [_spinner startAnimating];
-    [_twitterAPI accessTwitterAPI:HOME_TIMELINE parameters:nil];
+    [self.spinner startAnimating];
+    [self.twitterAPI accessTwitterAPI:HOME_TIMELINE parameters:nil];
 }
 
 #pragma mark - UITableViewCell buttons
@@ -98,11 +100,11 @@
     if (tweet.retweeted) {
         tweet.retweeted = NO;
         [sender setSelected:NO];
-        [_twitterAPI accessTwitterAPI:RETWEET_DESTROY parameters:@{@"id":tweet.retweetId}];
+        [self.twitterAPI accessTwitterAPI:RETWEET_DESTROY parameters:@{@"id":tweet.retweetId}];
     } else {
         tweet.retweeted = YES;
         [sender setSelected:YES];
-        [_twitterAPI accessTwitterAPI:POST_RETWEET parameters:@{@"id":tweet.tweetId}];
+        [self.twitterAPI accessTwitterAPI:POST_RETWEET parameters:@{@"id":tweet.tweetId}];
     }
     [self retweetStatusChanged:tweet];
 
@@ -114,11 +116,11 @@
     if (tweet.favorited) {
         tweet.favorited = NO;
         [sender setSelected:NO];
-        [_twitterAPI accessTwitterAPI:FAVORITES_DESTROY parameters:@{@"id": tweet.tweetId}];
+        [self.twitterAPI accessTwitterAPI:FAVORITES_DESTROY parameters:@{@"id": tweet.tweetId}];
     } else {
         tweet.favorited = YES;
         [sender setSelected:YES];
-        [_twitterAPI accessTwitterAPI:FAVORITES_CREATE parameters:@{@"id": tweet.tweetId}];
+        [self.twitterAPI accessTwitterAPI:FAVORITES_CREATE parameters:@{@"id": tweet.tweetId}];
     }
     [self favoriteStatusChanged:tweet];
 }
@@ -127,15 +129,15 @@
 #pragma mark - UIAlertViewDelegate
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    [_spinner startAnimating];
-    [_twitterAPI accessTwitterAPI:HOME_TIMELINE parameters:nil];
+    [self.spinner startAnimating];
+    [self.twitterAPI accessTwitterAPI:HOME_TIMELINE parameters:nil];
 }
 
 #pragma mark - TwitterApi
 - (void)twitterDidReturn:(NSArray *)data operation:(TwitterOperation)operation errorMessage:(NSString *)errorMessage
 {
-    if (_spinner.isAnimating) {
-        [_spinner stopAnimating];
+    if (self.spinner.isAnimating) {
+        [self.spinner stopAnimating];
     }
     
     if ([data isKindOfClass:[NSDictionary class]] && ((NSDictionary *)data)[@"errors"][0][@"message"]) {
@@ -154,7 +156,7 @@
     }
     
     if (errorMessage) {
-        _isAuthenticated = NO;
+        self.isAuthenticated = NO;
         NSLog(@"TwitterDidReturn with error.");
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Setup Error"
                                               message:errorMessage delegate:self
@@ -165,18 +167,18 @@
             [alertView show];
         });
     } else {
-        _isAuthenticated = YES;
+        self.isAuthenticated = YES;
         
         switch (operation) {
                 
             case HOME_TIMELINE: {
-                _dataFromTwitter = [[NSMutableArray alloc] initWithArray:data];
+                self.dataFromTwitter = [[NSMutableArray alloc] initWithArray:data];
                 NSMutableArray *newTweets = [[NSMutableArray alloc] init];
                 for (NSDictionary *dict in data) {
                     Tweet *tweet = [[Tweet alloc] initWithDictionary:dict];
                     [newTweets addObject:tweet];
                 }
-                _tweets = newTweets;
+                self.tweets = newTweets;
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self.tableView reloadData];
                 });
@@ -185,7 +187,7 @@
                 
             case SHOW_CURRENT_USER: {
                 NSLog(@"Done getting current user data.");
-                _currentUserInfo = [[Tweet alloc] initWithDictionary:@{@"user": data}];
+                self.currentUserInfo = [[Tweet alloc] initWithDictionary:@{@"user": data}];
                 break;
             }
                 
@@ -199,7 +201,7 @@
                 NSDictionary *dict = (NSDictionary *)data;
                 NSString *retweet_id = dict[@"id_str"];
                 NSString *original_id = dict[@"retweeted_status"][@"id_str"];
-                for (Tweet *t in _tweets) {
+                for (Tweet *t in self.tweets) {
                     if ([t.tweetId isEqualToString:original_id]) {
                         t.retweetId = retweet_id;
                         break;
@@ -231,29 +233,29 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (!_isAuthenticated) {
+    if (!self.isAuthenticated) {
         return 1;
     }
     
-    if (!_tweets) {
+    if (!self.tweets) {
         return 0;
     }
     
-    return [_tweets count];
+    return [self.tweets count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (!_isAuthenticated) {
+    if (!self.isAuthenticated) {
         UITableViewCell *cell = [[UITableViewCell alloc] init];
-        _spinner.center = cell.center;
-        [cell addSubview:_spinner];
-        [_spinner startAnimating];
+        self.spinner.center = cell.center;
+        [cell addSubview:self.spinner];
+        [self.spinner startAnimating];
         return cell;
     }
     
     TweetCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TweetCell" forIndexPath:indexPath];
-    Tweet *tweet = [_tweets objectAtIndex:indexPath.row];
+    Tweet *tweet = [self.tweets objectAtIndex:indexPath.row];
     cell = [cell initWithTweet:tweet];
     
     return cell;
@@ -266,10 +268,10 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if ([_tweets count] == 0) {
+    if ([self.tweets count] == 0) {
         return 176;
     }
-    Tweet *tweet = _tweets[indexPath.row];
+    Tweet *tweet = self.tweets[indexPath.row];
     if (tweet.tweetImageURL) {
         return 176;         // Height of prototype cell, with tweetImage.
     } else {
@@ -285,7 +287,7 @@
 
 -(void)favoriteStatusChanged:(Tweet *)tweet
 {
-    for (Tweet *t in _tweets) {
+    for (Tweet *t in self.tweets) {
         if ([t isEqual:tweet]) {
             t.favorited = tweet.favorited;
             [self.tableView reloadData];
@@ -297,7 +299,7 @@
 
 -(void)retweetStatusChanged:(Tweet *)tweet
 {
-    for (Tweet *t in _tweets) {
+    for (Tweet *t in self.tweets) {
         if ([t isEqual:tweet]) {
             t.retweeted = tweet.retweeted;
             [self.tableView reloadData];
@@ -311,19 +313,19 @@
 {
     if ([[segue identifier] isEqualToString:@"showTweet"]) {
         NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-        Tweet *tweet = _tweets[indexPath.row];
+        Tweet *tweet = self.tweets[indexPath.row];
         TweetViewController *tvc = (TweetViewController *)segue.destinationViewController;
         tvc.tweet = tweet;
         tvc.timelineViewController = self;
-        [segue.destinationViewController setCurrentUserInfo:_currentUserInfo];
+        [segue.destinationViewController setCurrentUserInfo:self.currentUserInfo];
     } else if ([segue.identifier isEqualToString:@"showCompose"]) {
-        [segue.destinationViewController setCurrentUserInfo:_currentUserInfo];
+        [segue.destinationViewController setCurrentUserInfo:self.currentUserInfo];
         [segue.destinationViewController setReplyTo:nil];
         [segue.destinationViewController setDelegate:self];
     } else if ([segue.identifier isEqualToString:@"showComposeWithReply"]) {
         UIButton *replyButton = (UIButton *)sender;
         TweetCell *tweetCell = (TweetCell *)replyButton.superview.superview.superview;
-        [segue.destinationViewController setCurrentUserInfo:_currentUserInfo];
+        [segue.destinationViewController setCurrentUserInfo:self.currentUserInfo];
         [segue.destinationViewController setReplyTo:tweetCell.tweet];
         [segue.destinationViewController setDelegate:self];
     } else {
@@ -336,23 +338,23 @@
 {
     ComposeViewController *cvc = (ComposeViewController *)controller;
     if (cvc.tweetText) {
-        Tweet *newTweet = _currentUserInfo;
+        Tweet *newTweet = self.currentUserInfo;
         newTweet.tweet = cvc.tweetText;
         
         NSDateFormatter *df = [[NSDateFormatter alloc] init];
         // Sun Jan 26 10:33:03 +0000 2014
         [df setDateFormat:@"eee MMM dd HH:mm:ss ZZZZ yyyy"];
         newTweet.timestamp = [df stringFromDate:[NSDate date]];
-        [_tweets insertObject:newTweet atIndex:0];
+        [self.tweets insertObject:newTweet atIndex:0];
         [self.tableView reloadData];
         
         if (cvc.replyTo) {
             NSDictionary *parameters = @{@"status": newTweet.tweet,
                            @"in_reply_to_status_id": cvc.replyTo.tweetId};
-            [_twitterAPI accessTwitterAPI:POST_TWEET parameters:parameters];
+            [self.twitterAPI accessTwitterAPI:POST_TWEET parameters:parameters];
         } else {
             NSDictionary *parameters = @{@"status": newTweet.tweet};
-            [_twitterAPI accessTwitterAPI:POST_TWEET parameters:parameters];
+            [self.twitterAPI accessTwitterAPI:POST_TWEET parameters:parameters];
         }
     }
     [self dismissViewControllerAnimated:YES completion:nil];
@@ -365,13 +367,13 @@
     // Inifinite scrooooooooooooooooooollllliiiiiiiinnnnnnnnnngggggggg........
     CGFloat actualPosition = scrollView.contentOffset.y;
     CGFloat contentHeight = scrollView.contentSize.height - 500;
-    NSString *count = [NSString stringWithFormat:@"%i", [_tweets count] + 20];
+    NSString *count = [NSString stringWithFormat:@"%i", [self.tweets count] + 20];
     if (!self.lastScroll) {
         self.lastScroll = 0;
     }
     if (self.lastScroll < actualPosition - 500 && actualPosition >= contentHeight) {
         self.lastScroll = actualPosition;
-        [_twitterAPI accessTwitterAPI:HOME_TIMELINE parameters:@{@"count":count}];
+        [self.twitterAPI accessTwitterAPI:HOME_TIMELINE parameters:@{@"count":count}];
     }
 }
 

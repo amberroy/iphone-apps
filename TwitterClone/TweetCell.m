@@ -22,6 +22,25 @@
     self.userImage.image = tweet.userImage;
     self.tweetLabel.text = tweet.tweet;
     
+    // Timestamp
+    NSDateFormatter *df = [[NSDateFormatter alloc] init];
+    [df setDateFormat:@"eee MMM dd HH:mm:ss ZZZZ yyyy"];// Sun Jan 26 10:33:03 +0000 2014
+    NSDate *date = [df dateFromString:self.tweet.timestamp];
+    
+    NSTimeInterval difference = [[NSDate date] timeIntervalSinceDate:date];
+    if (difference <= 60*60*24) {       // 1 day
+        NSInteger diffHours = difference / (60*60);
+        self.timestampLabel.text = [NSString stringWithFormat:@"%ih", diffHours];
+    } else {
+        if (difference <= 60*60*24*6) { // 6 days
+            NSInteger diffDays = difference / (60*60*24);
+            self.timestampLabel.text = [NSString stringWithFormat:@"%id", diffDays];
+        } else {
+            [df setDateFormat:@"M/d/yy"];              // 1/26/14, 10:33 AM
+            self.timestampLabel.text = [df stringFromDate:date];
+        }
+    }
+    
     // Set up buttons.
     UITableView *tv = (UITableView *) self.superview.superview;
     TimelineViewController *vc = (TimelineViewController *) tv.dataSource;

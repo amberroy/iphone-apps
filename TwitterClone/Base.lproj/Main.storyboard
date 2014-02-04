@@ -108,6 +108,7 @@
                                     <outlet property="favoriteButton" destination="CtC-b6-vD3" id="ZUq-h0-fxZ"/>
                                     <outlet property="nameLabel" destination="FVJ-Vq-xC1" id="scR-6M-uK0"/>
                                     <outlet property="retweetButton" destination="Lxc-6g-qH0" id="41l-Xi-5mG"/>
+                                    <outlet property="timestampLabel" destination="ePW-U3-XX8" id="pyq-3q-Nco"/>
                                     <outlet property="tweetImage" destination="FcA-yX-Mcg" id="aUu-t2-k4Y"/>
                                     <outlet property="tweetLabel" destination="u3f-uJ-98P" id="9Y0-iE-ZvI"/>
                                     <outlet property="userImage" destination="fSi-aQ-jYT" id="Og8-Ix-ZjD"/>

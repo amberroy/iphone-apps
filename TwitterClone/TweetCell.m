@@ -27,18 +27,21 @@
     [df setDateFormat:@"eee MMM dd HH:mm:ss ZZZZ yyyy"];// Sun Jan 26 10:33:03 +0000 2014
     NSDate *date = [df dateFromString:self.tweet.timestamp];
     
-    NSTimeInterval difference = [[NSDate date] timeIntervalSinceDate:date];
-    if (difference <= 60*60*24) {       // 1 day
-        NSInteger diffHours = difference / (60*60);
+    NSTimeInterval diffSeconds = [[NSDate date] timeIntervalSinceDate:date];
+    if (diffSeconds <= 60) {       // 1 min
+        self.timestampLabel.text = [NSString stringWithFormat:@"%fs", diffSeconds];
+    } else if (diffSeconds <= 60*60) {       // 1 hour
+        NSInteger diffMinutes = diffSeconds / 60;
+        self.timestampLabel.text = [NSString stringWithFormat:@"%im", diffMinutes];
+    } else if (diffSeconds <= 60*60*24) {       // 1 day
+        NSInteger diffHours = diffSeconds / (60*60);
         self.timestampLabel.text = [NSString stringWithFormat:@"%ih", diffHours];
+    } else if (diffSeconds <= 60*60*24*6) { // 6 days
+        NSInteger diffDays = diffSeconds / (60*60*24);
+        self.timestampLabel.text = [NSString stringWithFormat:@"%id", diffDays];
     } else {
-        if (difference <= 60*60*24*6) { // 6 days
-            NSInteger diffDays = difference / (60*60*24);
-            self.timestampLabel.text = [NSString stringWithFormat:@"%id", diffDays];
-        } else {
-            [df setDateFormat:@"M/d/yy"];              // 1/26/14, 10:33 AM
-            self.timestampLabel.text = [df stringFromDate:date];
-        }
+        [df setDateFormat:@"M/d/yy"];              // 1/26/14, 10:33 AM
+        self.timestampLabel.text = [df stringFromDate:date];
     }
     
     // Set up buttons.

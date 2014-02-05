@@ -39,7 +39,7 @@
                                             <rect key="frame" x="13" y="7" width="35" height="38"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         </imageView>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="Destiny The Game" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FVJ-Vq-xC1">
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Destiny The Game" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FVJ-Vq-xC1">
                                             <rect key="frame" x="61" y="7" width="33" height="17"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="boldSystem" pointSize="12"/>
@@ -52,7 +52,7 @@
                                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="233" verticalHuggingPriority="251" horizontalCompressionResistancePriority="700" ambiguous="YES" misplaced="YES" text="@DestinyTheGame" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0X7-oM-asW">
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="233" verticalHuggingPriority="251" horizontalCompressionResistancePriority="700" misplaced="YES" text="@DestinyTheGame" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0X7-oM-asW">
                                             <rect key="frame" x="104" y="5" width="153" height="21"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="11"/>
@@ -89,7 +89,7 @@
                                             </state>
                                             <state key="selected" image="favorite_on"/>
                                         </button>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="11/12/13" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ePW-U3-XX8">
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="11/12/13" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ePW-U3-XX8">
                                             <rect key="frame" x="264" y="5" width="46" height="21"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="11"/>
@@ -102,6 +102,9 @@
                                         <constraint firstItem="0X7-oM-asW" firstAttribute="leading" secondItem="FVJ-Vq-xC1" secondAttribute="trailing" priority="500" constant="8" id="7Py-5L-o3c"/>
                                         <constraint firstAttribute="trailing" secondItem="ePW-U3-XX8" secondAttribute="trailing" constant="10" id="LG0-IO-Eon"/>
                                         <constraint firstItem="FVJ-Vq-xC1" firstAttribute="leading" secondItem="b9c-y1-er1" secondAttribute="leading" constant="61" id="kLA-2l-k8O"/>
+                                        <constraint firstItem="ePW-U3-XX8" firstAttribute="top" secondItem="b9c-y1-er1" secondAttribute="top" constant="5" id="nuO-AD-A3u"/>
+                                        <constraint firstItem="FVJ-Vq-xC1" firstAttribute="top" secondItem="b9c-y1-er1" secondAttribute="top" constant="7" id="tgF-V1-ofI"/>
+                                        <constraint firstItem="0X7-oM-asW" firstAttribute="top" secondItem="b9c-y1-er1" secondAttribute="top" constant="5" id="vtG-o4-uep"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -233,9 +236,13 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="t76-Tx-irq">
-                                <rect key="frame" x="18" y="76" width="50" height="52"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="t76-Tx-irq">
+                                <rect key="frame" x="18" y="76" width="50" height="50"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="50" id="C49-6F-457"/>
+                                    <constraint firstAttribute="height" constant="50" id="xyT-ov-bvL"/>
+                                </constraints>
                             </imageView>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="Destiny The Game" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PZd-xf-xbH">
                                 <rect key="frame" x="76" y="76" width="128" height="21"/>
@@ -290,9 +297,13 @@
                                     <action selector="favorite:" destination="Ah7-4n-0Wa" eventType="touchUpInside" id="jxt-yp-DxE"/>
                                 </connections>
                             </button>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OJj-AJ-49q">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="OJj-AJ-49q">
                                 <rect key="frame" x="40" y="318" width="240" height="240"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="240" id="gp6-R3-rjQ"/>
+                                    <constraint firstAttribute="width" constant="240" id="uL0-WI-DpD"/>
+                                </constraints>
                             </imageView>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="1/26/14 10:33 AM" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hlu-hP-vfg">
                                 <rect key="frame" x="18" y="218" width="130" height="15"/>
@@ -349,6 +360,7 @@
                             <constraint firstItem="M5r-Cp-rLV" firstAttribute="top" secondItem="oH8-Hn-vvU" secondAttribute="bottom" constant="66" id="1Wt-kx-Lhh"/>
                             <constraint firstItem="tUX-tr-SGt" firstAttribute="top" secondItem="PZd-xf-xbH" secondAttribute="bottom" constant="-6" id="9HY-Vl-w9x"/>
                             <constraint firstItem="Smj-s4-bPz" firstAttribute="top" secondItem="oH8-Hn-vvU" secondAttribute="bottom" constant="185" id="Rvj-k8-Gs3"/>
+                            <constraint firstItem="t76-Tx-irq" firstAttribute="leading" secondItem="MMQ-IT-qOo" secondAttribute="leading" constant="18" id="RwR-9O-KRk"/>
                             <constraint firstItem="DI2-4b-eG0" firstAttribute="top" secondItem="oH8-Hn-vvU" secondAttribute="bottom" constant="176" id="T8e-9T-F4I"/>
                             <constraint firstItem="xVI-v5-omC" firstAttribute="top" secondItem="oH8-Hn-vvU" secondAttribute="bottom" constant="214" id="V7e-Dd-swV"/>
                             <constraint firstItem="t76-Tx-irq" firstAttribute="top" secondItem="oH8-Hn-vvU" secondAttribute="bottom" constant="6" id="a1a-y0-b0x"/>
@@ -359,6 +371,7 @@
                             <constraint firstItem="f4L-vy-hQd" firstAttribute="top" secondItem="oH8-Hn-vvU" secondAttribute="bottom" constant="185" id="o4O-dw-1bB"/>
                             <constraint firstItem="xVI-v5-omC" firstAttribute="top" secondItem="oH8-Hn-vvU" secondAttribute="bottom" constant="214" id="ocM-Me-hy1"/>
                             <constraint firstAttribute="centerX" secondItem="OJj-AJ-49q" secondAttribute="centerX" id="pL0-p9-bTZ"/>
+                            <constraint firstItem="DI2-4b-eG0" firstAttribute="leading" secondItem="MMQ-IT-qOo" secondAttribute="leading" constant="19" id="wLp-Sq-meC"/>
                             <constraint firstItem="Qes-Qw-PFt" firstAttribute="top" secondItem="oH8-Hn-vvU" secondAttribute="bottom" constant="214" id="y5b-PL-FXX"/>
                             <constraint firstItem="dpQ-09-hZo" firstAttribute="top" secondItem="oH8-Hn-vvU" secondAttribute="bottom" constant="185" id="y8q-lL-NK1"/>
                             <constraint firstItem="Zly-p6-Wys" firstAttribute="top" secondItem="oH8-Hn-vvU" secondAttribute="bottom" constant="214" id="yiZ-HH-rXf"/>
@@ -404,6 +417,6 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="Q5R-cP-Kdq"/>
+        <segue reference="bCw-Yb-SMB"/>
     </inferredMetricsTieBreakers>
 </document>

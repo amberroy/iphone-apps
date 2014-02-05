@@ -23,9 +23,12 @@
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     
-    // Fetch date from Xbox Live.
+    // Fetch data from Xbox Live.
     NSString *sampleGamertag = [XboxLiveClient gamertagsForTesting][0];
-    [[XboxLiveClient instance] initWithGamertag:sampleGamertag completion: ^(NSString *errorMessage) {
+    XboxLiveClient *xboxLiveClient = [XboxLiveClient instance];
+    
+    xboxLiveClient.isOfflineMode = YES;   // USE LOCAL DATA INSTEAD FETCHING FROM API
+    [xboxLiveClient initWithGamertag:sampleGamertag completion: ^(NSString *errorMessage) {
         if (errorMessage) {
             NSLog(@"Failed to initialize XboxLiveClient: %@", errorMessage);
         } else {

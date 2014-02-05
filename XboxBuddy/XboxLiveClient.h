@@ -12,10 +12,11 @@
 
 @class XboxLiveClient;
 
-@interface XboxLiveClient : NSObject
+@interface XboxLiveClient : NSObject <UIAlertViewDelegate>
 
 +(XboxLiveClient *) instance;
 +(NSArray *)gamertagsForTesting;
+
 
 -(NSArray *) achievements;
 -(NSArray *) achievementsWithGamertag:(NSString *)gamertag;
@@ -27,8 +28,7 @@
 -(void)initWithGamertag:(NSString *)userGamertag
              completion:(void (^)(NSString *errorDescription))completion;
 
--(void)initWithGamertag:(NSString *)userGamertag
-           useSavedData:(BOOL)useSavedData
-             completion:(void (^)(NSString *errorDescription))completion;
+// Defaults to NO.  Enable to use saved results from previous API calls.
+@property BOOL isOfflineMode;
 
 @end

@@ -32,12 +32,16 @@
 -(void)sendRequestWithURL:(NSString *)url retries:(int)retries success:(void(^)(NSDictionary *responseDictionary))success;
 
 // Methods that determine when initialization is complete.
+-(void)checkSavedDataExists;
 -(void)checkPendingRequests;
 -(void)requestsDidComplete;
 
 // Called from our async request completion block to handle received data.
 -(void)processProfile:(NSDictionary *)responseData;
 -(void)processFriends:(NSDictionary *)responseData;
+
+// Helpers
+-(NSString *)urlToFilename:(NSString *)url;
 
 @end
 
@@ -66,14 +70,6 @@
 -(void)initWithGamertag:(NSString *)userGamertag
              completion:(void (^)(NSString *errorDescription))completion
 {
-    [self initWithGamertag:userGamertag useSavedData:NO completion:completion];
-
-}
-
--(void)initWithGamertag:(NSString *)userGamertag
-           useSavedData:(BOOL)useSavedData
-             completion:(void (^)(NSString *errorDescription))completion
-{
     self.userGamertag = userGamertag;
     self.completionBlock = completion;
     self.pendingRequests = [[NSMutableArray alloc] init];
@@ -81,34 +77,52 @@
     self.friendProfilesUnsorted = [[NSMutableArray alloc] init];
     self.isInitializationError = NO;
     
-    NSLog(@"XboxLiveClient initializing with %@", userGamertag);
-    self.startInit = [NSDate date];
-    
-    if (useSavedData) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.completionBlock(@"Using Saved Data not yet implemented");
-        });
+    if (self.isOfflineMode) {
+        [self checkSavedDataExists];
     }
     
+    NSLog(@"XboxLiveClient initializing %@with gamertag %@",
+          (self.isOfflineMode) ? @"in OFFLINE MODE " : @"", userGamertag);
+    self.startInit = [NSDate date];
+    
+    // Send Profile request.
+    NSString *profile_url_str = [NSString stringWithFormat: @"http://xboxapi.com/v1/profile/%@", self.userGamertag];
+    [self sendRequestWithURL:profile_url_str retries:3
+                  success:^(NSDictionary *responseData) {
+                      [self processProfile:responseData];
+                  }];
+    
     // Send Friends request.
-    NSString *friends_url_str = [NSString stringWithFormat:
-                                 @"http://xboxapi.com/v1/friends/%@",
-                                 self.userGamertag];
+    NSString *friends_url_str = [NSString stringWithFormat: @"http://xboxapi.com/v1/friends/%@", self.userGamertag];
     [self sendRequestWithURL:friends_url_str retries:3
                   success:^(NSDictionary *responseData) {
                       [self processFriends:responseData];
                   }];
     
-    
-    // Send Profile request.
-    NSString *profile_url_str = [NSString stringWithFormat:
-                                 @"http://xboxapi.com/v1/profile/%@",
-                                 self.userGamertag];
-    [self sendRequestWithURL:profile_url_str retries:3
-                  success:^(NSDictionary *responseData) {
-                      [self processProfile:responseData];
-                  }];
 }
+
+-(void)checkSavedDataExists
+{
+    // Check saved data for user friend list only, assume if we have that we have the rest.
+    NSString *friends_url_str = [NSString stringWithFormat: @"http://xboxapi.com/v1/friends/%@", self.userGamertag];
+    NSString *requestKey = [friends_url_str stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSString *docsDir = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
+    NSString *savedDataPath = [NSString stringWithFormat:@"%@/XboxLiveClient-%@.json", docsDir, [self urlToFilename:requestKey]];
+    BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:savedDataPath];
+    if (!fileExists) {
+        UIAlertView *alert = [[UIAlertView alloc]
+                              initWithTitle:@"No Saved Data Found"
+                              message:@"Overriding Offline Mode for this run."
+                              delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+        NSLog(@"No Saved Data found at %@", savedDataPath);
+        NSLog(@"Overriding OFFLINE MODE for this run.");
+        self.isOfflineMode = NO;
+        [alert show];
+    } else {
+        NSLog(@"Saved Data found at %@", savedDataPath);
+    }
+}
+
 
 -(void)checkPendingRequests
 {
@@ -162,7 +176,8 @@
     
     self.endInit = [NSDate date];
     self.secondsToInit = [self.endInit timeIntervalSinceDate:self.startInit];
-    NSLog(@"XboxLiveClient initialized for %@ with %lu achievements (%0.f seconds)",
+    NSLog(@"XboxLiveClient initialized %@for %@ with %lu achievements (%0.f seconds)",
+          (self.isOfflineMode) ? @"in OFFLINE MODE " : @"",
           self.userGamertag, [self.achievementsFromJSON count], self.secondsToInit);
     
     // Done, notify caller.
@@ -250,8 +265,31 @@
 
 -(void)sendRequestWithURL:(NSString *)url retries:(int)retries success:(void(^)(NSDictionary *responseDictionary))success
 {
-    NSString *url_encoded = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]; NSString *requestKey = url_encoded;
+    NSString *url_encoded = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSString *requestKey = url_encoded;
     [self.pendingRequests addObject:requestKey];
+    
+    NSString *docsDir = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
+    NSString *savedDataPath = [NSString stringWithFormat:@"%@/XboxLiveClient-%@.json", docsDir, [self urlToFilename:requestKey]];
+    if (self.isOfflineMode) {
+        // If we are running in Offline Mode, check if we have saved response for this request.
+        NSError *jsonError;
+        NSData *jsonData = [NSData dataWithContentsOfFile:savedDataPath options:kNilOptions error:&jsonError];
+        if (jsonError) {
+            NSLog(@"Failed to read JSON data from file %@: %@", savedDataPath, jsonError);
+            self.isInitializationError = YES;
+        } else {
+            id result = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:&jsonError];
+            if (jsonError || ![result isKindOfClass:[NSDictionary class]]) {
+                NSLog(@"Failed to serialize JSON data from file %@: %@", savedDataPath, jsonError);
+                self.isInitializationError = YES;
+            }
+            success((NSDictionary *)result);
+            [self.pendingRequests removeObject:requestKey];
+            [self checkPendingRequests];
+        }
+        return;
+    }
     
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url_encoded]];
     NSLog(@"Sending request: %@", url_encoded);
@@ -292,11 +330,22 @@
              success(myResponseDictionary);
              [self.pendingRequests removeObject:requestKey];
              [self checkPendingRequests];
+             
+             // Save to file, for use in Offline Mode.
+             NSLog(@"Saving response to file: %@", savedDataPath);
+             [responseData writeToFile:savedDataPath atomically:YES];
          }
      }];
     
 }
 
+-(NSString *)urlToFilename:(NSString *)url
+{
+    NSString *new = [url stringByReplacingOccurrencesOfString:@"http://xboxapi.com/" withString:@""];
+    new = [new stringByReplacingOccurrencesOfString:@"/" withString:@"-"];
+    new = [new stringByReplacingOccurrencesOfString:@"%20" withString:@"_"];
+    return new;
+}
 
 # pragma mark - interface methods
 

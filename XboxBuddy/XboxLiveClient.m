@@ -176,9 +176,9 @@
     
     self.endInit = [NSDate date];
     self.secondsToInit = [self.endInit timeIntervalSinceDate:self.startInit];
-    NSLog(@"XboxLiveClient initialized %@for %@ with %lu achievements (%0.f seconds)",
-          (self.isOfflineMode) ? @"in OFFLINE MODE " : @"",
-          self.userGamertag, [self.achievementsFromJSON count], self.secondsToInit);
+    int count = (int)[self.achievementsFromJSON count];
+    NSLog(@"XboxLiveClient initialized %@for %@ with %i achievements (%0.f seconds)",
+          (self.isOfflineMode) ? @"in OFFLINE MODE " : @"", self.userGamertag, count, self.secondsToInit);
     
     // Done, notify caller.
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -188,8 +188,8 @@
 
 -(void)processFriends:(NSDictionary *)responseData
 {
-    NSLog(@"Found %lu Friends for current user %@",
-          [responseData[@"Friends"] count], responseData[@"Player"][@"Gamertag"]);
+    int count = (int)[responseData[@"Friends"] count];
+    NSLog(@"Found %i Friends for current user %@", count, responseData[@"Player"][@"Gamertag"]);
     
     for (NSDictionary *friend in responseData[@"Friends"]) {
         
@@ -220,6 +220,7 @@
     if ([responseData[@"RecentGames"] isKindOfClass:[NSArray class]]) {
         NSArray *games = responseData[@"RecentGames"];
         for (NSDictionary *game in games) {
+            // This won't work because there's no Achievement Count in the recent games.
             //int achievementsEarned = [game[@"Progress"][@"Achievements"] integerValue];
             //if (achievementsEarned == 0) {
             //    continue;   // Skip games (or apps) with no achievements.

@@ -56,18 +56,18 @@
 // TODO: move this to util file
 +(NSString *)timeAgoWithDate:(NSDate *)date {
 
-    NSInteger timeAgoInSeconds = abs(floor([date timeIntervalSinceNow]));
+    double timeAgoInSeconds = (double)abs([date timeIntervalSinceNow]);
 
     if (timeAgoInSeconds == 0) {
         return @"Just Now";
     } else if (timeAgoInSeconds < 60) {
-        return [NSString stringWithFormat:@"%li seconds ago", timeAgoInSeconds];
+        return [NSString stringWithFormat:@"%.0f seconds ago", timeAgoInSeconds];
     } else if (timeAgoInSeconds < 3600) {
-        return [NSString stringWithFormat:@"%li minutes ago", timeAgoInSeconds/60];
+        return [NSString stringWithFormat:@"%.0f minutes ago", floor(timeAgoInSeconds/60)];
     } else if (timeAgoInSeconds < 86400) {
-        return [NSString stringWithFormat:@"%li hours ago", timeAgoInSeconds/3600];
+        return [NSString stringWithFormat:@"%.0f hours ago", floor(timeAgoInSeconds/3600)];
     } else if (timeAgoInSeconds < 86400 * 7) {
-        return [NSString stringWithFormat:@"%li days ago", timeAgoInSeconds/86400];
+        return [NSString stringWithFormat:@"%.0f days ago", floor(timeAgoInSeconds/86400)];
     } else {
         NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
         [dateFormat setDateFormat:@"MM/dd/yy"];

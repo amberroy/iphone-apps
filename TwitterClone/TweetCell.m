@@ -58,7 +58,7 @@
         placeholderImage:nil success:
         ^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
             weakCell.tweetImage.image = image;
-            weakCell.tweetImage.contentMode = UIViewContentModeScaleToFill;
+            //weakCell.tweetImage.contentMode = UIViewContentModeScaleToFill;
             [weakCell setNeedsLayout];
         }
         failure:^(NSURLRequest *req, NSHTTPURLResponse *res, NSError *error) {

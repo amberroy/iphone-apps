@@ -7,6 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2681874818A206A3003D281B /* UserAchievementCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2681874718A206A3003D281B /* UserAchievementCell.m */; };
+		2681874B18A20701003D281B /* UserTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2681874A18A20701003D281B /* UserTableViewController.m */; };
+		2681874E18A213A2003D281B /* FriendsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2681874D18A213A2003D281B /* FriendsTableViewController.m */; };
+		2681875418A213E8003D281B /* FriendCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2681875318A213E8003D281B /* FriendCell.m */; };
+		2681875B18A22CDF003D281B /* TempAchievementImage.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 2681875818A22CDF003D281B /* TempAchievementImage.jpg */; };
+		2681875C18A22CDF003D281B /* TempGamerImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 2681875918A22CDF003D281B /* TempGamerImage.png */; };
+		2681875D18A22CDF003D281B /* TempBoxArt.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 2681875A18A22CDF003D281B /* TempBoxArt.jpg */; };
+		268187AB18A3649A003D281B /* TempHomeIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 268187A818A3649A003D281B /* TempHomeIcon.png */; };
+		268187AC18A3649A003D281B /* TempFriendsIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 268187A918A3649A003D281B /* TempFriendsIcon.png */; };
+		268187AD18A3649A003D281B /* TempUserIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 268187AA18A3649A003D281B /* TempUserIcon.png */; };
 		26D2F6661899E8FD00EFB93A /* HomeCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 26D2F6651899E8FD00EFB93A /* HomeCell.m */; };
 		26D2F66B1899F18700EFB93A /* HomeTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 26D2F66A1899F18700EFB93A /* HomeTableViewController.m */; };
 		26D2F6741899F27200EFB93A /* AchievementViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 26D2F6721899F27200EFB93A /* AchievementViewController.m */; };
@@ -39,6 +49,20 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2681874618A206A3003D281B /* UserAchievementCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserAchievementCell.h; sourceTree = "<group>"; };
+		2681874718A206A3003D281B /* UserAchievementCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserAchievementCell.m; sourceTree = "<group>"; };
+		2681874918A20701003D281B /* UserTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserTableViewController.h; sourceTree = "<group>"; };
+		2681874A18A20701003D281B /* UserTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserTableViewController.m; sourceTree = "<group>"; };
+		2681874C18A213A2003D281B /* FriendsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriendsTableViewController.h; sourceTree = "<group>"; };
+		2681874D18A213A2003D281B /* FriendsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriendsTableViewController.m; sourceTree = "<group>"; };
+		2681875218A213E8003D281B /* FriendCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriendCell.h; sourceTree = "<group>"; };
+		2681875318A213E8003D281B /* FriendCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriendCell.m; sourceTree = "<group>"; };
+		2681875818A22CDF003D281B /* TempAchievementImage.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = TempAchievementImage.jpg; sourceTree = "<group>"; };
+		2681875918A22CDF003D281B /* TempGamerImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TempGamerImage.png; sourceTree = "<group>"; };
+		2681875A18A22CDF003D281B /* TempBoxArt.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = TempBoxArt.jpg; sourceTree = "<group>"; };
+		268187A818A3649A003D281B /* TempHomeIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TempHomeIcon.png; sourceTree = "<group>"; };
+		268187A918A3649A003D281B /* TempFriendsIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TempFriendsIcon.png; sourceTree = "<group>"; };
+		268187AA18A3649A003D281B /* TempUserIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TempUserIcon.png; sourceTree = "<group>"; };
 		26D2F6641899E8FD00EFB93A /* HomeCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HomeCell.h; sourceTree = "<group>"; };
 		26D2F6651899E8FD00EFB93A /* HomeCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HomeCell.m; sourceTree = "<group>"; };
 		26D2F6691899F18700EFB93A /* HomeTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HomeTableViewController.h; sourceTree = "<group>"; };
@@ -94,11 +118,28 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2681875518A2214B003D281B /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				268187A818A3649A003D281B /* TempHomeIcon.png */,
+				268187A918A3649A003D281B /* TempFriendsIcon.png */,
+				268187AA18A3649A003D281B /* TempUserIcon.png */,
+				2681875818A22CDF003D281B /* TempAchievementImage.jpg */,
+				2681875918A22CDF003D281B /* TempGamerImage.png */,
+				2681875A18A22CDF003D281B /* TempBoxArt.jpg */,
+			);
+			name = Images;
+			sourceTree = "<group>";
+		};
 		26D2F67D189AD45F00EFB93A /* Views */ = {
 			isa = PBXGroup;
 			children = (
 				26D2F6641899E8FD00EFB93A /* HomeCell.h */,
 				26D2F6651899E8FD00EFB93A /* HomeCell.m */,
+				2681874618A206A3003D281B /* UserAchievementCell.h */,
+				2681874718A206A3003D281B /* UserAchievementCell.m */,
+				2681875218A213E8003D281B /* FriendCell.h */,
+				2681875318A213E8003D281B /* FriendCell.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -136,6 +177,7 @@
 		962084551899B915006AD8E9 /* XboxBuddy */ = {
 			isa = PBXGroup;
 			children = (
+				2681875518A2214B003D281B /* Images */,
 				966456641899E3B100E5C691 /* AppDelegate */,
 				966456651899E40C00E5C691 /* Controllers */,
 				966456661899E42000E5C691 /* Models */,
@@ -193,6 +235,10 @@
 				26D2F66A1899F18700EFB93A /* HomeTableViewController.m */,
 				26D2F6711899F27200EFB93A /* AchievementViewController.h */,
 				26D2F6721899F27200EFB93A /* AchievementViewController.m */,
+				2681874918A20701003D281B /* UserTableViewController.h */,
+				2681874A18A20701003D281B /* UserTableViewController.m */,
+				2681874C18A213A2003D281B /* FriendsTableViewController.h */,
+				2681874D18A213A2003D281B /* FriendsTableViewController.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -292,9 +338,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				268187AD18A3649A003D281B /* TempUserIcon.png in Resources */,
+				268187AC18A3649A003D281B /* TempFriendsIcon.png in Resources */,
+				268187AB18A3649A003D281B /* TempHomeIcon.png in Resources */,
 				9620847F1899B9C1006AD8E9 /* Main.storyboard in Resources */,
 				9620845A1899B915006AD8E9 /* InfoPlist.strings in Resources */,
+				2681875C18A22CDF003D281B /* TempGamerImage.png in Resources */,
+				2681875B18A22CDF003D281B /* TempAchievementImage.jpg in Resources */,
 				962084621899B915006AD8E9 /* Images.xcassets in Resources */,
+				2681875D18A22CDF003D281B /* TempBoxArt.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -316,8 +368,12 @@
 				26D2F66B1899F18700EFB93A /* HomeTableViewController.m in Sources */,
 				26D2F6781899F2A300EFB93A /* Achievement.m in Sources */,
 				26D2F6661899E8FD00EFB93A /* HomeCell.m in Sources */,
+				2681875418A213E8003D281B /* FriendCell.m in Sources */,
 				962084601899B915006AD8E9 /* AppDelegate.m in Sources */,
+				2681874818A206A3003D281B /* UserAchievementCell.m in Sources */,
+				2681874E18A213A2003D281B /* FriendsTableViewController.m in Sources */,
 				9664566A1899E49600E5C691 /* XboxLiveClient.m in Sources */,
+				2681874B18A20701003D281B /* UserTableViewController.m in Sources */,
 				9693F762189F032B00D3C80A /* Profile.m in Sources */,
 				26D2F6741899F27200EFB93A /* AchievementViewController.m in Sources */,
 				9620845C1899B915006AD8E9 /* main.m in Sources */,

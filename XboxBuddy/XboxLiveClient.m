@@ -72,6 +72,11 @@
               ];
 }
 
++(NSString *)filePathForUrl:(NSString *)url
+{
+    return [XboxLiveClient filePathForUrl:url withExtension:nil];
+}
+
 +(NSString *)filePathForUrl:(NSString *)url withExtension:(NSString *)extension
 {
     NSString *filename = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
@@ -247,7 +252,10 @@
         NSLog(@"Added profile for friend %@", friendGamertag);
     }
     
-    // Download avatar image.
+    // Download gamerpic and avatar images.
+    NSString *gamerpic_url_str = responseData[@"Player"][@"Avatar"][@"Gamerpic"][@"Large"];
+    [self imageRequestWithURL:gamerpic_url_str success:
+        ^(NSString *savedImagePath) { [self processImage:savedImagePath]; }];
     NSString *avatar_url_str = responseData[@"Player"][@"Avatar"][@"Body"];
     [self imageRequestWithURL:avatar_url_str success:
         ^(NSString *savedImagePath) { [self processImage:savedImagePath]; }];

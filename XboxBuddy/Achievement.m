@@ -37,7 +37,7 @@
         self.points = [dict[@"Achievement"][@"Score"] integerValue];
         
         self.gameName = dict[@"Game"][@"Name"];
-        self.gameImageUrl = dict[@"Game"][@"BoxArt"][@"Small"];
+        self.gameImageUrl = dict[@"Game"][@"BoxArt"][@"Large"];
         self.gameAchievementsPossible = [dict[@"Game"][@"PossibleAchievements"] integerValue];
         self.gamePointsPossible = [dict[@"Game"][@"PossibleGamerscore"] integerValue];
         
@@ -48,7 +48,8 @@
         
         self.gamertag = dict[@"Player"][@"Gamertag"];
         self.gamerscore = [dict[@"Player"][@"Gamerscore"] integerValue];
-        self.gamerImageUrl = dict[@"Player"][@"Avatar"][@"Body"];
+        self.gamerpicImageUrl = dict[@"Player"][@"Gamerpic"][@"Large"];
+        self.avatarImageUrl = dict[@"Player"][@"Avatar"][@"Body"];
     }
     return self;
 }

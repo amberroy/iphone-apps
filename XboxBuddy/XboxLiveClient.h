@@ -16,6 +16,8 @@
 
 +(XboxLiveClient *) instance;
 +(NSArray *)gamertagsForTesting;
+
++(NSString *)filePathForUrl:(NSString *)url;
 +(NSString *)filePathForUrl:(NSString *)url withExtension:(NSString *)extension;
 
 // TODO: move this to util

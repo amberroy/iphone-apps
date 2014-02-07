@@ -25,8 +25,9 @@
     if (self) {
         self.gamertag = dict[@"Player"][@"Gamertag"];
         self.gamerscore = [dict[@"Player"][@"Gamerscore"] integerValue];
-        self.gamerImageUrl = dict[@"Player"][@"Avatar"][@"Body"];
+        self.gamerpicImageUrl = dict[@"Player"][@"Avatar"][@"Gamerpic"][@"Large"];
         self.onlineStatus = dict[@"Player"][@"Status"][@"Online_Status"];
+        self.avatarImageUrl = dict[@"Player"][@"Avatar"][@"Body"];
     }
     
     return self;

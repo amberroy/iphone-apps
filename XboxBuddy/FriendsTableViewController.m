@@ -66,8 +66,16 @@
     Profile *profile = self.friends[indexPath.row];
 
     cell.gamerTag.text = profile.gamertag;
-    UIImage *placeholderImage = [UIImage imageNamed:@"TempGamerImage.png"];
-    cell.gamerImage.image = [XboxLiveClient createRoundedUserWithImage:placeholderImage];
+    
+    UIImage *gamerpicImage;
+    NSString *gamerpicPath = [XboxLiveClient filePathForUrl:profile.gamerpicImageUrl];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:gamerpicPath]) {
+        gamerpicImage = [UIImage imageWithContentsOfFile:gamerpicPath];
+    } else {
+        gamerpicImage = [UIImage imageNamed:@"TempGamerImage.png"];
+        NSLog(@"Gamerpic image not found, using placeholder instead of %@", gamerpicPath);
+    }
+    cell.gamerImage.image = [XboxLiveClient createRoundedUserWithImage:gamerpicImage];
 
     return cell;
 }

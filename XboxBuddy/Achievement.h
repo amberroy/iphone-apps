@@ -31,7 +31,8 @@
 // Player info.
 @property NSString *gamertag;
 @property NSInteger gamerscore;
-@property NSString *gamerImageUrl;
+@property NSString *gamerpicImageUrl;
+@property NSString *avatarImageUrl;
 
 // TODO: move this to util file
 +(NSString *)timeAgoWithDate:(NSDate *)date;

@@ -12,8 +12,9 @@
 
 @property NSString *gamertag;
 @property NSInteger gamerscore;
-@property NSString *gamerImageUrl;
+@property NSString *gamerpicImageUrl;
 @property NSString *onlineStatus;
+@property NSString *avatarImageUrl;
 
 
 +(NSArray *)profilesWithArray:(NSArray *)array;

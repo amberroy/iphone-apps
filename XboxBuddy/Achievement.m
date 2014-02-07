@@ -32,6 +32,9 @@
         }
         
         self.imageUrl = dict[@"Achievement"][@"UnlockedTileUrl"];
+        if (![self.imageUrl isKindOfClass:[NSString class]]) {
+            self.imageUrl = dict[@"Achievement"][@"TileUrl"];
+        }
         double earnedOn = [dict[@"Achievement"][@"EarnedOn-UNIX"] doubleValue];
         self.earnedOn = [NSDate dateWithTimeIntervalSince1970:earnedOn];
         self.points = [dict[@"Achievement"][@"Score"] integerValue];
@@ -48,7 +51,7 @@
         
         self.gamertag = dict[@"Player"][@"Gamertag"];
         self.gamerscore = [dict[@"Player"][@"Gamerscore"] integerValue];
-        self.gamerpicImageUrl = dict[@"Player"][@"Gamerpic"][@"Large"];
+        self.gamerpicImageUrl = dict[@"Player"][@"Avatar"][@"Gamerpic"][@"Large"];
         self.avatarImageUrl = dict[@"Player"][@"Avatar"][@"Body"];
     }
     return self;

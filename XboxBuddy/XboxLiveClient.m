@@ -87,6 +87,8 @@
     // Images are downloaded directly from xboxlive servers.
     filename = [filename stringByReplacingOccurrencesOfString:@"https://avatar-ssl.xboxlive.com/" withString:@""];
     filename = [filename stringByReplacingOccurrencesOfString:@"http://catalog.xboxapi.com/" withString:@""];
+    filename = [filename stringByReplacingOccurrencesOfString:@"https://live.xbox.com/" withString:@""];
+    filename = [filename stringByReplacingOccurrencesOfString:@"http://image.xboxlive.com/" withString:@""];
     
     // JSON data is obtained from xboxapi.
     filename = [filename stringByReplacingOccurrencesOfString:@"http://xboxapi.com/" withString:@""];
@@ -312,6 +314,14 @@
                 [self.achievementsUnsorted addObject: @{@"Player": responseData[@"Player"],
                                                         @"Game": responseData[@"Game"],
                                                         @"Achievement": achievement}];
+                // Get achievement image.
+                NSString *achievement_image_url_str = achievement[@"UnlockedTileUrl"];
+                if (![achievement_image_url_str isKindOfClass:[NSString class]]) {
+                    achievement_image_url_str = achievement[@"TileUrl"];
+                }
+                [self imageRequestWithURL:achievement_image_url_str success:
+                    ^(NSString *savedImagePath) { [self processImage:savedImagePath]; }];
+                
                 unlockedCount++;
             }
         }

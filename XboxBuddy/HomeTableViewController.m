@@ -62,8 +62,15 @@
     HomeCell *cell = (HomeCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     Achievement *achievementObj = self.achievements[indexPath.row];
 
-    UIImage *placeholderImage = [UIImage imageNamed:@"TempGamerImage.png"];
-    cell.gamerImage.image = [XboxLiveClient createRoundedUserWithImage:placeholderImage];
+    UIImage *gamerpicImage = [UIImage imageNamed:@"TempGamerImage.png"];
+    NSString *gamerpicPath = [XboxLiveClient filePathForUrl:achievementObj.gamerpicImageUrl];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:gamerpicPath]) {
+        gamerpicImage = [UIImage imageWithContentsOfFile:gamerpicPath];
+    } else {
+        NSLog(@"Gamerpic image not found, using placeholder instead of %@", gamerpicPath);
+    }
+    
+    cell.gamerImage.image = [XboxLiveClient createRoundedUserWithImage:gamerpicImage];
     cell.gamerTag.text = achievementObj.gamertag;
     cell.achievementName.text = achievementObj.name;
     cell.achievementEarnedOn.text = [Achievement timeAgoWithDate:achievementObj.earnedOn];

@@ -56,9 +56,17 @@
     // we'll need to work out how we want to do data refresh
     [self setup];
 
-    UIImage *placeholderImage = [UIImage imageNamed:@"TempGamerImage.png"];
-    self.gamerImage.image = [XboxLiveClient createRoundedUserWithImage:placeholderImage];
     self.gamerTag.text = self.profile.gamertag;
+    
+    UIImage *gamerpicImage;
+    NSString *gamerpicPath = [XboxLiveClient filePathForUrl:self.profile.gamerpicImageUrl];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:gamerpicPath]) {
+        gamerpicImage = [UIImage imageWithContentsOfFile:gamerpicPath];
+    } else {
+        gamerpicImage = [UIImage imageNamed:@"TempGamerImage.png"];
+        NSLog(@"Gamerpic image not found, using placeholder instead of %@", gamerpicPath);
+    }
+    self.gamerImage.image = [XboxLiveClient createRoundedUserWithImage:gamerpicImage];
 }
 
 #pragma mark - Table view data source
@@ -81,6 +89,16 @@
     cell.achievementDescription.text = achievementObj.description;
     cell.achievementEarnedOn.text = [Achievement timeAgoWithDate:achievementObj.earnedOn];
     cell.achievementImage.image = [UIImage imageNamed:@"TempAchievementImage.jpg"];
+    
+    UIImage *achievementImage;
+    NSString *achievementPath = [XboxLiveClient filePathForUrl:achievementObj.imageUrl];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:achievementPath]) {
+        achievementImage = [UIImage imageWithContentsOfFile:achievementPath];
+    } else {
+        achievementImage = [UIImage imageNamed:@"TempAchievementImage.png"];
+        NSLog(@"Achievement image not found, using placeholder instead of %@", achievementPath);
+    }
+    cell.achievementImage.image = achievementImage;
 
     return cell;
 }

@@ -25,14 +25,18 @@
 @property NSDate *startInit;
 @property NSDate *endInit;
 @property NSTimeInterval secondsToInit;
-@property int retriesDefault;
+@property int defaultRetries;
 
 // Callback to the object that envoked our init method.
 @property (nonatomic, copy) void (^completionBlock)(NSString *errorDescription);
 
 // Only methods that sends requests to the remote Xbox Live API.
--(void)sendRequestWithURL:(NSString *)url retries:(int)retries success:(void(^)(NSDictionary *responseDictionary))success;
--(void)imageRequestWithURL:(NSString *)url retries:(int)retries success:(void(^)(NSString *savedImagePath))success;
+-(void)sendRequestWithURL:(NSString *)url success:(void(^)(NSDictionary *responseDictionary))success;
+-(void)imageRequestWithURL:(NSString *)url success:(void(^)(NSString *savedImagePath))success;
+
+// Recursive versions of above.
+-(void)sendRequestWithURL:(NSString *)url success:(void(^)(NSDictionary *responseDictionary))success withRetries:(int)retries;
+-(void)imageRequestWithURL:(NSString *)url success:(void(^)(NSString *savedImagePath))success withRetries:(int)retries;
 
 // Methods that determine when initialization is complete.
 -(void)checkSavedDataExists;
@@ -43,9 +47,6 @@
 -(void)processProfile:(NSDictionary *)responseData;
 -(void)processFriends:(NSDictionary *)responseData;
 -(void)processImage:(NSString *)savedImagePath;
-
-// Helpers
--(NSString *)urlToFilename:(NSString *)url;
 
 @end
 
@@ -71,6 +72,27 @@
               ];
 }
 
++(NSString *)filePathForUrl:(NSString *)url withExtension:(NSString *)extension
+{
+    NSString *filename = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    if (extension) {
+        filename = [NSString stringWithFormat:@"%@.%@", filename, extension];
+    }
+    
+    // Images are downloaded directly from xboxlive servers.
+    filename = [filename stringByReplacingOccurrencesOfString:@"https://avatar-ssl.xboxlive.com/" withString:@""];
+    filename = [filename stringByReplacingOccurrencesOfString:@"http://catalog.xboxapi.com/" withString:@""];
+    
+    // JSON data is obtained from xboxapi.
+    filename = [filename stringByReplacingOccurrencesOfString:@"http://xboxapi.com/" withString:@""];
+    filename = [filename stringByReplacingOccurrencesOfString:@"/" withString:@"-"];
+    filename = [filename stringByReplacingOccurrencesOfString:@"%20" withString:@"_"];
+    
+    NSString *docsDir = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
+    NSString *filePath = [NSString stringWithFormat:@"%@/XboxLiveClient-%@", docsDir, filename];
+    return filePath;
+}
+
 -(void)initWithGamertag:(NSString *)userGamertag
              completion:(void (^)(NSString *errorDescription))completion
 {
@@ -80,7 +102,7 @@
     self.achievementsUnsorted = [[NSMutableArray alloc] init];
     self.friendProfilesUnsorted = [[NSMutableArray alloc] init];
     self.isInitializationError = NO;
-    self.retriesDefault = 3;
+    self.defaultRetries = 3;
     
     if (self.isOfflineMode) {
         [self checkSavedDataExists];
@@ -90,19 +112,10 @@
           (self.isOfflineMode) ? @"in OFFLINE MODE " : @"", userGamertag);
     self.startInit = [NSDate date];
     
-    // Send Profile request.
-    NSString *profile_url_str = [NSString stringWithFormat: @"http://xboxapi.com/v1/profile/%@", self.userGamertag];
-    [self sendRequestWithURL:profile_url_str retries:self.retriesDefault
-                  success:^(NSDictionary *responseData) {
-                      [self processProfile:responseData];
-                  }];
-    
     // Send Friends request.
     NSString *friends_url_str = [NSString stringWithFormat: @"http://xboxapi.com/v1/friends/%@", self.userGamertag];
-    [self sendRequestWithURL:friends_url_str retries:self.retriesDefault
-                  success:^(NSDictionary *responseData) {
-                      [self processFriends:responseData];
-                  }];
+    [self sendRequestWithURL:friends_url_str success:
+        ^(NSDictionary *responseData) { [self processFriends:responseData]; }];
     
 }
 
@@ -110,9 +123,7 @@
 {
     // Check saved data for user friend list only, assume if we have that we have the rest.
     NSString *friends_url_str = [NSString stringWithFormat: @"http://xboxapi.com/v1/friends/%@", self.userGamertag];
-    NSString *requestKey = [friends_url_str stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSString *docsDir = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
-    NSString *savedDataPath = [NSString stringWithFormat:@"%@/XboxLiveClient-%@.json", docsDir, [self urlToFilename:requestKey]];
+    NSString *savedDataPath = [XboxLiveClient filePathForUrl:friends_url_str withExtension:@"json"];
     BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:savedDataPath];
     if (!fileExists) {
         UIAlertView *alert = [[UIAlertView alloc]
@@ -187,6 +198,7 @@
     self.endInit = [NSDate date];
     self.secondsToInit = [self.endInit timeIntervalSinceDate:self.startInit];
     int count = (int)[self.achievementsFromJSON count];
+    
     NSLog(@"XboxLiveClient initialized %@for %@ with %i achievements (%0.f seconds)",
           (self.isOfflineMode) ? @"in OFFLINE MODE " : @"", self.userGamertag, count, self.secondsToInit);
     
@@ -195,6 +207,7 @@
         self.completionBlock(nil);
     });
 }
+
 
 -(void)processFriends:(NSDictionary *)responseData
 {
@@ -206,18 +219,21 @@
         return;
     }
     
+    // Get profiles for all my friends.
     for (NSDictionary *friend in responseData[@"Friends"]) {
-        
-        // Get profiles for all my friends.
         NSString *friendGamertag = friend[@"GamerTag"];
         NSString *profile_url_str = [NSString stringWithFormat:
                                      @"http://xboxapi.com/v1/profile/%@",
                                      friendGamertag];
-        [self sendRequestWithURL:profile_url_str retries:self.retriesDefault
-                      success:^(NSDictionary *responseData) {
-                          [self processProfile:responseData];
-                      }];
+        [self sendRequestWithURL:profile_url_str success:
+            ^(NSDictionary *responseData) { [self processProfile:responseData]; }];
     }
+    
+    // Get profile for current user.
+    NSString *profile_url_str = [NSString stringWithFormat: @"http://xboxapi.com/v1/profile/%@", self.userGamertag];
+    [self sendRequestWithURL:profile_url_str success:
+        ^(NSDictionary *responseData) { [self processProfile:responseData]; }];
+    
 }
 
 -(void)processProfile:(NSDictionary *)responseData
@@ -233,10 +249,8 @@
     
     // Download avatar image.
     NSString *avatar_url_str = responseData[@"Player"][@"Avatar"][@"Body"];
-    [self imageRequestWithURL:avatar_url_str retries:self.retriesDefault
-                             success:^(NSString *savedImagePath) {
-                                 [self processImage:savedImagePath];
-                             }];
+    [self imageRequestWithURL:avatar_url_str success:
+        ^(NSString *savedImagePath) { [self processImage:savedImagePath]; }];
     
     if (self.isInitializationError) {
         NSLog(@"Initialization error detected, skipping fetching achievements.");
@@ -247,24 +261,32 @@
     if ([responseData[@"RecentGames"] isKindOfClass:[NSArray class]]) {
         NSArray *games = responseData[@"RecentGames"];
         for (NSDictionary *game in games) {
-            // This won't work because there's no Achievement Count in the recent games.
-            //int achievementsEarned = [game[@"Progress"][@"Achievements"] integerValue];
-            //if (achievementsEarned == 0) {
-            //    continue;   // Skip games (or apps) with no achievements.
-            //}
+            
+            // Some of these "games" are console apps like Netflix that don't have achievements.
+            // Detect them by analyzing the URL since this API doesn't provide isApp flag.
+            NSString *game_boxart_url_str = game[@"BoxArt"][@"Large"];
+            if ([game_boxart_url_str rangeOfString:@"/consoleAssets/"].location != NSNotFound) {
+                NSLog(@"Skipping recent game console app for %@: %@", friendGamertag, game[@"Name"]);
+                continue;   // Console app, skip it.
+            }
+            
+            // Get game artwork.
+            [self imageRequestWithURL:game_boxart_url_str success:
+                ^(NSString *savedImagePath) { [self processImage:savedImagePath]; }];
+            
+            // Get game achievements.
             NSString *acheivements_url_str = [NSString stringWithFormat:
                                               @"http://xboxapi.com/v1/achievements/%@/%@",
                                               game[@"ID"], friendGamertag];
             
-            [self sendRequestWithURL:acheivements_url_str retries:self.retriesDefault
-                             success:^(NSDictionary *responseData) {
-                                 [self processAchievements:responseData];
-                             }];
+            [self sendRequestWithURL:acheivements_url_str success:
+                ^(NSDictionary *responseData) { [self processAchievements:responseData]; }];
         }
     } else {
         // User has game history hidden in their privacy settings.
         NSLog(@"Cannot view Games for %@: Privacy Settings Enabled", friendGamertag);
     }
+    
 }
 
 -(void)processAchievements:(NSDictionary *)responseData
@@ -288,25 +310,28 @@
     }
     NSLog(@"Added %i achievements for %@ for game %@", unlockedCount,
           gamertag, responseData[@"Game"][@"Name"]);
-    
 }
 
 -(void)processImage:(NSString *)savedImagePath
 {
-    // TODO
-    NSLog(@"Downloaded image: %@", savedImagePath);
+    // TODO: send notification that we downloaded this image.
     
 }
 
--(void)sendRequestWithURL:(NSString *)url retries:(int)retries success:(void(^)(NSDictionary *responseDictionary))success
+-(void)sendRequestWithURL:(NSString *)url success:(void(^)(NSDictionary *responseDictionary))success
+{
+    // Need to pass retries as argument to function to handle recursive case when we retry and recall it.
+    [self sendRequestWithURL:url success:success withRetries:self.defaultRetries];
+}
+
+-(void)sendRequestWithURL:(NSString *)url success:(void(^)(NSDictionary *responseDictionary))success withRetries:(int)retries
 {
     NSString *url_encoded = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     NSString *requestKey = url_encoded;
     [self.pendingRequests addObject:requestKey];
 
     NSString *errorMessage = nil;
-    NSString *docsDir = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
-    NSString *savedDataPath = [NSString stringWithFormat:@"%@/XboxLiveClient-%@.json", docsDir, [self urlToFilename:requestKey]];
+    NSString *savedDataPath = [XboxLiveClient filePathForUrl:url withExtension:@"json"];
     if (self.isOfflineMode) {
         // If we are running in Offline Mode, check if we have saved response for this request.
         BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:savedDataPath];
@@ -364,7 +389,7 @@
          if (myErrorMessage) {
              if (retries > 0) {
                  NSLog(@"Retring request for %@", url_encoded);
-                 [self sendRequestWithURL:url retries:(retries-1) success:success];
+                 [self sendRequestWithURL:url success:success withRetries:(retries-1)];
              } else {
                  if (!self.isInitializationError) {
                      self.isInitializationError = YES;
@@ -389,16 +414,19 @@
     
 }
 
--(void)imageRequestWithURL:(NSString *)url retries:(int)retries success:(void(^)(NSString *savedImagePath))success
+-(void)imageRequestWithURL:(NSString *)url success:(void(^)(NSString *savedImagePath))success
 {
-    NSString *url_encoded = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSString *requestKey = url_encoded;
-    
-    NSString *docsDir = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
-    NSString *savedDataPath = [NSString stringWithFormat:@"%@/XboxLiveClient-%@", docsDir, [self urlToFilename:requestKey]];
+    // Need to pass retries as argument to function to handle recursive case when we retry and recall it.
+    [self imageRequestWithURL:url success:success withRetries:self.defaultRetries];
+}
+
+-(void)imageRequestWithURL:(NSString *)url success:(void(^)(NSString *savedImagePath))success withRetries:(int)retries
+{
+    NSString *savedDataPath = [XboxLiveClient filePathForUrl:url withExtension:nil];
     BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:savedDataPath];
     if (fileExists) {
         // We might have already downloaded this image, e.g. if multiple friends played the same game.
+        NSLog(@"Using previously downloaded image for %@ found at %@", url, savedDataPath);
         success(savedDataPath);
         return;
     } else {
@@ -415,6 +443,7 @@
         }
     }
 
+    NSString *url_encoded = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url_encoded]];
     NSLog(@"Sending image request: %@", url_encoded);
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue]
@@ -431,7 +460,7 @@
          if (myErrorMessage) {
              if (retries > 0) {
                  NSLog(@"Retrying image request for %@", url_encoded);
-                 [self imageRequestWithURL:url retries:(retries-1) success:success];
+                 [self imageRequestWithURL:url success:success withRetries:(retries-1)];
              } else {
                  if (!self.isInitializationError) {
                      self.isInitializationError = YES;
@@ -452,19 +481,7 @@
      }];
 }
 
--(NSString *)urlToFilename:(NSString *)url
-{
 
-    NSString *new = url;
-    // Images are downloaded directly from xboxlive servers.
-    new = [new stringByReplacingOccurrencesOfString:@"https://avatar-ssl.xboxlive.com/" withString:@""];
-    
-    // JSON data is obtained from xboxapi.
-    new = [new stringByReplacingOccurrencesOfString:@"http://xboxapi.com/" withString:@""];
-    new = [new stringByReplacingOccurrencesOfString:@"/" withString:@"-"];
-    new = [new stringByReplacingOccurrencesOfString:@"%20" withString:@"_"];
-    return new;
-}
 
 # pragma mark - interface methods
 

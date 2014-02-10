@@ -39,7 +39,7 @@
     self.gamerTag.text = self.achievement.gamertag;
     self.achievementName.text = self.achievement.name;
     self.achievementDescription.text = self.achievement.description;
-    
+    self.achievementEarnedOn.text = [Achievement timeAgoWithDate:self.achievement.earnedOn];
     
     UIImage *gamerpicImage;
     NSString *gamerpicPath = [XboxLiveClient filePathForUrl:self.achievement.gamerpicImageUrl];

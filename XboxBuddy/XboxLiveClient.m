@@ -425,7 +425,8 @@
              [self checkPendingRequests];
              
              // Save to file, for use in Offline Mode.
-             NSLog(@"Saving response to file: %@", savedDataPath);
+             // TODO: Add DEBUG logging, for now just comment out.
+             //NSLog(@"Saving response to file: %@", savedDataPath);    // DEBUG
              [responseData writeToFile:savedDataPath atomically:YES];
          }
      }];
@@ -440,11 +441,20 @@
 
 -(void)imageRequestWithURL:(NSString *)url success:(void(^)(NSString *savedImagePath))success withRetries:(int)retries
 {
-    NSString *savedDataPath = [XboxLiveClient filePathForUrl:url withExtension:nil];
+    NSString *extension = @"jpg";
+    NSArray *image_extensions = @[@"jpeg", @"jpg", @"png",
+                                  @"JPEG", @"JPG", @"PNG"];
+    if ([image_extensions containsObject:[url substringFromIndex:[url length]-4]] ||
+        [image_extensions containsObject:[url substringFromIndex:[url length]-3]]) {
+        // Url already ends in image suffix, no need to append jpg.
+        extension = nil;
+    }
+    
+    NSString *savedDataPath = [XboxLiveClient filePathForUrl:url withExtension:extension];
     BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:savedDataPath];
     if (fileExists) {
         // We might have already downloaded this image, e.g. if multiple friends played the same game.
-        NSLog(@"Using previously downloaded image for %@ found at %@", url, savedDataPath);
+        //NSLog(@"Using previously downloaded image for %@ found at %@", url, savedDataPath);   // DEBUG
         success(savedDataPath);
         return;
     } else {
@@ -463,7 +473,7 @@
 
     NSString *url_encoded = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url_encoded]];
-    NSLog(@"Sending image request: %@", url_encoded);
+    //NSLog(@"Sending image request: %@", url_encoded); // DEBUG
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue]
                            completionHandler: ^(NSURLResponse *urlResponse, NSData *responseData, NSError *connectionError)
      {
@@ -477,7 +487,7 @@
          }
          if (myErrorMessage) {
              if (retries > 0) {
-                 NSLog(@"Retrying image request for %@", url_encoded);
+                 //NSLog(@"Retrying image request for %@", url_encoded);    // DEBUG
                  [self imageRequestWithURL:url success:success withRetries:(retries-1)];
              } else {
                  if (!self.isInitializationError) {
@@ -491,9 +501,8 @@
          } else {
              
              // Save image data to file, return path to caller.
-             NSLog(@"Saving image to file: %@", savedDataPath);
+             //NSLog(@"Saving image to file: %@", savedDataPath);   // DEBUG
              [responseData writeToFile:savedDataPath atomically:YES];
-             
              success(savedDataPath);
          }
      }];

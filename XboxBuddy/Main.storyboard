@@ -42,7 +42,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lk8-VT-UEN">
-                                            <rect key="frame" x="12" y="7" width="50" height="50"/>
+                                            <rect key="frame" x="12" y="7" width="50" height="0.0"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         </imageView>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="2 hours ago" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wwJ-yB-E4M">
@@ -65,12 +65,16 @@
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="O9G-ot-J97">
+                                            <rect key="frame" x="12" y="7" width="50" height="50"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        </imageView>
                                     </subviews>
                                 </tableViewCellContentView>
                                 <connections>
                                     <outlet property="achievementEarnedOn" destination="wwJ-yB-E4M" id="sdk-XI-e32"/>
                                     <outlet property="achievementName" destination="jjh-u3-h1G" id="CxQ-LZ-ttE"/>
-                                    <outlet property="gamerImage" destination="lk8-VT-UEN" id="naE-R9-Eri"/>
+                                    <outlet property="gamerImage" destination="O9G-ot-J97" id="QOY-gm-YjE"/>
                                     <outlet property="gamerTag" destination="pwk-gR-omQ" id="5vj-HG-msp"/>
                                     <segue destination="EsV-EW-HG1" kind="push" identifier="showAchievementDetail" id="DYk-JR-jkb"/>
                                 </connections>

@@ -28,6 +28,13 @@
         self.gamerpicImageUrl = dict[@"Player"][@"Avatar"][@"Gamerpic"][@"Large"];
         self.onlineStatus = dict[@"Player"][@"Status"][@"Online_Status"];
         self.avatarImageUrl = dict[@"Player"][@"Avatar"][@"Body"];
+        
+        if (dict[@"LastAchievement"] != [NSNull null]) {
+           self.gameName = dict[@"LastAchievement"][@"Game"][@"Name"];
+           self.gameImageUrl = dict[@"LastAchievement"][@"Game"][@"BoxArt"][@"Large"];
+           self.gamePointsPossible = [dict[@"LastAchievement"][@"Game"][@"PossibleGamerscore"] integerValue];
+           self.gamePointsEarned = [dict[@"LastAchievement"][@"Game"][@"Progress"][@"Gamerscore"] integerValue];
+        }
     }
     
     return self;

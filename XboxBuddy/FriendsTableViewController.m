@@ -68,7 +68,7 @@
     cell.gamerTag.text = profile.gamertag;
     
     UIImage *gamerpicImage;
-    NSString *gamerpicPath = [XboxLiveClient filePathForUrl:profile.gamerpicImageUrl];
+    NSString *gamerpicPath = [XboxLiveClient filePathForImageUrl:profile.gamerpicImageUrl];
     if ([[NSFileManager defaultManager] fileExistsAtPath:gamerpicPath]) {
         gamerpicImage = [UIImage imageWithContentsOfFile:gamerpicPath];
     } else {

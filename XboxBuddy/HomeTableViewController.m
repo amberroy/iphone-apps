@@ -63,7 +63,7 @@
     Achievement *achievementObj = self.achievements[indexPath.row];
 
     UIImage *gamerpicImage = [UIImage imageNamed:@"TempGamerImage.png"];
-    NSString *gamerpicPath = [XboxLiveClient filePathForUrl:achievementObj.gamerpicImageUrl];
+    NSString *gamerpicPath = [XboxLiveClient filePathForImageUrl:achievementObj.gamerpicImageUrl];
     if ([[NSFileManager defaultManager] fileExistsAtPath:gamerpicPath]) {
         gamerpicImage = [UIImage imageWithContentsOfFile:gamerpicPath];
     } else {

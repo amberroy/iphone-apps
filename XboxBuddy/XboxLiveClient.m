@@ -72,14 +72,17 @@
               ];
 }
 
-+(NSString *)filePathForUrl:(NSString *)url
-{
-    return [XboxLiveClient filePathForUrl:url withExtension:nil];
-}
-
-+(NSString *)filePathForUrl:(NSString *)url withExtension:(NSString *)extension
++(NSString *)filePathForImageUrl:(NSString *)url
 {
     NSString *filename = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSString *extension = @"jpg";
+    NSArray *image_extensions = @[@"jpeg", @"jpg", @"png",
+                                  @"JPEG", @"JPG", @"PNG"];
+    if ([image_extensions containsObject:[url substringFromIndex:[url length]-4]] ||
+        [image_extensions containsObject:[url substringFromIndex:[url length]-3]]) {
+        // Url already ends in image suffix, no need to append jpg.
+        extension = nil;
+    }
     if (extension) {
         filename = [NSString stringWithFormat:@"%@.%@", filename, extension];
     }
@@ -90,8 +93,26 @@
     filename = [filename stringByReplacingOccurrencesOfString:@"https://live.xbox.com/" withString:@""];
     filename = [filename stringByReplacingOccurrencesOfString:@"http://image.xboxlive.com/" withString:@""];
     
+    // Replace unwanted symbols.
+    filename = [filename stringByReplacingOccurrencesOfString:@"/" withString:@"-"];
+    filename = [filename stringByReplacingOccurrencesOfString:@"%20" withString:@"_"];
+    
+    NSString *docsDir = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
+    NSString *filePath = [NSString stringWithFormat:@"%@/XboxLiveClient-%@", docsDir, filename];
+    return filePath;
+}
+
+-(NSString *)filePathForUrl:(NSString *)url withExtension:(NSString *)extension
+{
+    NSString *filename = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    if (extension) {
+        filename = [NSString stringWithFormat:@"%@.%@", filename, extension];
+    }
+    
     // JSON data is obtained from xboxapi.
     filename = [filename stringByReplacingOccurrencesOfString:@"http://xboxapi.com/" withString:@""];
+    
+    // Replace unwanted symbols.
     filename = [filename stringByReplacingOccurrencesOfString:@"/" withString:@"-"];
     filename = [filename stringByReplacingOccurrencesOfString:@"%20" withString:@"_"];
     
@@ -130,7 +151,7 @@
 {
     // Check saved data for user friend list only, assume if we have that we have the rest.
     NSString *friends_url_str = [NSString stringWithFormat: @"http://xboxapi.com/v1/friends/%@", self.userGamertag];
-    NSString *savedDataPath = [XboxLiveClient filePathForUrl:friends_url_str withExtension:@"json"];
+    NSString *savedDataPath = [self filePathForUrl:friends_url_str withExtension:@"json"];
     BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:savedDataPath];
     if (!fileExists) {
         UIAlertView *alert = [[UIAlertView alloc]
@@ -175,12 +196,41 @@
          }];
         
     // Create list of friend gamertags, sorted by last achievement earned.
+    NSMutableDictionary *lastAchievement = [[NSMutableDictionary alloc] init];
     NSMutableArray *gamertagArray = [[NSMutableArray alloc] init];
     for (NSDictionary *achievement in self.achievementsFromJSON) {
         NSString *gamertag = achievement[@"Player"][@"Gamertag"];
         if (![gamertagArray containsObject:gamertag]) {
             [gamertagArray addObject:gamertag];
+            // This is the most recent achievement earned by this player, remember it,
+            // but first remove the Player info as we'll already have it in their profile.
+            NSMutableDictionary *achievement_mdict = [[NSMutableDictionary alloc] initWithDictionary:achievement];
+            [achievement_mdict removeObjectForKey:@"Player"];
+            lastAchievement[gamertag] = achievement_mdict;
         }
+    }
+    
+    // Add the last achievement earned to user profile and each friend profile.
+    NSMutableDictionary *user_profile_mdict = [[NSMutableDictionary alloc] initWithDictionary:self.userProfileFromJSON];
+    NSMutableDictionary *user_last_achievement = lastAchievement[self.userGamertag];
+    if (user_last_achievement) {
+        user_profile_mdict[@"LastAchievement"] = user_last_achievement;
+    } else {
+        // Last achivement for current user could be null if they haven't earned one yet; unlikely but possible.
+        user_profile_mdict[@"LastAchievement"] = [NSNull null];
+    }
+    self.userProfileFromJSON = user_profile_mdict;
+    for (int i=0; i < [self.friendProfilesUnsorted count]; i++) {
+        NSDictionary *profile_dict = self.friendProfilesUnsorted[i];
+        NSMutableDictionary *profile_mdict = [[NSMutableDictionary alloc] initWithDictionary:profile_dict];
+        NSMutableDictionary *profile_acheivement = lastAchievement[profile_mdict[@"Player"][@"Gamertag"]];
+        if (profile_acheivement) {
+            profile_mdict[@"LastAchievement"] = profile_acheivement;
+        } else {
+            // Last achivement will be null if friend has their recent activity hidden.
+            profile_mdict[@"LastAchievement"] = [NSNull null];
+        }
+        self.friendProfilesUnsorted[i] = profile_mdict;
     }
     
     // Sort friends by last achievement earned.
@@ -349,7 +399,7 @@
     [self.pendingRequests addObject:requestKey];
 
     NSString *errorMessage = nil;
-    NSString *savedDataPath = [XboxLiveClient filePathForUrl:url withExtension:@"json"];
+    NSString *savedDataPath = [self filePathForUrl:url withExtension:@"json"];
     if (self.isOfflineMode) {
         // If we are running in Offline Mode, check if we have saved response for this request.
         BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:savedDataPath];
@@ -425,7 +475,8 @@
              [self checkPendingRequests];
              
              // Save to file, for use in Offline Mode.
-             NSLog(@"Saving response to file: %@", savedDataPath);
+             // TODO: Add DEBUG logging, for now just comment out.
+             //NSLog(@"Saving response to file: %@", savedDataPath);    // DEBUG
              [responseData writeToFile:savedDataPath atomically:YES];
          }
      }];
@@ -440,11 +491,11 @@
 
 -(void)imageRequestWithURL:(NSString *)url success:(void(^)(NSString *savedImagePath))success withRetries:(int)retries
 {
-    NSString *savedDataPath = [XboxLiveClient filePathForUrl:url withExtension:nil];
+    NSString *savedDataPath = [XboxLiveClient filePathForImageUrl:url];
     BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:savedDataPath];
     if (fileExists) {
         // We might have already downloaded this image, e.g. if multiple friends played the same game.
-        NSLog(@"Using previously downloaded image for %@ found at %@", url, savedDataPath);
+        //NSLog(@"Using previously downloaded image for %@ found at %@", url, savedDataPath);   // DEBUG
         success(savedDataPath);
         return;
     } else {
@@ -463,7 +514,7 @@
 
     NSString *url_encoded = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url_encoded]];
-    NSLog(@"Sending image request: %@", url_encoded);
+    //NSLog(@"Sending image request: %@", url_encoded); // DEBUG
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue]
                            completionHandler: ^(NSURLResponse *urlResponse, NSData *responseData, NSError *connectionError)
      {
@@ -477,7 +528,7 @@
          }
          if (myErrorMessage) {
              if (retries > 0) {
-                 NSLog(@"Retrying image request for %@", url_encoded);
+                 //NSLog(@"Retrying image request for %@", url_encoded);    // DEBUG
                  [self imageRequestWithURL:url success:success withRetries:(retries-1)];
              } else {
                  if (!self.isInitializationError) {
@@ -491,9 +542,8 @@
          } else {
              
              // Save image data to file, return path to caller.
-             NSLog(@"Saving image to file: %@", savedDataPath);
+             //NSLog(@"Saving image to file: %@", savedDataPath);   // DEBUG
              [responseData writeToFile:savedDataPath atomically:YES];
-             
              success(savedDataPath);
          }
      }];

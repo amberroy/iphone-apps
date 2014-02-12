@@ -39,10 +39,10 @@
     self.gamerTag.text = self.achievement.gamertag;
     self.achievementName.text = self.achievement.name;
     self.achievementDescription.text = self.achievement.description;
-    
+    self.achievementEarnedOn.text = [Achievement timeAgoWithDate:self.achievement.earnedOn];
     
     UIImage *gamerpicImage;
-    NSString *gamerpicPath = [XboxLiveClient filePathForUrl:self.achievement.gamerpicImageUrl];
+    NSString *gamerpicPath = [XboxLiveClient filePathForImageUrl:self.achievement.gamerpicImageUrl];
     if ([[NSFileManager defaultManager] fileExistsAtPath:gamerpicPath]) {
         gamerpicImage = [UIImage imageWithContentsOfFile:gamerpicPath];
     } else {
@@ -52,7 +52,7 @@
     self.gamerImage.image = [XboxLiveClient createRoundedUserWithImage:gamerpicImage];
     
     UIImage *achievmentImage;
-    NSString *achievementPath = [XboxLiveClient filePathForUrl:self.achievement.imageUrl];
+    NSString *achievementPath = [XboxLiveClient filePathForImageUrl:self.achievement.imageUrl];
     if ([[NSFileManager defaultManager] fileExistsAtPath:achievementPath]) {
         achievmentImage = [UIImage imageWithContentsOfFile:achievementPath];
     } else {
@@ -62,7 +62,7 @@
     self.achievementImage.image = achievmentImage;
     
     UIImage *boxArtImage;
-    NSString *boxArtPath = [XboxLiveClient filePathForUrl:self.achievement.gameImageUrl];
+    NSString *boxArtPath = [XboxLiveClient filePathForImageUrl:self.achievement.gameImageUrl];
     if ([[NSFileManager defaultManager] fileExistsAtPath:boxArtPath]) {
         boxArtImage = [UIImage imageWithContentsOfFile:boxArtPath];
     } else {

@@ -17,8 +17,7 @@
 +(XboxLiveClient *) instance;
 +(NSArray *)gamertagsForTesting;
 
-+(NSString *)filePathForUrl:(NSString *)url;
-+(NSString *)filePathForUrl:(NSString *)url withExtension:(NSString *)extension;
++(NSString *)filePathForImageUrl:(NSString *)url;
 
 // TODO: move this to util
 +(UIImage *)createRoundedUserWithImage:(UIImage *)image;

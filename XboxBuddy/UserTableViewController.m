@@ -59,7 +59,7 @@
     self.gamerTag.text = self.profile.gamertag;
     
     UIImage *gamerpicImage;
-    NSString *gamerpicPath = [XboxLiveClient filePathForUrl:self.profile.gamerpicImageUrl];
+    NSString *gamerpicPath = [XboxLiveClient filePathForImageUrl:self.profile.gamerpicImageUrl];
     if ([[NSFileManager defaultManager] fileExistsAtPath:gamerpicPath]) {
         gamerpicImage = [UIImage imageWithContentsOfFile:gamerpicPath];
     } else {
@@ -91,7 +91,9 @@
     cell.achievementImage.image = [UIImage imageNamed:@"TempAchievementImage.jpg"];
     
     UIImage *achievementImage;
-    NSString *achievementPath = [XboxLiveClient filePathForUrl:achievementObj.imageUrl];
+    NSString *achievementPath = [XboxLiveClient filePathForImageUrl:achievementObj.imageUrl];
+    // We added the .jpg extension when downloading the image.
+    //achievementPath = [NSString stringWithFormat:@"%@.jpg", achievementPath];
     if ([[NSFileManager defaultManager] fileExistsAtPath:achievementPath]) {
         achievementImage = [UIImage imageWithContentsOfFile:achievementPath];
     } else {

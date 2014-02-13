@@ -24,10 +24,12 @@
     [self.window makeKeyAndVisible];
     
     // Fetch data from Xbox Live.
-    NSString *sampleGamertag = [XboxLiveClient gamertagsForTesting][0];
+    // TEMP
+    //NSString *sampleGamertag = [XboxLiveClient gamertagsForTesting][0];
+    NSString *sampleGamertag = @"ambroy";
     XboxLiveClient *xboxLiveClient = [XboxLiveClient instance];
     
-    xboxLiveClient.isOfflineMode = YES;   // USE LOCAL DATA INSTEAD FETCHING FROM API
+    //xboxLiveClient.isOfflineMode = YES;   // USE LOCAL DATA INSTEAD FETCHING FROM API
     [xboxLiveClient initWithGamertag:sampleGamertag completion: ^(NSString *errorMessage) {
         if (errorMessage) {
             NSLog(@"Failed to initialize XboxLiveClient: %@", errorMessage);

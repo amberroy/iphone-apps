@@ -26,8 +26,6 @@
 @property NSDate *endInit;
 @property NSTimeInterval secondsToInit;
 @property int defaultRetries;
-@property int recentActivityRetries;
-@property NSMutableDictionary *recentActivityRetryCounts;
 
 // Callback to the object that envoked our init method.
 @property (nonatomic, copy) void (^completionBlock)(NSString *errorDescription);
@@ -133,8 +131,6 @@
     self.friendProfilesUnsorted = [[NSMutableArray alloc] init];
     self.isInitializationError = NO;
     self.defaultRetries = 3;
-    self.recentActivityRetries = 3;
-    self.recentActivityRetryCounts = [[NSMutableDictionary alloc] init];
     
     if (self.isOfflineMode) {
         [self checkSavedDataExists];
@@ -154,7 +150,7 @@
 -(void)checkSavedDataExists
 {
     // Check saved data for user friend list only, assume if we have that we have the rest.
-    NSString *friends_url_str = [NSString stringWithFormat: @"http://xboxapi.com/v1/friends/%@", self.userGamertag];
+    NSString *friends_url_str = [NSString stringWithFormat: @"http://xboxleaders.com/api/friends.json?gamertag=%@", self.userGamertag];
     NSString *savedDataPath = [self filePathForUrl:friends_url_str withExtension:@"json"];
     BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:savedDataPath];
     if (!fileExists) {
@@ -278,15 +274,15 @@
         return;
     }
     
-//    // Get profiles for all my friends.
-//    for (NSDictionary *friend in responseData[@"friends"]) {
-//        NSString *friendGamertag = friend[@"gamertag"];
-//        NSString *profile_url_str = [NSString stringWithFormat:
-//                                     @"http://xboxleaders.com/api/profile.json?gamertag=%@",
-//                                     friendGamertag];
-//        [self sendRequestWithURL:profile_url_str success:
-//            ^(NSDictionary *responseData) { [self processProfile:responseData]; }];
-//    }
+    // Get profiles for all my friends.
+    for (NSDictionary *friend in responseData[@"friends"]) {
+        NSString *friendGamertag = friend[@"gamertag"];
+        NSString *profile_url_str = [NSString stringWithFormat:
+                                     @"http://xboxleaders.com/api/profile.json?gamertag=%@",
+                                     friendGamertag];
+        [self sendRequestWithURL:profile_url_str success:
+            ^(NSDictionary *responseData) { [self processProfile:responseData]; }];
+    }
     
     // Get profile for current user.
     NSString *profile_url_str = [NSString stringWithFormat: @"http://xboxleaders.com/api/profile.json?gamertag=%@", self.userGamertag];
@@ -298,26 +294,6 @@
 -(void)processProfile:(NSDictionary *)responseData
 {
     NSString *friendGamertag = responseData[@"gamertag"];
-    
-    if (responseData[@"recentactivity"] == [NSNull null]) {
-        // Sometimes the API incorrectly returns "null" for recent activity, so retry to be sure.
-        // If this friend really does have privacy settings enabled then we'll retry for nothing.
-        // TODO: Is there a reliable way to check if a friend has their recent activity hidden?
-        if (!self.isOfflineMode) {
-            if (!self.recentActivityRetryCounts[friendGamertag]) {
-                self.recentActivityRetryCounts[friendGamertag] = @0;
-            }
-            int current_retries = [self.recentActivityRetryCounts[friendGamertag] integerValue];
-            if (current_retries < self.recentActivityRetries) {
-                self.recentActivityRetryCounts[friendGamertag] = @(current_retries + 1);
-                NSLog(@"Retrying recent activity for %@", friendGamertag);
-                NSString *profile_url_str = [NSString stringWithFormat: @"http://xboxleaders.com/api/profile.json?gamertag=%@", friendGamertag];
-                [self sendRequestWithURL:profile_url_str success:
-                    ^(NSDictionary *responseData) { [self processProfile:responseData]; }];
-                return;
-            }
-        }
-    }
     if ([friendGamertag isEqualToString:self.userGamertag]) {
         self.userProfileFromJSON = responseData;
         NSLog(@"Added profile for current user %@", self.userGamertag);
@@ -388,26 +364,28 @@
     if (responseData[@"achievements"] != [NSNull null]) {
     
         //NSArray *achievements = responseData[@"Achievements"];
-        NSArray *achievements = responseData[@"achievements"];
+        NSMutableArray *achievements = [[NSMutableArray alloc] initWithArray: responseData[@"achievements"]];
         for (NSDictionary *achievement in achievements) {
     
             BOOL isUnlocked = [achievement[@"unlocked"] boolValue];
             if (isUnlocked) {
+                // Get achievement images.
+                NSString *achievement_image_unlocked_url_str = achievement[@"artwork"][@"unlocked"];
+                NSString *achievement_image_locked_url_str = achievement[@"artwork"][@"locked"];
+                
+                [self imageRequestWithURL:achievement_image_unlocked_url_str success:
+                    ^(NSString *savedImagePath) { [self processImage:savedImagePath]; }];
+                [self imageRequestWithURL:achievement_image_locked_url_str success:
+                    ^(NSString *savedImagePath) { [self processImage:savedImagePath]; }];
+                
                 // Save the Game and Player info with the Achievement.
                 [self.achievementsUnsorted addObject: @{@"player": player,
                                                         @"game": game,
                                                         @"achievement": achievement}];
-                // Get achievement image.
-                NSString *achievement_image_url_str = achievement[@"artwork"][@"unlocked"];
-                [self imageRequestWithURL:achievement_image_url_str success:
-                    ^(NSString *savedImagePath) { [self processImage:savedImagePath]; }];
                 
                 unlockedCount++;
             }
         }
-    }
-    if (unlockedCount == 0) {
-        ;;
     }
     NSLog(@"Added %i achievements for %@ for game %@", unlockedCount,
           gamertag, responseData[@"game"]);
@@ -415,7 +393,7 @@
 
 -(void)processImage:(NSString *)savedImagePath
 {
-    // TODO: send notification that we downloaded this image.
+    // Placeholder, do nothing for now.
     
 }
 
@@ -449,7 +427,7 @@
                     errorMessage = [NSString stringWithFormat:@"Failed to serialize JSON data from file %@: %@", savedDataPath, jsonError];
                 } else {
                     // Call success block before checkPendingReqeusts, in case it adds requests to the queue.
-                    success((NSDictionary *)result);
+                    success((NSDictionary *)result[@"data"]);
                     [self.pendingRequests removeObject:requestKey];
                     [self checkPendingRequests];
                 }
@@ -465,7 +443,8 @@
     }
     
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url_encoded]];
-    NSLog(@"Sending request: %@", url_encoded);
+    (retries == self.defaultRetries) ? NSLog(@"Sending request: %@", url_encoded): NSLog(@"Retrying request: %@", url_encoded);
+    
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue]
                            completionHandler: ^(NSURLResponse *urlResponse, NSData *responseData, NSError *connectionError)
      {
@@ -483,13 +462,23 @@
                  if (!isSuccess) {
                      myErrorMessage = response[@"data"][@"message"];
                  } else {
-                     myResponseDictionary = response[@"data"];
+                     // Special Case.
+                     if ([url rangeOfString:@"profile"].location != NSNotFound &&
+                         response[@"data"][@"recentactivity"] == [NSNull null] &&
+                         retries > 0) {     // Don't fail permanently for this reason, just retry.
+                         
+                         // Sometimes the API incorrectly returns "null" for recent activity, so retry to be sure.
+                         // If this friend really does have privacy settings enabled then we'll retry for nothing.
+                         myErrorMessage = @"Recent Activity missing for this user.";
+                     } else {
+                         // Success.
+                         myResponseDictionary = response[@"data"];
+                     }
                  }
              }
          }
          if (myErrorMessage) {
              if (retries > 0) {
-                 NSLog(@"Retring request for %@", url_encoded);
                  [self sendRequestWithURL:url success:success withRetries:(retries-1)];
              } else {
                  if (!self.isInitializationError) {
@@ -528,7 +517,7 @@
     BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:savedDataPath];
     if (fileExists) {
         // We might have already downloaded this image, e.g. if multiple friends played the same game.
-        NSLog(@"Using previously downloaded image for %@ found at %@", url, savedDataPath);   // DEBUG
+        //NSLog(@"Using previously downloaded image for %@ found at %@", url, savedDataPath);   // DEBUG
         success(savedDataPath);
         return;
     } else {
@@ -547,7 +536,7 @@
 
     NSString *url_encoded = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url_encoded]];
-    NSLog(@"Sending image request: %@", url_encoded); // DEBUG
+    //NSLog(@"Sending image request: %@", url_encoded); // DEBUG
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue]
                            completionHandler: ^(NSURLResponse *urlResponse, NSData *responseData, NSError *connectionError)
      {
@@ -561,7 +550,7 @@
          }
          if (myErrorMessage) {
              if (retries > 0) {
-                 NSLog(@"Retrying image request for %@", url_encoded);    // DEBUG
+                 //NSLog(@"Retrying image request for %@", url_encoded);    // DEBUG
                  [self imageRequestWithURL:url success:success withRetries:(retries-1)];
              } else {
                  if (!self.isInitializationError) {

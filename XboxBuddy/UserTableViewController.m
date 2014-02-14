@@ -88,19 +88,7 @@
     cell.achievementName.text = achievementObj.name;
     cell.achievementDescription.text = achievementObj.detail;
     cell.achievementEarnedOn.text = [Achievement timeAgoWithDate:achievementObj.earnedOn];
-    cell.achievementImage.image = [UIImage imageNamed:@"TempAchievementImage.jpg"];
-    
-    UIImage *achievementImage;
-    NSString *achievementPath = [XboxLiveClient filePathForImageUrl:achievementObj.imageUrl];
-    // We added the .jpg extension when downloading the image.
-    //achievementPath = [NSString stringWithFormat:@"%@.jpg", achievementPath];
-    if ([[NSFileManager defaultManager] fileExistsAtPath:achievementPath]) {
-        achievementImage = [UIImage imageWithContentsOfFile:achievementPath];
-    } else {
-        achievementImage = [UIImage imageNamed:@"TempAchievementImage.png"];
-        NSLog(@"Achievement image not found, using placeholder instead of %@", achievementPath);
-    }
-    cell.achievementImage.image = achievementImage;
+    cell.achievementImage.image = [achievementObj imageFromAchievement];
 
     return cell;
 }

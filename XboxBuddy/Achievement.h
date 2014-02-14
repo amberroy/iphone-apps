@@ -13,7 +13,8 @@
 // Achievement info.
 @property NSString *name;
 @property NSString *detail;
-@property NSString *imageUrl;
+@property NSString *unlockedImageUrl;
+@property NSString *lockedImageUrl;
 @property NSDate *earnedOn;
 @property NSInteger points;
 
@@ -33,6 +34,8 @@
 @property NSInteger gamerscore;
 @property NSString *gamerpicImageUrl;
 @property NSString *avatarImageUrl;
+
+- (UIImage *)imageFromAchievement;
 
 // TODO: move this to util file
 +(NSString *)timeAgoWithDate:(NSDate *)date;

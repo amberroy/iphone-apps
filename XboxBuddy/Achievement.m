@@ -7,6 +7,7 @@
 //
 
 #import "Achievement.h"
+#import "XboxLiveClient.h"
 
 @implementation Achievement
 
@@ -26,7 +27,11 @@
         self.name = dict[@"achievement"][@"title"];
         self.detail = dict[@"achievement"][@"description"];
         
-        self.imageUrl = dict[@"achievement"][@"artwork"][@"unlocked"];
+        // Workaround for API bug where HTML escape for apostrophe is used insead of the character.
+        self.detail = [self.detail stringByReplacingOccurrencesOfString:@"&#039;" withString:@"'"];
+        
+        self.unlockedImageUrl = dict[@"achievement"][@"artwork"][@"unlocked"];
+        self.lockedImageUrl = dict[@"achievement"][@"artwork"][@"locked"];
         double earnedOn = [dict[@"achievement"][@"unlockdate"] doubleValue];
         self.earnedOn = [NSDate dateWithTimeIntervalSince1970:earnedOn];
         self.points = [dict[@"achievement"][@"gamerscore"] integerValue];
@@ -47,6 +52,28 @@
         self.avatarImageUrl = dict[@"player"][@"avatar"][@"full"];
     }
     return self;
+}
+
+- (UIImage *)imageFromAchievement
+{
+    UIImage *achievmentImage;
+    NSString *achievementPath = [XboxLiveClient filePathForImageUrl:self.unlockedImageUrl];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:achievementPath] &&
+        [[[NSFileManager defaultManager] attributesOfItemAtPath:achievementPath error:NULL] fileSize] > 0) {
+        achievmentImage = [UIImage imageWithContentsOfFile:achievementPath];
+    } else {
+        // Workaround for bug in API where the URL returned for the main (unlocked) achievement artwork
+        // sometimes isn't valid.  So if we get an empty file, use the locked artwork (grayed out).
+        achievementPath = [XboxLiveClient filePathForImageUrl:self.lockedImageUrl];
+        if ([[NSFileManager defaultManager] fileExistsAtPath:achievementPath] &&
+            [[[NSFileManager defaultManager] attributesOfItemAtPath:achievementPath error:NULL] fileSize] > 0) {
+            achievmentImage = [UIImage imageWithContentsOfFile:achievementPath];
+        } else {
+            achievmentImage = [UIImage imageNamed:@"TempAchievementImage.jpg"];
+            NSLog(@"Achievement image not found, using placeholder instead of %@", achievementPath);
+        }
+    }
+    return achievmentImage;
 }
 
 // TODO: move this to util file

@@ -24,9 +24,7 @@
     [self.window makeKeyAndVisible];
     
     // Fetch data from Xbox Live.
-    // TEMP
-    //NSString *sampleGamertag = [XboxLiveClient gamertagsForTesting][0];
-    NSString *sampleGamertag = @"ambroy";
+    NSString *sampleGamertag = [XboxLiveClient gamertagsForTesting][0];
     XboxLiveClient *xboxLiveClient = [XboxLiveClient instance];
     
     //xboxLiveClient.isOfflineMode = YES;   // USE LOCAL DATA INSTEAD FETCHING FROM API

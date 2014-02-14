@@ -86,7 +86,7 @@
     Achievement *achievementObj = self.achievements[indexPath.row];
 
     cell.achievementName.text = achievementObj.name;
-    cell.achievementDescription.text = achievementObj.description;
+    cell.achievementDescription.text = achievementObj.detail;
     cell.achievementEarnedOn.text = [Achievement timeAgoWithDate:achievementObj.earnedOn];
     cell.achievementImage.image = [UIImage imageNamed:@"TempAchievementImage.jpg"];
     

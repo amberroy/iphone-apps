@@ -26,6 +26,8 @@
 @property NSDate *endInit;
 @property NSTimeInterval secondsToInit;
 @property int defaultRetries;
+@property int recentActivityRetries;
+@property NSMutableDictionary *recentActivityRetryCounts;
 
 // Callback to the object that envoked our init method.
 @property (nonatomic, copy) void (^completionBlock)(NSString *errorDescription);
@@ -88,14 +90,10 @@
     }
     
     // Images are downloaded directly from xboxlive servers.
-    filename = [filename stringByReplacingOccurrencesOfString:@"https://avatar-ssl.xboxlive.com/" withString:@""];
-    filename = [filename stringByReplacingOccurrencesOfString:@"http://catalog.xboxapi.com/" withString:@""];
-    filename = [filename stringByReplacingOccurrencesOfString:@"https://live.xbox.com/" withString:@""];
-    filename = [filename stringByReplacingOccurrencesOfString:@"http://image.xboxlive.com/" withString:@""];
-    
-    // TEMP
+    filename = [filename stringByReplacingOccurrencesOfString:@"https://image-ssl.xboxlive.com/" withString:@""];
     filename = [filename stringByReplacingOccurrencesOfString:@"http://avatar.xboxlive.com/" withString:@""];
     filename = [filename stringByReplacingOccurrencesOfString:@"http://download.xbox.com/" withString:@""];
+    filename = [filename stringByReplacingOccurrencesOfString:@"https://live.xbox.com/" withString:@""];
     
     // Replace unwanted symbols.
     filename = [filename stringByReplacingOccurrencesOfString:@"/" withString:@"-"];
@@ -114,7 +112,7 @@
     }
     
     // JSON data is obtained from xboxapi.
-    filename = [filename stringByReplacingOccurrencesOfString:@"http://xboxapi.com/" withString:@""];
+    filename = [filename stringByReplacingOccurrencesOfString:@"http://xboxleaders.com/" withString:@""];
     
     // Replace unwanted symbols.
     filename = [filename stringByReplacingOccurrencesOfString:@"/" withString:@"-"];
@@ -135,6 +133,8 @@
     self.friendProfilesUnsorted = [[NSMutableArray alloc] init];
     self.isInitializationError = NO;
     self.defaultRetries = 3;
+    self.recentActivityRetries = 3;
+    self.recentActivityRetryCounts = [[NSMutableDictionary alloc] init];
     
     if (self.isOfflineMode) {
         [self checkSavedDataExists];
@@ -145,8 +145,6 @@
     self.startInit = [NSDate date];
     
     // Send Friends request.
-    // TEMP
-    //NSString *friends_url_str = [NSString stringWithFormat: @"http://xboxapi.com/v1/friends/%@", self.userGamertag];
     NSString *friends_url_str = [NSString stringWithFormat: @"http://xboxleaders.com/api/friends.json?gamertag=%@", self.userGamertag];
     [self sendRequestWithURL:friends_url_str success:
         ^(NSDictionary *responseData) { [self processFriends:responseData]; }];
@@ -196,11 +194,8 @@
     // Sort achievements by date earned.
     self.achievementsFromJSON = [self.achievementsUnsorted sortedArrayUsingComparator:
          ^NSComparisonResult(id a, id b) {
-             // TEMP
-               //NSNumber *first_date = ((NSDictionary*)a)[@"Achievement"][@"EarnedOn-UNIX"];
-               //NSNumber *second_date = ((NSDictionary*)b)[@"Achievement"][@"EarnedOn-UNIX"];
-               NSNumber *first_date = ((NSDictionary*)a)[@"Achievement"][@"unlockdate"];
-               NSNumber *second_date = ((NSDictionary*)b)[@"Achievement"][@"unlockdate"];
+               NSNumber *first_date = ((NSDictionary*)a)[@"achievement"][@"unlockdate"];
+               NSNumber *second_date = ((NSDictionary*)b)[@"achievement"][@"unlockdate"];
                return [second_date compare:first_date];     // Descending.
          }];
         
@@ -208,16 +203,11 @@
     NSMutableDictionary *lastAchievement = [[NSMutableDictionary alloc] init];
     NSMutableArray *gamertagArray = [[NSMutableArray alloc] init];
     for (NSDictionary *achievement in self.achievementsFromJSON) {
-        // TEMP
-        //NSString *gamertag = achievement[@"Player"][@"Gamertag"];
-        NSString *gamertag = achievement[@"gamertag"];
+        NSString *gamertag = achievement[@"player"][@"gamertag"];
         if (![gamertagArray containsObject:gamertag]) {
             [gamertagArray addObject:gamertag];
-            // This is the most recent achievement earned by this player, remember it,
-            // but first remove the Player info as we'll already have it in their profile.
+            // This is the most recent achievement earned by this player, remember it.
             NSMutableDictionary *achievement_mdict = [[NSMutableDictionary alloc] initWithDictionary:achievement];
-            // TEMP
-            //[achievement_mdict removeObjectForKey:@"Player"];
             lastAchievement[gamertag] = achievement_mdict;
         }
     }
@@ -226,34 +216,28 @@
     NSMutableDictionary *user_profile_mdict = [[NSMutableDictionary alloc] initWithDictionary:self.userProfileFromJSON];
     NSMutableDictionary *user_last_achievement = lastAchievement[self.userGamertag];
     if (user_last_achievement) {
-        user_profile_mdict[@"LastAchievement"] = user_last_achievement;
+        user_profile_mdict[@"achievement"] = user_last_achievement;
     } else {
         // Last achivement for current user could be null if they haven't earned one yet; unlikely but possible.
-        user_profile_mdict[@"LastAchievement"] = [NSNull null];
+        user_profile_mdict[@"achievement"] = [NSNull null];
     }
     self.userProfileFromJSON = user_profile_mdict;
     for (int i=0; i < [self.friendProfilesUnsorted count]; i++) {
         NSDictionary *profile_dict = self.friendProfilesUnsorted[i];
         NSMutableDictionary *profile_mdict = [[NSMutableDictionary alloc] initWithDictionary:profile_dict];
-        // TEMP
-        //NSMutableDictionary *profile_acheivement = lastAchievement[profile_mdict[@"Player"][@"Gamertag"]];
         NSMutableDictionary *profile_acheivement = lastAchievement[profile_mdict[@"gamertag"]];
         if (profile_acheivement) {
-            profile_mdict[@"LastAchievement"] = profile_acheivement;
+            profile_mdict[@"achievement"] = profile_acheivement;
         } else {
             // Last achivement will be null if friend has their recent activity hidden.
-            profile_mdict[@"LastAchievement"] = [NSNull null];
+            profile_mdict[@"achievement"] = [NSNull null];
         }
         self.friendProfilesUnsorted[i] = profile_mdict;
     }
     
-    // TEMP
     // Sort friends by last achievement earned.
     self.friendProfilesFromJSON = [self.friendProfilesUnsorted sortedArrayUsingComparator:
            ^NSComparisonResult(id a, id b) {
-               // TEMP
-               //NSString *first_gamertag = ((NSDictionary *)a)[@"Player"][@"Gamertag"];
-               //NSString *second_gamertag = ((NSDictionary *)b)[@"Player"][@"Gamertag"];
                NSString *first_gamertag = ((NSDictionary *)a)[@"gamertag"];
                NSString *second_gamertag = ((NSDictionary *)b)[@"gamertag"];
                
@@ -286,10 +270,7 @@
 
 -(void)processFriends:(NSDictionary *)responseData
 {
-    // TEMP
-    //int count = (int)[responseData[@"Friends"] count];
-    //NSLog(@"Found %i Friends for current user %@", count, responseData[@"Player"][@"Gamertag"]);
-    int count = (int)[responseData[@"data"][@"friends"] count];
+    int count = (int)[responseData[@"friends"] count];
     NSLog(@"Found %i Friends for current user", count);
     
     if (self.isInitializationError) {
@@ -297,24 +278,17 @@
         return;
     }
     
-    // Get profiles for all my friends.
-    // TEMP
-    //for (NSDictionary *friend in responseData[@"Friends"]) {
-    //    NSString *friendGamertag = friend[@"GamerTag"];
-    for (NSDictionary *friend in responseData[@"data"][@"friends"]) {
-        NSString *friendGamertag = friend[@"gamertag"];
-        NSString *profile_url_str = [NSString stringWithFormat:
-                                     // TEMP
-                                     //@"http://xboxapi.com/v1/profile/%@",
-                                     @"http://xboxleaders.com/api/profile.json?gamertag=%@",
-                                     friendGamertag];
-        [self sendRequestWithURL:profile_url_str success:
-            ^(NSDictionary *responseData) { [self processProfile:responseData]; }];
-    }
+//    // Get profiles for all my friends.
+//    for (NSDictionary *friend in responseData[@"friends"]) {
+//        NSString *friendGamertag = friend[@"gamertag"];
+//        NSString *profile_url_str = [NSString stringWithFormat:
+//                                     @"http://xboxleaders.com/api/profile.json?gamertag=%@",
+//                                     friendGamertag];
+//        [self sendRequestWithURL:profile_url_str success:
+//            ^(NSDictionary *responseData) { [self processProfile:responseData]; }];
+//    }
     
     // Get profile for current user.
- // TEMP
-    //NSString *profile_url_str = [NSString stringWithFormat: @"http://xboxapi.com/v1/profile/%@", self.userGamertag];
     NSString *profile_url_str = [NSString stringWithFormat: @"http://xboxleaders.com/api/profile.json?gamertag=%@", self.userGamertag];
     [self sendRequestWithURL:profile_url_str success:
         ^(NSDictionary *responseData) { [self processProfile:responseData]; }];
@@ -323,56 +297,44 @@
 
 -(void)processProfile:(NSDictionary *)responseData
 {
-    NSString *friendGamertag = responseData[@"data"][@"gamertag"];
+    NSString *friendGamertag = responseData[@"gamertag"];
     
-    // TODO: Use property instead of static variable.
-    static NSMutableDictionary *retry_mdict;
-    static int retries = 3;
-    if (!retry_mdict) {
-        retry_mdict = [[NSMutableDictionary alloc] init];
-    }
-    if (responseData[@"data"][@"recentactivity"] != [NSNull null]) {
+    if (responseData[@"recentactivity"] == [NSNull null]) {
         // Sometimes the API incorrectly returns "null" for recent activity, so retry to be sure.
         // If this friend really does have privacy settings enabled then we'll retry for nothing.
         // TODO: Is there a reliable way to check if a friend has their recent activity hidden?
-        if (!retry_mdict[friendGamertag]) {
-            retry_mdict[friendGamertag] = @0;
-        }
-        if ([retry_mdict[friendGamertag] integerValue] < retries) {
-            retry_mdict[friendGamertag] = @([retry_mdict[friendGamertag] integerValue] + 1);
-            NSLog(@"Retrying recent activity for %@", friendGamertag);
-            NSString *profile_url_str = [NSString stringWithFormat: @"http://xboxleaders.com/api/profile.json?gamertag=%@", friendGamertag];
-            [self sendRequestWithURL:profile_url_str success:
-                ^(NSDictionary *responseData) { [self processProfile:responseData]; }];
-            return;
+        if (!self.isOfflineMode) {
+            if (!self.recentActivityRetryCounts[friendGamertag]) {
+                self.recentActivityRetryCounts[friendGamertag] = @0;
+            }
+            int current_retries = [self.recentActivityRetryCounts[friendGamertag] integerValue];
+            if (current_retries < self.recentActivityRetries) {
+                self.recentActivityRetryCounts[friendGamertag] = @(current_retries + 1);
+                NSLog(@"Retrying recent activity for %@", friendGamertag);
+                NSString *profile_url_str = [NSString stringWithFormat: @"http://xboxleaders.com/api/profile.json?gamertag=%@", friendGamertag];
+                [self sendRequestWithURL:profile_url_str success:
+                    ^(NSDictionary *responseData) { [self processProfile:responseData]; }];
+                return;
+            }
         }
     }
-    // TEMP
-    //NSString *friendGamertag = responseData[@"Player"][@"Gamertag"];
     if ([friendGamertag isEqualToString:self.userGamertag]) {
         self.userProfileFromJSON = responseData;
         NSLog(@"Added profile for current user %@", self.userGamertag);
     } else {
         [self.friendProfilesUnsorted addObject:responseData];
-        // TEMP
-        //NSLog(@"Added profile for friend %@", friendGamertag);
         unsigned long count = 0;
-        //if (responseData[@"data"][@"recentactivity"] isKindOfClass:[NSArray class]]) {
-        if (responseData[@"data"][@"recentactivity"] != [NSNull null]) {
-            count = (unsigned long)[responseData[@"data"][@"recentactivity"] count];
+        if (responseData[@"recentactivity"] != [NSNull null]) {
+            count = (unsigned long)[responseData[@"recentactivity"] count];
         }
         NSLog(@"Added profile for friend %@ with %lu recent games", friendGamertag, count);
     }
     
     // Download gamerpic and avatar images.
-    // TEMP
-    //NSString *gamerpic_url_str = responseData[@"Player"][@"Avatar"][@"Gamerpic"][@"Large"];
-    NSString *gamerpic_url_str = responseData[@"data"][@"avatar"][@"large"];
+    NSString *gamerpic_url_str = responseData[@"avatar"][@"large"];
     [self imageRequestWithURL:gamerpic_url_str success:
         ^(NSString *savedImagePath) { [self processImage:savedImagePath]; }];
-    // TEMP
-    //NSString *avatar_url_str = responseData[@"Player"][@"Avatar"][@"Body"];
-    NSString *avatar_url_str = responseData[@"data"][@"avatar"][@"full"];
+    NSString *avatar_url_str = responseData[@"avatar"][@"full"];
     [self imageRequestWithURL:avatar_url_str success:
         ^(NSString *savedImagePath) { [self processImage:savedImagePath]; }];
     
@@ -381,21 +343,19 @@
         return;
     }
     
+    // Save a summary of the player info with the achievement.
+    NSDictionary *player_dict = @{@"gamertag": responseData[@"gamertag"],
+                                  @"gamerscore": responseData[@"gamerscore"],
+                                  @"avatar": responseData[@"avatar"]};
+    
     // Get Acheivements for the Recent Games.
-    // TEMP
-    //if ([responseData[@"RecentGames"] isKindOfClass:[NSArray class]]) {
-    //    NSArray *games = responseData[@"RecentGames"];
-    if (responseData[@"data"][@"recentactivity"] != [NSNull null]) {
-        NSArray *games = responseData[@"data"][@"recentactivity"];
+    if (responseData[@"recentactivity"] != [NSNull null]) {
+        NSArray *games = responseData[@"recentactivity"];
         for (NSDictionary *game in games) {
             
             // Some of these "games" are console apps like Netflix that don't have achievements.
             // Detect them by analyzing the URL since this API doesn't provide isApp flag.
-            // TEMP
-            //NSString *game_boxart_url_str = game[@"BoxArt"][@"Large"];
             NSString *game_boxart_url_str = game[@"artwork"][@"large"];
-            //if ([game_boxart_url_str rangeOfString:@"/consoleAssets/"].location != NSNotFound) {
-                //NSLog(@"Skipping recent game console app for %@: %@", friendGamertag, game[@"Name"]);
             BOOL isApp = [game[@"isapp"] boolValue];
             if (isApp) {
                 NSLog(@"Skipping recent game console app for %@: %@", friendGamertag, game[@"title"]);
@@ -408,14 +368,11 @@
             
             // Get game achievements.
             NSString *acheivements_url_str = [NSString stringWithFormat:
-                                              // TEMP
-                                              //@"http://xboxapi.com/v1/achievements/%@/%@",
-                                              //game[@"ID"], friendGamertag];
                                               @"http://xboxleaders.com/api/achievements.json?gameid=%@&gamertag=%@",
                                               game[@"id"], friendGamertag];
             
             [self sendRequestWithURL:acheivements_url_str success:
-                ^(NSDictionary *responseData) { [self processAchievements:responseData]; }];
+             ^(NSDictionary *responseData) { [self processAchievements:responseData forPlayer:player_dict forGame:game]; }];
         }
     } else {
         // User has game history hidden in their privacy settings.
@@ -424,36 +381,24 @@
     
 }
 
--(void)processAchievements:(NSDictionary *)responseData
+-(void)processAchievements:(NSDictionary *)responseData forPlayer:(NSDictionary *)player forGame:(NSDictionary *)game
 {
-    // TEMP
-    //NSString *gamertag = responseData[@"Player"][@"Gamertag"];
-    NSString *gamertag = responseData[@"data"][@"gamertag"];
+    NSString *gamertag = responseData[@"gamertag"];
     int unlockedCount = 0;
-    //if ([responseData[@"Achievements"] isKindOfClass:[NSArray class]]) {
-    if (responseData[@"data"][@"achievements"] != [NSNull null]) {
+    if (responseData[@"achievements"] != [NSNull null]) {
     
         //NSArray *achievements = responseData[@"Achievements"];
-        NSArray *achievements = responseData[@"data"][@"achievements"];
+        NSArray *achievements = responseData[@"achievements"];
         for (NSDictionary *achievement in achievements) {
     
-            //long earnedOn = [achievement[@"EarnedOn-UNIX"] integerValue];
-            //if (earnedOn != 0) {
             BOOL isUnlocked = [achievement[@"unlocked"] boolValue];
             if (isUnlocked) {
-                // Save the Player and Game info with the Achievement.
-                //[self.achievementsUnsorted addObject: @{@"Player": responseData[@"Player"],
-                //                                        @"Game": responseData[@"Game"],
-                //                                        @"Achievement": achievement}];
-                [self.achievementsUnsorted addObject: @{@"gamertag": responseData[@"data"][@"gamertag"],
-                                                        @"game": responseData[@"data"][@"game"],
-                                                        @"Achievement": achievement}];
+                // Save the Game and Player info with the Achievement.
+                [self.achievementsUnsorted addObject: @{@"player": player,
+                                                        @"game": game,
+                                                        @"achievement": achievement}];
                 // Get achievement image.
-                //NSString *achievement_image_url_str = achievement[@"UnlockedTileUrl"];
                 NSString *achievement_image_url_str = achievement[@"artwork"][@"unlocked"];
-                if (![achievement_image_url_str isKindOfClass:[NSString class]]) {
-                    achievement_image_url_str = achievement[@"TileUrl"];
-                }
                 [self imageRequestWithURL:achievement_image_url_str success:
                     ^(NSString *savedImagePath) { [self processImage:savedImagePath]; }];
                 
@@ -465,8 +410,7 @@
         ;;
     }
     NSLog(@"Added %i achievements for %@ for game %@", unlockedCount,
-          //gamertag, responseData[@"Game"][@"Name"]);
-          gamertag, responseData[@"data"][@"game"]);
+          gamertag, responseData[@"game"]);
 }
 
 -(void)processImage:(NSString *)savedImagePath
@@ -535,18 +479,11 @@
              if (!response) {
                  myErrorMessage = [NSString stringWithFormat:@"Empty response from %@", url_encoded];
              } else {
-                 // TEMP
-                 //BOOL isSuccess = [response[@"Success"] boolValue];
-                 //if (!isSuccess) {
-                 //    myErrorMessage = response[@"Error"];
-                 //} else {
-                 //    myResponseDictionary = response;
-                 //}
                  BOOL isSuccess = [response[@"status"] isEqualToString:@"success"];
                  if (!isSuccess) {
                      myErrorMessage = response[@"data"][@"message"];
                  } else {
-                     myResponseDictionary = response;
+                     myResponseDictionary = response[@"data"];
                  }
              }
          }
@@ -591,7 +528,7 @@
     BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:savedDataPath];
     if (fileExists) {
         // We might have already downloaded this image, e.g. if multiple friends played the same game.
-        //NSLog(@"Using previously downloaded image for %@ found at %@", url, savedDataPath);   // DEBUG
+        NSLog(@"Using previously downloaded image for %@ found at %@", url, savedDataPath);   // DEBUG
         success(savedDataPath);
         return;
     } else {
@@ -610,7 +547,7 @@
 
     NSString *url_encoded = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url_encoded]];
-    //NSLog(@"Sending image request: %@", url_encoded); // DEBUG
+    NSLog(@"Sending image request: %@", url_encoded); // DEBUG
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue]
                            completionHandler: ^(NSURLResponse *urlResponse, NSData *responseData, NSError *connectionError)
      {
@@ -624,7 +561,7 @@
          }
          if (myErrorMessage) {
              if (retries > 0) {
-                 //NSLog(@"Retrying image request for %@", url_encoded);    // DEBUG
+                 NSLog(@"Retrying image request for %@", url_encoded);    // DEBUG
                  [self imageRequestWithURL:url success:success withRetries:(retries-1)];
              } else {
                  if (!self.isInitializationError) {
@@ -659,7 +596,7 @@
 {
     NSMutableArray *filtered = [[NSMutableArray alloc] init];
     for (NSDictionary *achievementDict in self.achievementsFromJSON) {
-        if ([achievementDict[@"Player"][@"Gamertag"] isEqualToString:gamertag]) {
+        if ([achievementDict[@"player"][@"gamertag"] isEqualToString:gamertag]) {
             [filtered addObject:achievementDict];
         }
     }
@@ -679,7 +616,7 @@
 -(Profile *) friendProfileWithGamertag:(NSString *)gamertag
 {
     for (NSDictionary *friendProfile in self.friendProfilesFromJSON) {
-        if ([friendProfile[@"Player"][@"Gamertag"] isEqualToString:gamertag]) {
+        if ([friendProfile[@"gamertag"] isEqualToString:gamertag]) {
             return [[Profile alloc] initWithDictionary:friendProfile];
         }
     }

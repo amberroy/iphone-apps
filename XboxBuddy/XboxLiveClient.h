@@ -19,10 +19,6 @@
 
 +(NSString *)filePathForImageUrl:(NSString *)url;
 
-// TODO: move this to util
-+(UIImage *)createRoundedUserWithImage:(UIImage *)image;
-
-
 -(NSArray *) achievements;
 -(NSArray *) achievementsWithGamertag:(NSString *)gamertag;
 

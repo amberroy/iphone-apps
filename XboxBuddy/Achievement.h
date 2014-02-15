@@ -37,6 +37,7 @@
 
 // TODO: move this to util file
 +(NSString *)timeAgoWithDate:(NSDate *)date;
++(UIImage *)createRoundedUserWithImage:(UIImage *)image;
 
 +(NSArray *)achievementsWithArray:(NSArray *)array;
 

@@ -651,30 +651,7 @@
     return nil;
 }
 
-// TODO: Move to util file
-+(UIImage *)createRoundedUserWithImage:(UIImage *)image {
-    CGSize imageSize = image.size;
-    CGRect imageRect = CGRectMake(0, 0, imageSize.width, imageSize.height);
 
-    UIGraphicsBeginImageContextWithOptions(imageSize, NO, 0.0);
-
-    UIBezierPath *path = [UIBezierPath bezierPathWithOvalInRect:imageRect];
-    [path addClip];
-    [image drawInRect:imageRect];
-
-    // Uncomment for image outline
-    /*
-    CGContextRef ctx = UIGraphicsGetCurrentContext();
-    CGContextSetStrokeColorWithColor(ctx, [[UIColor grayColor] CGColor]);
-    [path setLineWidth:2.0f];
-    [path stroke];
-    */
-
-    UIImage *roundedImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-
-    return roundedImage;
-}
 
 @end
 

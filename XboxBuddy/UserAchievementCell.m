@@ -7,6 +7,13 @@
 //
 
 #import "UserAchievementCell.h"
+#import "XboxLiveClient.h"
+
+@interface UserAchievementCell ()
+
+@property Achievement *achievementObj;
+
+@end
 
 @implementation UserAchievementCell
 
@@ -24,6 +31,29 @@
     [super setSelected:selected animated:animated];
 
     // Configure the view for the selected state
+}
+
+
+- (void)initWithAchievement:(Achievement *)achievementObj
+{
+    self.achievementObj = achievementObj;
+    
+    UIImage *achievementImage;
+    NSString *achievementPath = [XboxLiveClient filePathForImageUrl:achievementObj.imageUrl];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:achievementPath]) {
+        achievementImage = [UIImage imageWithContentsOfFile:achievementPath];
+    } else {
+        NSLog(@"Achievemnt image not found, using placeholder instead of %@", achievementPath);
+        achievementImage = [UIImage imageNamed:@"TempAchievementImage.png"];
+    }
+    self.achievementImage.image = achievementImage;
+    
+    self.achievementPoints.text = [NSString stringWithFormat:@"%i G", achievementObj.points];
+    self.gameName.text = achievementObj.gameName;
+    self.gameProgress.text = [NSString stringWithFormat:@"%i%%", achievementObj.gameProgress];
+    self.achievementName.text = [NSString stringWithFormat:@"%@: %@",
+                                 achievementObj.name, achievementObj.detail];
+    self.achievementEarnedOn.text = [Achievement timeAgoWithDate:achievementObj.earnedOn];
 }
 
 @end

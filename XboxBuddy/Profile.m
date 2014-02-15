@@ -27,14 +27,6 @@
         self.gamerscore = [dict[@"Player"][@"Gamerscore"] integerValue];
         self.gamerpicImageUrl = dict[@"Player"][@"Avatar"][@"Gamerpic"][@"Large"];
         self.avatarImageUrl = dict[@"Player"][@"Avatar"][@"Body"];
-        self.onlineStatus = dict[@"Player"][@"Status"][@"Online_Status"];
-        self.isOnline = [dict[@"Player"][@"Status"][@"Online"] boolValue];
-        self.tier = dict[@"Player"][@"Status"][@"Tier"];
-        
-        self.name = dict[@"Player"][@"Name"];
-        self.location = dict[@"Player"][@"Location"];
-        self.motto = dict[@"Player"][@"Motto"];
-        self.biography = dict[@"Player"][@"Bio"];
         
         if (dict[@"LastAchievement"] != [NSNull null]) {
             self.gameName = dict[@"LastAchievement"][@"Game"][@"Name"];

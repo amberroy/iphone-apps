@@ -25,8 +25,11 @@
 @property NSDate *startInit;
 @property NSDate *endInit;
 @property NSTimeInterval secondsToInit;
+
+// Configuration settings
 @property int defaultRetries;
 @property int defaultCachePolicy;
+@property int maxRecentGames;
 
 // Callback to the object that envoked our init method.
 @property (nonatomic, copy) void (^completionBlock)(NSString *errorDescription);
@@ -48,6 +51,7 @@
 // Called from our async request completion block to handle received data.
 -(void)processProfile:(NSDictionary *)responseData;
 -(void)processFriends:(NSDictionary *)responseData;
+-(void)processGames:(NSDictionary *)responseData;
 -(void)processImage:(NSString *)savedImagePath;
 
 @end
@@ -134,6 +138,7 @@
     self.isInitializationError = NO;
     self.defaultRetries = 3;
     self.defaultCachePolicy = NSURLRequestUseProtocolCachePolicy;
+    self.maxRecentGames = 3;
     
     if (self.isOfflineMode) {
         [self checkSavedDataExists];
@@ -277,8 +282,28 @@
         return;
     }
     
-    // Get profiles for all my friends.
+    // Get Games for all my friends.
     for (NSDictionary *friend in responseData[@"Friends"]) {
+        NSString *friendGamertag = friend[@"GamerTag"];
+        NSString *games_url_str = [NSString stringWithFormat:
+                                     @"http://xboxapi.com/v1/games/%@",
+                                     friendGamertag];
+        [self sendRequestWithURL:games_url_str success:
+         ^(NSDictionary *responseData) { [self processGames:responseData]; }];
+        
+    }
+    
+    // Get games for current user.
+    NSString *games_url_str = [NSString stringWithFormat: @"http://xboxapi.com/v1/games/%@", self.userGamertag];
+    [self sendRequestWithURL:games_url_str success:
+     ^(NSDictionary *responseData) { [self processGames:responseData]; }];
+    
+}
+
+-(void)fetchProfiles:(NSArray *)friends     // UNUSED for now.
+{
+    // Get profiles for all my friends.
+    for (NSDictionary *friend in friends) {
         NSString *friendGamertag = friend[@"GamerTag"];
         NSString *profile_url_str = [NSString stringWithFormat:
                                      @"http://xboxapi.com/v1/profile/%@",
@@ -286,37 +311,35 @@
         [self sendRequestWithURL:profile_url_str success:
             ^(NSDictionary *responseData) { [self processProfile:responseData]; }];
     }
-    
+
     // Get profile for current user.
     NSString *profile_url_str = [NSString stringWithFormat: @"http://xboxapi.com/v1/profile/%@", self.userGamertag];
     [self sendRequestWithURL:profile_url_str success:
         ^(NSDictionary *responseData) { [self processProfile:responseData]; }];
-    
+
 }
 
--(void)processProfile:(NSDictionary *)responseData
+-(void)processProfile:(NSDictionary *)responseData      // UNUSED for now.
 {
     NSString *friendGamertag = responseData[@"Player"][@"Gamertag"];
-    unsigned long count = 0;
-    if (responseData[@"RecentGames"] != [NSNull null]) {
-        count = (unsigned long)[responseData[@"RecentGames"] count];
-    }
-    
     if ([friendGamertag isEqualToString:self.userGamertag]) {
         self.userProfileFromJSON = responseData;
-        NSLog(@"Added profile for current user %@ with %lu recent games", self.userGamertag, count);
+        NSLog(@"Added profile for current user %@", self.userGamertag);
     } else {
         [self.friendProfilesUnsorted addObject:responseData];
-        NSLog(@"Added profile for friend %@ with %lu recent games", friendGamertag, count);
+        NSLog(@"Added profile for friend %@", friendGamertag);
     }
-    
+}
+
+-(void)processGames:(NSDictionary *)responseData
+{
     // Download gamerpic and avatar images.
     NSString *gamerpic_url_str = responseData[@"Player"][@"Avatar"][@"Gamerpic"][@"Large"];
     [self imageRequestWithURL:gamerpic_url_str success:
-        ^(NSString *savedImagePath) { [self processImage:savedImagePath]; }];
+     ^(NSString *savedImagePath) { [self processImage:savedImagePath]; }];
     NSString *avatar_url_str = responseData[@"Player"][@"Avatar"][@"Body"];
     [self imageRequestWithURL:avatar_url_str success:
-        ^(NSString *savedImagePath) { [self processImage:savedImagePath]; }];
+     ^(NSString *savedImagePath) { [self processImage:savedImagePath]; }];
     
     if (self.isInitializationError) {
         NSLog(@"Initialization error detected, skipping fetching achievements.");
@@ -328,23 +351,30 @@
                                   @"Gamerscore": responseData[@"Player"][@"Gamerscore"],
                                   @"Avatar": responseData[@"Player"][@"Avatar"]};
     
-    // Get Acheivements for the Recent Games.
-    // TODO: Build our own list of Recent Games from the player's full Games list.
-    if (responseData[@"RecentGames"] != [NSNull null]) {
-        NSArray *games = responseData[@"RecentGames"];
+    // Get Acheivements for a handful of the most recently played games.
+    NSString *friendGamertag = responseData[@"Player"][@"Gamertag"];
+    int recent_game_count = 0;
+    if ([responseData[@"Games"] isKindOfClass:[NSArray class]]) {
+        NSArray *games = responseData[@"Games"];
         for (NSDictionary *game in games) {
             
             // Some of these "games" are console apps like Netflix that don't have achievements.
             // Detect them by analyzing the URL since this API doesn't provide isApp flag.
             NSString *game_boxart_url_str = game[@"BoxArt"][@"Large"];
             if ([game_boxart_url_str rangeOfString:@"/consoleAssets/"].location != NSNotFound) {
-                NSLog(@"Skipping recent game console app for %@: %@", friendGamertag, game[@"Name"]);
+                //NSLog(@"Skipping recent game console app for %@: %@", friendGamertag, game[@"Name"]);   // DEBUG
                 continue;   // Console app, skip it.
+            }
+            
+            // Skip games with no achievements unlocked.
+            if ([game[@"Progress"][@"Achievements"] intValue] == 0) {
+                //NSLog(@"Skipping game with no achievements unlocked for %@: %@", friendGamertag, game[@"Name"]);   // DEBUG
+                continue;
             }
             
             // Get game artwork.
             [self imageRequestWithURL:game_boxart_url_str success:
-                ^(NSString *savedImagePath) { [self processImage:savedImagePath]; }];
+             ^(NSString *savedImagePath) { [self processImage:savedImagePath]; }];
             
             // Get game achievements.
             NSString *acheivements_url_str = [NSString stringWithFormat:
@@ -353,10 +383,24 @@
             
             [self sendRequestWithURL:acheivements_url_str success:
              ^(NSDictionary *responseData) { [self processAchievements:responseData forPlayer:player_dict forGame:game]; }];
+            
+            // Exit loop when we've collected the desired number of most recent games.
+            recent_game_count++;
+            if (recent_game_count == self.maxRecentGames) {
+                break;
+            }
         }
     } else {
         // User has game history hidden in their privacy settings.
         NSLog(@"Cannot view Games for %@: Privacy Settings Enabled", friendGamertag);
+    }
+    
+    if ([friendGamertag isEqualToString:self.userGamertag]) {
+        self.userProfileFromJSON = responseData;
+        NSLog(@"Added %i recent games for current user %@", recent_game_count, self.userGamertag);
+    } else {
+        [self.friendProfilesUnsorted addObject:responseData];
+        NSLog(@"Added %i recent games for friend %@", recent_game_count, friendGamertag);
     }
     
 }

@@ -24,6 +24,7 @@
 @property NSInteger gameAchievementsEarned;
 @property NSInteger gameProgress;
 @property NSString *gameImageUrl;
+@property NSDate *achievementEarnedOn;
 
 +(NSArray *)profilesWithArray:(NSArray *)array;
 - (Profile *)initWithDictionary:(NSDictionary *)dict;

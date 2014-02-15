@@ -17,7 +17,8 @@
 @property (nonatomic, strong) NSArray *achievements;
 
 @property (strong, nonatomic) IBOutlet UIImageView *gamerImage;
-@property (strong, nonatomic) IBOutlet UILabel *gamerTag;
+@property (strong, nonatomic) IBOutlet UILabel *gamertag;
+@property (weak, nonatomic) IBOutlet UILabel *gamerscore;
 
 @end
 
@@ -56,7 +57,8 @@
     // we'll need to work out how we want to do data refresh
     [self setup];
 
-    self.gamerTag.text = self.profile.gamertag;
+    self.gamertag.text = self.profile.gamertag;
+    self.gamerscore.text = [NSString stringWithFormat:@"%i G", self.profile.gamerscore];
     
     UIImage *gamerpicImage;
     NSString *gamerpicPath = [XboxLiveClient filePathForImageUrl:self.profile.gamerpicImageUrl];
@@ -66,7 +68,7 @@
         gamerpicImage = [UIImage imageNamed:@"TempGamerImage.png"];
         NSLog(@"Gamerpic image not found, using placeholder instead of %@", gamerpicPath);
     }
-    self.gamerImage.image = [XboxLiveClient createRoundedUserWithImage:gamerpicImage];
+    self.gamerImage.image = gamerpicImage;
 }
 
 #pragma mark - Table view data source
@@ -84,21 +86,8 @@
 
     UserAchievementCell *cell = (UserAchievementCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     Achievement *achievementObj = self.achievements[indexPath.row];
-
-    cell.achievementName.text = achievementObj.name;
-    cell.achievementDescription.text = achievementObj.detail;
-    cell.achievementEarnedOn.text = [Achievement timeAgoWithDate:achievementObj.earnedOn];
-
-    UIImage *achievementImage;
-    NSString *achievementPath = [XboxLiveClient filePathForImageUrl:achievementObj.imageUrl];
-    if ([[NSFileManager defaultManager] fileExistsAtPath:achievementPath]) {
-        achievementImage = [UIImage imageWithContentsOfFile:achievementPath];
-    } else {
-        achievementImage = [UIImage imageNamed:@"TempAchievementImage.png"];
-        NSLog(@"Achievement image not found, using placeholder instead of %@", achievementPath);
-    }
-    cell.achievementImage.image = achievementImage;
-
+    [cell initWithAchievement:achievementObj];
+    
     return cell;
 }
 

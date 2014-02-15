@@ -7,6 +7,14 @@
 //
 
 #import "FriendCell.h"
+#import "Profile.h"
+#import "XboxLiveClient.h"
+
+@interface FriendCell ()
+
+@property Profile *profileObj;
+
+@end
 
 @implementation FriendCell
 
@@ -24,6 +32,28 @@
     [super setSelected:selected animated:animated];
 
     // Configure the view for the selected state
+}
+
+- (void)initWithProfile:(Profile *)profileObj
+{
+    self.profileObj = profileObj;
+    UIImage *gamerpicImage;
+    NSString *gamerpicPath = [XboxLiveClient filePathForImageUrl:profileObj.gamerpicImageUrl];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:gamerpicPath]) {
+        gamerpicImage = [UIImage imageWithContentsOfFile:gamerpicPath];
+    } else {
+        NSLog(@"Gamerpic image not found, using placeholder instead of %@", gamerpicPath);
+        gamerpicImage = [UIImage imageNamed:@"TempGamerImage.png"];
+    }
+    self.gamerImage.image = gamerpicImage;
+    
+    self.gamerTag.text = profileObj.gamertag;
+    self.gameName.text = profileObj.gameName;
+    self.gamerscore.text = [NSString stringWithFormat:@"%i G", profileObj.gamerscore];
+    self.achievementEarnedOn.text = [Achievement timeAgoWithDate:profileObj.achievementEarnedOn];
+    
+    
+    
 }
 
 @end

@@ -72,18 +72,43 @@
     if (timeAgoInSeconds == 0) {
         return @"Just Now";
     } else if (timeAgoInSeconds < 60) {
-        return [NSString stringWithFormat:@"%.0f seconds ago", timeAgoInSeconds];
+        return [NSString stringWithFormat:@"%.0fs ago", timeAgoInSeconds];
     } else if (timeAgoInSeconds < 3600) {
-        return [NSString stringWithFormat:@"%.0f minutes ago", floor(timeAgoInSeconds/60)];
+        return [NSString stringWithFormat:@"%.0fm ago", floor(timeAgoInSeconds/60)];
     } else if (timeAgoInSeconds < 86400) {
-        return [NSString stringWithFormat:@"%.0f hours ago", floor(timeAgoInSeconds/3600)];
+        return [NSString stringWithFormat:@"%.0fh ago", floor(timeAgoInSeconds/3600)];
     } else if (timeAgoInSeconds < 86400 * 7) {
-        return [NSString stringWithFormat:@"%.0f days ago", floor(timeAgoInSeconds/86400)];
+        return [NSString stringWithFormat:@"%.0fd ago", floor(timeAgoInSeconds/86400)];
     } else {
         NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
         [dateFormat setDateFormat:@"MM/dd/yy"];
         return [dateFormat stringFromDate:date];
     }
+}
+
+// TODO: Move to util file
++(UIImage *)createRoundedUserWithImage:(UIImage *)image {
+    CGSize imageSize = image.size;
+    CGRect imageRect = CGRectMake(0, 0, imageSize.width, imageSize.height);
+    
+    UIGraphicsBeginImageContextWithOptions(imageSize, NO, 0.0);
+    
+    UIBezierPath *path = [UIBezierPath bezierPathWithOvalInRect:imageRect];
+    [path addClip];
+    [image drawInRect:imageRect];
+    
+    // Uncomment for image outline
+    /*
+     CGContextRef ctx = UIGraphicsGetCurrentContext();
+     CGContextSetStrokeColorWithColor(ctx, [[UIColor grayColor] CGColor]);
+     [path setLineWidth:2.0f];
+     [path stroke];
+     */
+    
+    UIImage *roundedImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return roundedImage;
 }
 
 

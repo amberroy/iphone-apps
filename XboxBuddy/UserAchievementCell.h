@@ -7,12 +7,18 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Achievement.h"
 
 @interface UserAchievementCell : UITableViewCell
 
 @property (strong, nonatomic) IBOutlet UIImageView *achievementImage;
 @property (strong, nonatomic) IBOutlet UILabel *achievementName;
-@property (strong, nonatomic) IBOutlet UILabel *achievementDescription;
 @property (strong, nonatomic) IBOutlet UILabel *achievementEarnedOn;
+@property (weak, nonatomic) IBOutlet UILabel *achievementPoints;
+
+@property (weak, nonatomic) IBOutlet UILabel *gameName;
+@property (weak, nonatomic) IBOutlet UILabel *gameProgress;
+
+-(void)initWithAchievement:(Achievement *)achievementObj;
 
 @end

@@ -64,18 +64,7 @@
 
     FriendCell *cell = (FriendCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     Profile *profile = self.friends[indexPath.row];
-
-    cell.gamerTag.text = profile.gamertag;
-    
-    UIImage *gamerpicImage;
-    NSString *gamerpicPath = [XboxLiveClient filePathForImageUrl:profile.gamerpicImageUrl];
-    if ([[NSFileManager defaultManager] fileExistsAtPath:gamerpicPath]) {
-        gamerpicImage = [UIImage imageWithContentsOfFile:gamerpicPath];
-    } else {
-        gamerpicImage = [UIImage imageNamed:@"TempGamerImage.png"];
-        NSLog(@"Gamerpic image not found, using placeholder instead of %@", gamerpicPath);
-    }
-    cell.gamerImage.image = [XboxLiveClient createRoundedUserWithImage:gamerpicImage];
+    [cell initWithProfile:profile];
 
     return cell;
 }

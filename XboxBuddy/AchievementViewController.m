@@ -15,9 +15,13 @@
 @property (strong, nonatomic) IBOutlet UILabel *gamerTag;
 @property (strong, nonatomic) IBOutlet UIImageView *achievementImage;
 @property (strong, nonatomic) IBOutlet UILabel *achievementName;
-@property (strong, nonatomic) IBOutlet UILabel *achievementEarnedOn;
 @property (strong, nonatomic) IBOutlet UILabel *achievementDescription;
-@property (strong, nonatomic) IBOutlet UIImageView *gameBoxImage;
+@property (strong, nonatomic) IBOutlet UILabel *achievementEarnedOn;
+
+@property (weak, nonatomic) IBOutlet UILabel *headline1;
+@property (weak, nonatomic) IBOutlet UILabel *headline2;
+@property (weak, nonatomic) IBOutlet UILabel *gameName;
+@property (weak, nonatomic) IBOutlet UILabel *gameProgress;
 
 @end
 
@@ -37,6 +41,9 @@
     [super viewDidLoad];
 
     self.gamerTag.text = self.achievement.gamertag;
+    self.headline1.text = @"unlocked an";
+    self.headline2.text = [NSString stringWithFormat:@"achievement worth %i Gamerscore", self.achievement.points];
+    
     self.achievementName.text = self.achievement.name;
     self.achievementDescription.text = self.achievement.detail;
     self.achievementEarnedOn.text = [Achievement timeAgoWithDate:self.achievement.earnedOn];
@@ -49,7 +56,7 @@
         gamerpicImage = [UIImage imageNamed:@"TempGamerImage.png"];
         NSLog(@"Gamerpic image not found, using placeholder instead of %@", gamerpicPath);
     }
-    self.gamerImage.image = [XboxLiveClient createRoundedUserWithImage:gamerpicImage];
+    self.gamerImage.image = gamerpicImage;
     
     UIImage *achievmentImage;
     NSString *achievementPath = [XboxLiveClient filePathForImageUrl:self.achievement.imageUrl];
@@ -61,16 +68,11 @@
     }
     self.achievementImage.image = achievmentImage;
 
-    UIImage *boxArtImage;
-    NSString *boxArtPath = [XboxLiveClient filePathForImageUrl:self.achievement.gameImageUrl];
-    if ([[NSFileManager defaultManager] fileExistsAtPath:boxArtPath]) {
-        boxArtImage = [UIImage imageWithContentsOfFile:boxArtPath];
-    } else {
-        boxArtImage = [UIImage imageNamed:@"TempBoxArt.jpg"];
-        NSLog(@"Box Art image not found, using placeholder instead of %@", boxArtPath);
-    }
-    self.gameBoxImage.image = boxArtImage;
-    
+    self.gameName.text = [NSString stringWithFormat:@"Game: %@", self.achievement.gameName];
+    self.gameProgress.text = [NSString stringWithFormat:@"Progress: %i/%i unlocked (%i%%)",
+                              self.achievement.gameAchievementsEarned,
+                              self.achievement.gameAchievementsPossible,
+                              self.achievement.gameProgress];
     
 }
 

@@ -329,6 +329,7 @@
                                   @"Avatar": responseData[@"Player"][@"Avatar"]};
     
     // Get Acheivements for the Recent Games.
+    // TODO: Build our own list of Recent Games from the player's full Games list.
     if (responseData[@"RecentGames"] != [NSNull null]) {
         NSArray *games = responseData[@"RecentGames"];
         for (NSDictionary *game in games) {

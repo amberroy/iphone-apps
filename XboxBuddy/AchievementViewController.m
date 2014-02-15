@@ -38,7 +38,7 @@
 
     self.gamerTag.text = self.achievement.gamertag;
     self.achievementName.text = self.achievement.name;
-    self.achievementDescription.text = self.achievement.description;
+    self.achievementDescription.text = self.achievement.detail;
     self.achievementEarnedOn.text = [Achievement timeAgoWithDate:self.achievement.earnedOn];
     
     UIImage *gamerpicImage;
@@ -60,7 +60,7 @@
         NSLog(@"Achievement image not found, using placeholder instead of %@", achievementPath);
     }
     self.achievementImage.image = achievmentImage;
-    
+
     UIImage *boxArtImage;
     NSString *boxArtPath = [XboxLiveClient filePathForImageUrl:self.achievement.gameImageUrl];
     if ([[NSFileManager defaultManager] fileExistsAtPath:boxArtPath]) {

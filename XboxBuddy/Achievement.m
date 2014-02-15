@@ -7,6 +7,7 @@
 //
 
 #import "Achievement.h"
+#import "XboxLiveClient.h"
 
 @implementation Achievement
 
@@ -25,10 +26,10 @@
     if (self) {
         if ([dict[@"Achievement"][@"Name"] isEqualToString:@""]) {
             self.name = @"Secret Achievement";
-            self.description = @"This is a secret achievement. Unlock it to find out more about it.";
+            self.detail = @"This is a secret achievement. Unlock it to find out more about it.";
         } else {
             self.name = dict[@"Achievement"][@"Name"];
-            self.description = dict[@"Achievement"][@"Description"];
+            self.detail = dict[@"Achievement"][@"Description"];
         }
         
         self.imageUrl = dict[@"Achievement"][@"UnlockedTileUrl"];
@@ -48,14 +49,20 @@
         self.gamePointsEarned = [dict[@"Game"][@"Progress"][@"Gamerscore"] integerValue];
         double lastPlayed = [dict[@"Game"][@"Progress"][@"LastPlayed-UNIX"] doubleValue];
         self.gameLastPlayed = [NSDate dateWithTimeIntervalSince1970:lastPlayed];
+        self.gameProgress = round((float)self.gameAchievementsEarned / self.gameAchievementsPossible);
         
         self.gamertag = dict[@"Player"][@"Gamertag"];
         self.gamerscore = [dict[@"Player"][@"Gamerscore"] integerValue];
         self.gamerpicImageUrl = dict[@"Player"][@"Avatar"][@"Gamerpic"][@"Large"];
         self.avatarImageUrl = dict[@"Player"][@"Avatar"][@"Body"];
+        
+        // Workaround for API bug where HTML escape for apostrophe is used insead of the character.
+        self.detail = [self.detail stringByReplacingOccurrencesOfString:@"&#039;" withString:@"'"];
+        
     }
     return self;
 }
+
 
 // TODO: move this to util file
 +(NSString *)timeAgoWithDate:(NSDate *)date {

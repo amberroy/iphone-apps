@@ -26,14 +26,24 @@
         self.gamertag = dict[@"Player"][@"Gamertag"];
         self.gamerscore = [dict[@"Player"][@"Gamerscore"] integerValue];
         self.gamerpicImageUrl = dict[@"Player"][@"Avatar"][@"Gamerpic"][@"Large"];
-        self.onlineStatus = dict[@"Player"][@"Status"][@"Online_Status"];
         self.avatarImageUrl = dict[@"Player"][@"Avatar"][@"Body"];
+        self.onlineStatus = dict[@"Player"][@"Status"][@"Online_Status"];
+        self.isOnline = [dict[@"Player"][@"Status"][@"Online"] boolValue];
+        self.tier = dict[@"Player"][@"Status"][@"Tier"];
+        
+        self.name = dict[@"Player"][@"Name"];
+        self.location = dict[@"Player"][@"Location"];
+        self.motto = dict[@"Player"][@"Motto"];
+        self.biography = dict[@"Player"][@"Bio"];
         
         if (dict[@"LastAchievement"] != [NSNull null]) {
-           self.gameName = dict[@"LastAchievement"][@"Game"][@"Name"];
-           self.gameImageUrl = dict[@"LastAchievement"][@"Game"][@"BoxArt"][@"Large"];
-           self.gamePointsPossible = [dict[@"LastAchievement"][@"Game"][@"PossibleGamerscore"] integerValue];
-           self.gamePointsEarned = [dict[@"LastAchievement"][@"Game"][@"Progress"][@"Gamerscore"] integerValue];
+            self.gameName = dict[@"LastAchievement"][@"Game"][@"Name"];
+            self.gamePointsPossible = [dict[@"LastAchievement"][@"Game"][@"PossibleGamerscore"] integerValue];
+            self.gamePointsEarned = [dict[@"LastAchievement"][@"Game"][@"Progress"][@"Gamerscore"] integerValue];
+            self.gameAchievementsPossible = [dict[@"LastAchievement"][@"Game"][@"PossibleAchievements"] integerValue];
+            self.gameAchievementsEarned = [dict[@"LastAchievement"][@"Game"][@"Progress"][@"Achievements"] integerValue];
+            self.gameImageUrl = dict[@"LastAchievement"][@"Game"][@"BoxArt"][@"Large"];
+            self.gameProgress = round((float)self.gameAchievementsEarned / self.gameAchievementsPossible);
         }
     }
     

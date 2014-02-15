@@ -26,6 +26,7 @@
 @property NSDate *endInit;
 @property NSTimeInterval secondsToInit;
 @property int defaultRetries;
+@property int defaultCachePolicy;
 
 // Callback to the object that envoked our init method.
 @property (nonatomic, copy) void (^completionBlock)(NSString *errorDescription);
@@ -35,7 +36,8 @@
 -(void)imageRequestWithURL:(NSString *)url success:(void(^)(NSString *savedImagePath))success;
 
 // Recursive versions of above.
--(void)sendRequestWithURL:(NSString *)url success:(void(^)(NSDictionary *responseDictionary))success withRetries:(int)retries;
+-(void)sendRequestWithURL:(NSString *)url success:(void(^)(NSDictionary *responseDictionary))success withRetries:(int)retries
+          withCachePolicy:(NSURLRequestCachePolicy)cachePolicy;
 -(void)imageRequestWithURL:(NSString *)url success:(void(^)(NSString *savedImagePath))success withRetries:(int)retries;
 
 // Methods that determine when initialization is complete.
@@ -131,6 +133,7 @@
     self.friendProfilesUnsorted = [[NSMutableArray alloc] init];
     self.isInitializationError = NO;
     self.defaultRetries = 3;
+    self.defaultCachePolicy = NSURLRequestUseProtocolCachePolicy;
     
     if (self.isOfflineMode) {
         [self checkSavedDataExists];
@@ -202,10 +205,8 @@
         NSString *gamertag = achievement[@"Player"][@"Gamertag"];
         if (![gamertagArray containsObject:gamertag]) {
             [gamertagArray addObject:gamertag];
-            // This is the most recent achievement earned by this player, remember it,
-            // but first remove the Player info as we'll already have it in their profile.
+            // This is the most recent achievement earned by this player, remember it.
             NSMutableDictionary *achievement_mdict = [[NSMutableDictionary alloc] initWithDictionary:achievement];
-            [achievement_mdict removeObjectForKey:@"Player"];
             lastAchievement[gamertag] = achievement_mdict;
         }
     }
@@ -269,7 +270,7 @@
 -(void)processFriends:(NSDictionary *)responseData
 {
     int count = (int)[responseData[@"Friends"] count];
-    NSLog(@"Found %i Friends for current user %@", count, responseData[@"Player"][@"Gamertag"]);
+    NSLog(@"Found %i Friends for current user", count);
     
     if (self.isInitializationError) {
         NSLog(@"Initialization error detected, skipping fetching friend profile.");
@@ -296,12 +297,17 @@
 -(void)processProfile:(NSDictionary *)responseData
 {
     NSString *friendGamertag = responseData[@"Player"][@"Gamertag"];
+    unsigned long count = 0;
+    if (responseData[@"RecentGames"] != [NSNull null]) {
+        count = (unsigned long)[responseData[@"RecentGames"] count];
+    }
+    
     if ([friendGamertag isEqualToString:self.userGamertag]) {
         self.userProfileFromJSON = responseData;
-        NSLog(@"Added profile for current user %@", self.userGamertag);
+        NSLog(@"Added profile for current user %@ with %lu recent games", self.userGamertag, count);
     } else {
         [self.friendProfilesUnsorted addObject:responseData];
-        NSLog(@"Added profile for friend %@", friendGamertag);
+        NSLog(@"Added profile for friend %@ with %lu recent games", friendGamertag, count);
     }
     
     // Download gamerpic and avatar images.
@@ -317,8 +323,14 @@
         return;
     }
     
+    // Save a summary of the player info with the achievement.
+    NSDictionary *player_dict = @{@"Gamertag": responseData[@"Player"][@"Gamertag"],
+                                  @"Gamerscore": responseData[@"Player"][@"Gamerscore"],
+                                  @"Avatar": responseData[@"Player"][@"Avatar"]};
+    
     // Get Acheivements for the Recent Games.
-    if ([responseData[@"RecentGames"] isKindOfClass:[NSArray class]]) {
+    // TODO: Build our own list of Recent Games from the player's full Games list.
+    if (responseData[@"RecentGames"] != [NSNull null]) {
         NSArray *games = responseData[@"RecentGames"];
         for (NSDictionary *game in games) {
             
@@ -340,7 +352,7 @@
                                               game[@"ID"], friendGamertag];
             
             [self sendRequestWithURL:acheivements_url_str success:
-                ^(NSDictionary *responseData) { [self processAchievements:responseData]; }];
+             ^(NSDictionary *responseData) { [self processAchievements:responseData forPlayer:player_dict forGame:game]; }];
         }
     } else {
         // User has game history hidden in their privacy settings.
@@ -349,26 +361,28 @@
     
 }
 
--(void)processAchievements:(NSDictionary *)responseData
+-(void)processAchievements:(NSDictionary *)responseData forPlayer:(NSDictionary *)player forGame:(NSDictionary *)game
 {
-    NSString *gamertag = responseData[@"Player"][@"Gamertag"];
     int unlockedCount = 0;
-    if ([responseData[@"Achievements"] isKindOfClass:[NSArray class]]) {
-        
-        NSArray *achievements = responseData[@"Achievements"];
+    if (responseData[@"Achievements"] != [NSNull null]) {
+    
+        //NSArray *achievements = responseData[@"Achievements"];
+        NSMutableArray *achievements = [[NSMutableArray alloc] initWithArray: responseData[@"Achievements"]];
         for (NSDictionary *achievement in achievements) {
     
-            long earnedOn = [achievement[@"EarnedOn-UNIX"] integerValue];
+            long earnedOn = [achievement[@"EarnedOn-UNIX"] boolValue];
             if (earnedOn != 0) {
-                // Save the Player and Game info with the Achievement.
-                [self.achievementsUnsorted addObject: @{@"Player": responseData[@"Player"],
-                                                        @"Game": responseData[@"Game"],
+                // Save the Game and Player info with the Achievement.
+                [self.achievementsUnsorted addObject: @{@"Player": player,
+                                                        @"Game": game,
                                                         @"Achievement": achievement}];
+                
                 // Get achievement image.
                 NSString *achievement_image_url_str = achievement[@"UnlockedTileUrl"];
                 if (![achievement_image_url_str isKindOfClass:[NSString class]]) {
                     achievement_image_url_str = achievement[@"TileUrl"];
                 }
+                
                 [self imageRequestWithURL:achievement_image_url_str success:
                     ^(NSString *savedImagePath) { [self processImage:savedImagePath]; }];
                 
@@ -377,22 +391,23 @@
         }
     }
     NSLog(@"Added %i achievements for %@ for game %@", unlockedCount,
-          gamertag, responseData[@"Game"][@"Name"]);
+          player[@"Gamertag"], game[@"Name"]);
 }
 
 -(void)processImage:(NSString *)savedImagePath
 {
-    // TODO: send notification that we downloaded this image.
+    // Placeholder, do nothing for now.
     
 }
 
 -(void)sendRequestWithURL:(NSString *)url success:(void(^)(NSDictionary *responseDictionary))success
 {
     // Need to pass retries as argument to function to handle recursive case when we retry and recall it.
-    [self sendRequestWithURL:url success:success withRetries:self.defaultRetries];
+    [self sendRequestWithURL:url success:success withRetries:self.defaultRetries withCachePolicy:self.defaultCachePolicy];
 }
 
--(void)sendRequestWithURL:(NSString *)url success:(void(^)(NSDictionary *responseDictionary))success withRetries:(int)retries
+-(void)sendRequestWithURL:(NSString *)url success:(void(^)(NSDictionary *responseDictionary))success
+              withRetries:(int)retries withCachePolicy:(NSURLRequestCachePolicy)cachePolicy
 {
     NSString *url_encoded = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     NSString *requestKey = url_encoded;
@@ -432,7 +447,8 @@
     }
     
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url_encoded]];
-    NSLog(@"Sending request: %@", url_encoded);
+    (retries == self.defaultRetries) ? NSLog(@"Sending request: %@", url_encoded): NSLog(@"Retrying request: %@", url_encoded);
+    
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue]
                            completionHandler: ^(NSURLResponse *urlResponse, NSData *responseData, NSError *connectionError)
      {
@@ -456,8 +472,9 @@
          }
          if (myErrorMessage) {
              if (retries > 0) {
-                 NSLog(@"Retring request for %@", url_encoded);
-                 [self sendRequestWithURL:url success:success withRetries:(retries-1)];
+                 // Force server to reload data on retries.
+                 [self sendRequestWithURL:url success:success withRetries:(retries-1)
+                      withCachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData];
              } else {
                  if (!self.isInitializationError) {
                      self.isInitializationError = YES;

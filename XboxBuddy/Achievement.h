@@ -12,21 +12,22 @@
 
 // Achievement info.
 @property NSString *name;
-@property NSString *description;
+@property NSString *detail;
 @property NSString *imageUrl;
 @property NSDate *earnedOn;
 @property NSInteger points;
 
 // Game info.
 @property NSString *gameName;
-@property NSString *gameImageUrl;
 @property NSInteger gameAchievementsPossible;
 @property NSInteger gamePointsPossible;
+@property NSString *gameImageUrl;
 
 // Player progress on this game.
 @property NSInteger gameAchievementsEarned;
 @property NSInteger gamePointsEarned;
 @property NSDate *gameLastPlayed;
+@property NSInteger gameProgress;
 
 // Player info.
 @property NSString *gamertag;

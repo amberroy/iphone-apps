@@ -36,7 +36,8 @@
 -(void)imageRequestWithURL:(NSString *)url success:(void(^)(NSString *savedImagePath))success;
 
 // Recursive versions of above.
--(void)sendRequestWithURL:(NSString *)url success:(void(^)(NSDictionary *responseDictionary))success withRetries:(int)retries;
+-(void)sendRequestWithURL:(NSString *)url success:(void(^)(NSDictionary *responseDictionary))success withRetries:(int)retries
+          withCachePolicy:(NSURLRequestCachePolicy)cachePolicy;
 -(void)imageRequestWithURL:(NSString *)url success:(void(^)(NSString *savedImagePath))success withRetries:(int)retries;
 
 // Methods that determine when initialization is complete.

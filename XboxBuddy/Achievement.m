@@ -26,7 +26,7 @@
     if (self) {
         if ([dict[@"Achievement"][@"Name"] isEqualToString:@""]) {
             self.name = @"Secret Achievement";
-            self.detail = @"This is a secret achievement. Unlock it to find out more about it.";
+            self.detail = @"Unlock it to find out more about it.";
         } else {
             self.name = dict[@"Achievement"][@"Name"];
             self.detail = dict[@"Achievement"][@"Description"];
@@ -45,19 +45,17 @@
         self.gameAchievementsPossible = [dict[@"Game"][@"PossibleAchievements"] integerValue];
         self.gamePointsPossible = [dict[@"Game"][@"PossibleGamerscore"] integerValue];
         
-        self.gameAchievementsEarned = [dict[@"Game"][@"Progress"][@"EarnedAchievements"] integerValue];
-        self.gamePointsEarned = [dict[@"Game"][@"Progress"][@"Gamerscore"] integerValue];
+        self.gameAchievementsEarned = [dict[@"Game"][@"Progress"][@"Achievements"] integerValue];
+        self.gamePointsEarned = [dict[@"Game"][@"Progress"][@"Score"] integerValue];
         double lastPlayed = [dict[@"Game"][@"Progress"][@"LastPlayed-UNIX"] doubleValue];
         self.gameLastPlayed = [NSDate dateWithTimeIntervalSince1970:lastPlayed];
-        self.gameProgress = round((float)self.gameAchievementsEarned / self.gameAchievementsPossible);
+        double progress = (float)self.gameAchievementsEarned / self.gameAchievementsPossible * 100;
+        self.gameProgress = round(progress);
         
         self.gamertag = dict[@"Player"][@"Gamertag"];
         self.gamerscore = [dict[@"Player"][@"Gamerscore"] integerValue];
         self.gamerpicImageUrl = dict[@"Player"][@"Avatar"][@"Gamerpic"][@"Large"];
         self.avatarImageUrl = dict[@"Player"][@"Avatar"][@"Body"];
-        
-        // Workaround for API bug where HTML escape for apostrophe is used insead of the character.
-        self.detail = [self.detail stringByReplacingOccurrencesOfString:@"&#039;" withString:@"'"];
         
     }
     return self;

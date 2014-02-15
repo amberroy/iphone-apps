@@ -424,7 +424,7 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="2/1/14" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6ye-x8-sXa">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2/1/14" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6ye-x8-sXa">
                                 <rect key="frame" x="264" y="239" width="36" height="15"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
@@ -459,7 +459,7 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="QBM-Zt-RHb">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="QBM-Zt-RHb">
                                 <rect key="frame" x="60" y="203" width="240" height="1"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -469,7 +469,7 @@
                                     <constraint firstAttribute="height" constant="1" id="bTU-j0-OS0"/>
                                 </constraints>
                             </view>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Game: Diablo III" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9GM-Lw-OvK">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Game: Diablo III" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9GM-Lw-OvK">
                                 <rect key="frame" x="60" y="207" width="240" height="15"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <constraints>
@@ -478,7 +478,7 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Progress: 21/45 unlocked (47%)" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gKf-fN-HwT">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Progress: 21/45 unlocked (47%)" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gKf-fN-HwT">
                                 <rect key="frame" x="60" y="223" width="196" height="15"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <constraints>
@@ -490,9 +490,9 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="WSZ-Wf-8bx" firstAttribute="top" secondItem="C5h-Wz-Nbs" secondAttribute="bottom" constant="62" id="35e-DA-L5t"/>
                             <constraint firstItem="gKf-fN-HwT" firstAttribute="leading" secondItem="VPs-Sg-Oyq" secondAttribute="leading" constant="60" id="4BD-DY-d6n"/>
                             <constraint firstItem="LrP-SN-KMh" firstAttribute="leading" secondItem="VPs-Sg-Oyq" secondAttribute="leading" constant="12" id="9tm-oI-17c"/>
+                            <constraint firstItem="QBM-Zt-RHb" firstAttribute="top" relation="greaterThanOrEqual" secondItem="WSZ-Wf-8bx" secondAttribute="bottom" constant="13" id="AD4-ua-3iZ"/>
                             <constraint firstItem="YH3-l9-2E1" firstAttribute="leading" secondItem="LrP-SN-KMh" secondAttribute="trailing" constant="8" id="AYA-rP-zDn"/>
                             <constraint firstItem="6Yl-k5-bgp" firstAttribute="top" secondItem="C5h-Wz-Nbs" secondAttribute="bottom" constant="16" id="Dk2-Zu-kaA"/>
                             <constraint firstItem="6Yl-k5-bgp" firstAttribute="leading" secondItem="2gk-Qu-bbs" secondAttribute="trailing" constant="8" id="DrD-Xm-8ba"/>
@@ -505,13 +505,14 @@
                             <constraint firstItem="FDz-Fd-cyy" firstAttribute="leading" secondItem="VPs-Sg-Oyq" secondAttribute="leading" constant="60" id="XFC-fS-dgz"/>
                             <constraint firstItem="gKf-fN-HwT" firstAttribute="top" secondItem="9GM-Lw-OvK" secondAttribute="bottom" constant="1" id="afB-SB-mfs"/>
                             <constraint firstItem="YH3-l9-2E1" firstAttribute="top" secondItem="2gk-Qu-bbs" secondAttribute="bottom" id="dfK-8L-hG1"/>
+                            <constraint firstItem="WSZ-Wf-8bx" firstAttribute="top" secondItem="YH3-l9-2E1" secondAttribute="bottom" constant="12" id="fTw-Rb-R1q"/>
                             <constraint firstItem="LrP-SN-KMh" firstAttribute="top" secondItem="C5h-Wz-Nbs" secondAttribute="bottom" constant="14" id="iHe-W8-6ZR"/>
                             <constraint firstItem="FDz-Fd-cyy" firstAttribute="top" secondItem="YH3-l9-2E1" secondAttribute="bottom" constant="16" id="k0R-fF-I6G"/>
                             <constraint firstItem="QBM-Zt-RHb" firstAttribute="leading" secondItem="VPs-Sg-Oyq" secondAttribute="leading" constant="60" id="kEb-Ng-DA2"/>
                             <constraint firstItem="Gws-ZB-S3x" firstAttribute="leading" secondItem="VPs-Sg-Oyq" secondAttribute="leading" constant="60" id="lK4-dN-InZ"/>
                             <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="6Yl-k5-bgp" secondAttribute="trailing" constant="20" id="reB-Ad-icQ"/>
                             <constraint firstItem="6ye-x8-sXa" firstAttribute="top" secondItem="gKf-fN-HwT" secondAttribute="bottom" constant="1" id="rlz-vl-GNn"/>
-                            <constraint firstItem="QBM-Zt-RHb" firstAttribute="top" relation="greaterThanOrEqual" secondItem="Gws-ZB-S3x" secondAttribute="bottom" constant="20" id="ujK-vN-8ea"/>
+                            <constraint firstItem="QBM-Zt-RHb" firstAttribute="top" secondItem="Gws-ZB-S3x" secondAttribute="bottom" constant="20" id="uuD-7W-Ls1"/>
                             <constraint firstAttribute="trailing" secondItem="WSZ-Wf-8bx" secondAttribute="trailing" constant="20" id="vfI-bC-Toh"/>
                         </constraints>
                     </view>

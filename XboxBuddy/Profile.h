@@ -15,7 +15,7 @@
 @property NSInteger gamerscore;
 @property NSString *gamerpicImageUrl;
 @property NSString *avatarImageUrl;
-@property NSString *lastSeen;
+@property NSString *onlineStatus;
 @property BOOL isOnline;
 
 // Player bio (often blank).
@@ -23,7 +23,6 @@
 @property NSString *motto;
 @property NSString *location;
 @property NSString *biography;
-@property NSInteger reputation;
 @property NSString *tier;
 
 // Game info for most recently earned achievement.

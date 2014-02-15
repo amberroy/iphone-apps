@@ -24,57 +24,45 @@
 - (Achievement *)initWithDictionary:(NSDictionary *)dict {
     self = [super init];
     if (self) {
-        self.name = dict[@"achievement"][@"title"];
-        self.detail = dict[@"achievement"][@"description"];
+        if ([dict[@"Achievement"][@"Name"] isEqualToString:@""]) {
+            self.name = @"Secret Achievement";
+            self.detail = @"This is a secret achievement. Unlock it to find out more about it.";
+        } else {
+            self.name = dict[@"Achievement"][@"Name"];
+            self.detail = dict[@"Achievement"][@"Description"];
+        }
+        
+        self.imageUrl = dict[@"Achievement"][@"UnlockedTileUrl"];
+        if (![self.imageUrl isKindOfClass:[NSString class]]) {
+            self.imageUrl = dict[@"Achievement"][@"TileUrl"];
+        }
+        double earnedOn = [dict[@"Achievement"][@"EarnedOn-UNIX"] doubleValue];
+        self.earnedOn = [NSDate dateWithTimeIntervalSince1970:earnedOn];
+        self.points = [dict[@"Achievement"][@"Score"] integerValue];
+        
+        self.gameName = dict[@"Game"][@"Name"];
+        self.gameImageUrl = dict[@"Game"][@"BoxArt"][@"Large"];
+        self.gameAchievementsPossible = [dict[@"Game"][@"PossibleAchievements"] integerValue];
+        self.gamePointsPossible = [dict[@"Game"][@"PossibleGamerscore"] integerValue];
+        
+        self.gameAchievementsEarned = [dict[@"Game"][@"Progress"][@"EarnedAchievements"] integerValue];
+        self.gamePointsEarned = [dict[@"Game"][@"Progress"][@"Gamerscore"] integerValue];
+        double lastPlayed = [dict[@"Game"][@"Progress"][@"LastPlayed-UNIX"] doubleValue];
+        self.gameLastPlayed = [NSDate dateWithTimeIntervalSince1970:lastPlayed];
+        self.gameProgress = round((float)self.gameAchievementsEarned / self.gameAchievementsPossible);
+        
+        self.gamertag = dict[@"Player"][@"Gamertag"];
+        self.gamerscore = [dict[@"Player"][@"Gamerscore"] integerValue];
+        self.gamerpicImageUrl = dict[@"Player"][@"Avatar"][@"Gamerpic"][@"Large"];
+        self.avatarImageUrl = dict[@"Player"][@"Avatar"][@"Body"];
         
         // Workaround for API bug where HTML escape for apostrophe is used insead of the character.
         self.detail = [self.detail stringByReplacingOccurrencesOfString:@"&#039;" withString:@"'"];
         
-        self.unlockedImageUrl = dict[@"achievement"][@"artwork"][@"unlocked"];
-        self.lockedImageUrl = dict[@"achievement"][@"artwork"][@"locked"];
-        double earnedOn = [dict[@"achievement"][@"unlockdate"] doubleValue];
-        self.earnedOn = [NSDate dateWithTimeIntervalSince1970:earnedOn];
-        self.points = [dict[@"achievement"][@"gamerscore"] integerValue];
-        
-        self.gameName = dict[@"game"][@"title"];
-        self.gameAchievementsPossible = [dict[@"game"][@"achievements"][@"total"] integerValue];
-        self.gamePointsPossible = [dict[@"game"][@"gamerscore"][@"total"] integerValue];
-        
-        self.gameAchievementsEarned = [dict[@"game"][@"achievements"][@"current"] integerValue];
-        self.gamePointsEarned = [dict[@"game"][@"gamerscore"][@"current"] integerValue];
-        double lastPlayed = [dict[@"game"][@"lastplayed"] doubleValue];
-        self.gameLastPlayed = [NSDate dateWithTimeIntervalSince1970:lastPlayed];
-        self.gameImageUrl = dict[@"game"][@"artwork"][@"large"];
-        
-        self.gamertag = dict[@"player"][@"gamertag"];
-        self.gamerscore = [dict[@"player"][@"gamerscore"] integerValue];
-        self.gamerpicImageUrl = dict[@"player"][@"avatar"][@"large"];
-        self.avatarImageUrl = dict[@"player"][@"avatar"][@"full"];
     }
     return self;
 }
 
-- (UIImage *)imageFromAchievement
-{
-    UIImage *achievmentImage;
-    NSString *achievementPath = [XboxLiveClient filePathForImageUrl:self.unlockedImageUrl];
-    if ([[NSFileManager defaultManager] fileExistsAtPath:achievementPath] &&
-        [[[NSFileManager defaultManager] attributesOfItemAtPath:achievementPath error:NULL] fileSize] > 0) {
-        achievmentImage = [UIImage imageWithContentsOfFile:achievementPath];
-    } else {
-        // Workaround for bug in API where the URL returned for the main (unlocked) achievement artwork
-        // sometimes isn't valid.  So if we get an empty file, use the locked artwork (grayed out).
-        achievementPath = [XboxLiveClient filePathForImageUrl:self.lockedImageUrl];
-        if ([[NSFileManager defaultManager] fileExistsAtPath:achievementPath] &&
-            [[[NSFileManager defaultManager] attributesOfItemAtPath:achievementPath error:NULL] fileSize] > 0) {
-            achievmentImage = [UIImage imageWithContentsOfFile:achievementPath];
-        } else {
-            achievmentImage = [UIImage imageNamed:@"TempAchievementImage.jpg"];
-            NSLog(@"Achievement image not found, using placeholder instead of %@", achievementPath);
-        }
-    }
-    return achievmentImage;
-}
 
 // TODO: move this to util file
 +(NSString *)timeAgoWithDate:(NSDate *)date {

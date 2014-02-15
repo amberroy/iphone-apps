@@ -50,7 +50,16 @@
         NSLog(@"Gamerpic image not found, using placeholder instead of %@", gamerpicPath);
     }
     self.gamerImage.image = [XboxLiveClient createRoundedUserWithImage:gamerpicImage];
-    self.achievementImage.image = [self.achievement imageFromAchievement];
+    
+    UIImage *achievmentImage;
+    NSString *achievementPath = [XboxLiveClient filePathForImageUrl:self.achievement.imageUrl];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:achievementPath]) {
+        achievmentImage = [UIImage imageWithContentsOfFile:achievementPath];
+    } else {
+        achievmentImage = [UIImage imageNamed:@"TempAchievementImage.jpg"];
+        NSLog(@"Achievement image not found, using placeholder instead of %@", achievementPath);
+    }
+    self.achievementImage.image = achievmentImage;
 
     UIImage *boxArtImage;
     NSString *boxArtPath = [XboxLiveClient filePathForImageUrl:self.achievement.gameImageUrl];

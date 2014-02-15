@@ -23,28 +23,27 @@
 - (Profile *)initWithDictionary:(NSDictionary *)dict {
     self = [super init];
     if (self) {
-        self.gamertag = dict[@"gamertag"];
-        self.gamerscore = [dict[@"gamerscore"] integerValue];
-        self.gamerpicImageUrl = dict[@"avatar"][@"large"];
-        self.lastSeen = dict[@"presence"];
-        self.isOnline = [dict[@"online"] boolValue];
-        self.avatarImageUrl = dict[@"avatar"][@"full"];
+        self.gamertag = dict[@"Player"][@"Gamertag"];
+        self.gamerscore = [dict[@"Player"][@"Gamerscore"] integerValue];
+        self.gamerpicImageUrl = dict[@"Player"][@"Avatar"][@"Gamerpic"][@"Large"];
+        self.avatarImageUrl = dict[@"Player"][@"Avatar"][@"Body"];
+        self.onlineStatus = dict[@"Player"][@"Status"][@"Online_Status"];
+        self.isOnline = [dict[@"Player"][@"Status"][@"Online"] boolValue];
+        self.tier = dict[@"Player"][@"Status"][@"Tier"];
         
-        self.name = dict[@"name"];
-        self.motto = dict[@"motto"];
-        self.location = dict[@"location"];
-        self.biography = dict[@"biography"];
-        self.reputation = [dict[@"reputation"] integerValue];
-        self.tier = dict[@"tier"];
+        self.name = dict[@"Player"][@"Name"];
+        self.location = dict[@"Player"][@"Location"];
+        self.motto = dict[@"Player"][@"Motto"];
+        self.biography = dict[@"Player"][@"Bio"];
         
-        if (dict[@"achievement"] != [NSNull null]) {
-           self.gameName = dict[@"achievement"][@"game"][@"title"];
-           self.gamePointsPossible = [dict[@"achievement"][@"game"][@"gamerscore"][@"total"] integerValue];
-           self.gamePointsEarned = [dict[@"achievement"][@"game"][@"gamerscore"][@"current"] integerValue];
-           self.gameAchievementsPossible = [dict[@"achievement"][@"game"][@"achievements"][@"total"] integerValue];
-           self.gameAchievementsEarned = [dict[@"achievement"][@"game"][@"achievements"][@"current"] integerValue];
-           self.gameProgress = [dict[@"achievement"][@"game"][@"progress"] integerValue];
-           self.gameImageUrl = dict[@"achievement"][@"game"][@"artwork"][@"large"];
+        if (dict[@"LastAchievement"] != [NSNull null]) {
+            self.gameName = dict[@"LastAchievement"][@"Game"][@"Name"];
+            self.gamePointsPossible = [dict[@"LastAchievement"][@"Game"][@"PossibleGamerscore"] integerValue];
+            self.gamePointsEarned = [dict[@"LastAchievement"][@"Game"][@"Progress"][@"Gamerscore"] integerValue];
+            self.gameAchievementsPossible = [dict[@"LastAchievement"][@"Game"][@"PossibleAchievements"] integerValue];
+            self.gameAchievementsEarned = [dict[@"LastAchievement"][@"Game"][@"Progress"][@"Achievements"] integerValue];
+            self.gameImageUrl = dict[@"LastAchievement"][@"Game"][@"BoxArt"][@"Large"];
+            self.gameProgress = round((float)self.gameAchievementsEarned / self.gameAchievementsPossible);
         }
     }
     

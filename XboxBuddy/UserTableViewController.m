@@ -88,7 +88,16 @@
     cell.achievementName.text = achievementObj.name;
     cell.achievementDescription.text = achievementObj.detail;
     cell.achievementEarnedOn.text = [Achievement timeAgoWithDate:achievementObj.earnedOn];
-    cell.achievementImage.image = [achievementObj imageFromAchievement];
+
+    UIImage *achievementImage;
+    NSString *achievementPath = [XboxLiveClient filePathForImageUrl:achievementObj.imageUrl];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:achievementPath]) {
+        achievementImage = [UIImage imageWithContentsOfFile:achievementPath];
+    } else {
+        achievementImage = [UIImage imageNamed:@"TempAchievementImage.png"];
+        NSLog(@"Achievement image not found, using placeholder instead of %@", achievementPath);
+    }
+    cell.achievementImage.image = achievementImage;
 
     return cell;
 }

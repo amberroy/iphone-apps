@@ -26,6 +26,7 @@
 @property NSDate *endInit;
 @property NSTimeInterval secondsToInit;
 @property int defaultRetries;
+@property int defaultCachePolicy;
 
 // Callback to the object that envoked our init method.
 @property (nonatomic, copy) void (^completionBlock)(NSString *errorDescription);
@@ -131,6 +132,7 @@
     self.friendProfilesUnsorted = [[NSMutableArray alloc] init];
     self.isInitializationError = NO;
     self.defaultRetries = 3;
+    self.defaultCachePolicy = NSURLRequestUseProtocolCachePolicy;
     
     if (self.isOfflineMode) {
         [self checkSavedDataExists];
@@ -400,10 +402,11 @@
 -(void)sendRequestWithURL:(NSString *)url success:(void(^)(NSDictionary *responseDictionary))success
 {
     // Need to pass retries as argument to function to handle recursive case when we retry and recall it.
-    [self sendRequestWithURL:url success:success withRetries:self.defaultRetries];
+    [self sendRequestWithURL:url success:success withRetries:self.defaultRetries withCachePolicy:self.defaultCachePolicy];
 }
 
--(void)sendRequestWithURL:(NSString *)url success:(void(^)(NSDictionary *responseDictionary))success withRetries:(int)retries
+-(void)sendRequestWithURL:(NSString *)url success:(void(^)(NSDictionary *responseDictionary))success
+              withRetries:(int)retries withCachePolicy:(NSURLRequestCachePolicy)cachePolicy
 {
     NSString *url_encoded = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     NSString *requestKey = url_encoded;
@@ -479,7 +482,9 @@
          }
          if (myErrorMessage) {
              if (retries > 0) {
-                 [self sendRequestWithURL:url success:success withRetries:(retries-1)];
+                 // Force server to reload data; workaround for the "missing recent activity" bug mentioned above.
+                 [self sendRequestWithURL:url success:success withRetries:(retries-1)
+                      withCachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData];
              } else {
                  if (!self.isInitializationError) {
                      self.isInitializationError = YES;

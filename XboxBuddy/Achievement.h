@@ -27,7 +27,7 @@
 @property NSInteger gameAchievementsEarned;
 @property NSInteger gamePointsEarned;
 @property NSDate *gameLastPlayed;
-@property NSInteger gameProgress;
+@property NSInteger gamePercentComplete;
 
 // Player info.
 @property NSString *gamertag;

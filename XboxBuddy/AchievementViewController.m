@@ -69,10 +69,12 @@
     self.achievementImage.image = achievmentImage;
 
     self.gameName.text = [NSString stringWithFormat:@"Game: %@", self.achievement.gameName];
-    self.gameProgress.text = [NSString stringWithFormat:@"Progress: %i/%i unlocked (%i%%)",
+    self.gameProgress.text = [NSString stringWithFormat:@"Progress: %i/%i unlocked (%i%%) for %i/%i G",
                               self.achievement.gameAchievementsEarned,
                               self.achievement.gameAchievementsPossible,
-                              self.achievement.gameProgress];
+                              self.achievement.gamePercentComplete,
+                              self.achievement.gamePointsEarned,
+                              self.achievement.gamePointsPossible];
     
 }
 

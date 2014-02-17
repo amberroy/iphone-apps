@@ -50,7 +50,7 @@
     
     self.achievementPoints.text = [NSString stringWithFormat:@"%i G", achievementObj.points];
     self.gameName.text = achievementObj.gameName;
-    self.gameProgress.text = [NSString stringWithFormat:@"%i%%", achievementObj.gameProgress];
+    self.gamePercentComplete.text = [NSString stringWithFormat:@"%i%%", achievementObj.gamePercentComplete];
     self.achievementName.text = [NSString stringWithFormat:@"%@: %@",
                                  achievementObj.name, achievementObj.detail];
     self.achievementEarnedOn.text = [Achievement timeAgoWithDate:achievementObj.earnedOn];

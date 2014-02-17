@@ -17,7 +17,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *achievementPoints;
 
 @property (weak, nonatomic) IBOutlet UILabel *gameName;
-@property (weak, nonatomic) IBOutlet UILabel *gameProgress;
+@property (weak, nonatomic) IBOutlet UILabel *gamePercentComplete;
 
 -(void)initWithAchievement:(Achievement *)achievementObj;
 

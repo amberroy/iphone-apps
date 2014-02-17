@@ -45,12 +45,11 @@
         self.gameAchievementsPossible = [dict[@"Game"][@"PossibleAchievements"] integerValue];
         self.gamePointsPossible = [dict[@"Game"][@"PossibleGamerscore"] integerValue];
         
-        self.gameAchievementsEarned = [dict[@"Game"][@"Progress"][@"Achievements"] integerValue];
-        self.gamePointsEarned = [dict[@"Game"][@"Progress"][@"Score"] integerValue];
+        self.gameAchievementsEarned = [dict[@"Game"][@"Progress"][@"EarnedAchievements"] integerValue];
+        self.gamePointsEarned = [dict[@"Game"][@"Progress"][@"Gamerscore"] integerValue];
         double lastPlayed = [dict[@"Game"][@"Progress"][@"LastPlayed-UNIX"] doubleValue];
         self.gameLastPlayed = [NSDate dateWithTimeIntervalSince1970:lastPlayed];
-        double progress = (float)self.gameAchievementsEarned / self.gameAchievementsPossible * 100;
-        self.gameProgress = round(progress);
+        self.gamePercentComplete = [dict[@"Player"][@"PercentComplete"] integerValue];
         
         self.gamertag = dict[@"Player"][@"Gamertag"];
         self.gamerscore = [dict[@"Player"][@"Gamerscore"] integerValue];

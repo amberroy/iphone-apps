@@ -50,7 +50,8 @@
 
 // Called from our async request completion block to handle received data.
 -(void)processProfiles:(NSDictionary *)responseData;
--(void)processGames:(NSDictionary *)responseData forPlayer:(NSDictionary *)player;
+-(void)processGames:(NSDictionary *)responseData;
+-(void)processAchievements:(NSDictionary *)responseData;
 -(void)processImage:(NSString *)savedImagePath;
 
 @end
@@ -303,14 +304,14 @@
                                      @"http://xboxapi.com/v1/games/%@",
                                      friendGamertag];
         [self sendRequestWithURL:games_url_str success:
-         ^(NSDictionary *responseData) { [self processGames:responseData forPlayer:friend]; }];
+         ^(NSDictionary *responseData) { [self processGames:responseData]; }];
         
     }
     
     // Get games for current user.
     NSString *games_url_str = [NSString stringWithFormat: @"http://xboxapi.com/v1/games/%@", self.userGamertag];
     [self sendRequestWithURL:games_url_str success:
-     ^(NSDictionary *responseData) { [self processGames:responseData forPlayer:self.userProfileFromJSON[@"Player"]]; }];
+     ^(NSDictionary *responseData) { [self processGames:responseData]; }];
     
 }
 
@@ -326,7 +327,7 @@
     }
 }
 
--(void)processGames:(NSDictionary *)responseData forPlayer:(NSDictionary *)player
+-(void)processGames:(NSDictionary *)responseData
 {
     // Download gamerpic and avatar images.
     NSString *gamerpic_url_str = responseData[@"Player"][@"Avatar"][@"Gamerpic"][@"Large"];
@@ -340,12 +341,6 @@
         NSLog(@"Initialization error detected, skipping fetching achievements.");
         return;
     }
-    
-    // Save a summary of the player info with the achievement.
-    NSDictionary *player_dict;
-    player_dict = @{@"Gamertag": responseData[@"Player"][@"Gamertag"],
-                    @"Gamerscore": responseData[@"Player"][@"Gamerscore"],
-                    @"Avatar": responseData[@"Player"][@"Avatar"]};
     
     // Get Acheivements for a handful of the most recently played games.
     NSString *friendGamertag = responseData[@"Player"][@"Gamertag"];
@@ -378,7 +373,7 @@
                                               game[@"ID"], friendGamertag];
             
             [self sendRequestWithURL:acheivements_url_str success:
-             ^(NSDictionary *responseData) { [self processAchievements:responseData forPlayer:player_dict forGame:game]; }];
+             ^(NSDictionary *responseData) { [self processAchievements:responseData]; }];
             
             // Exit loop when we've collected the desired number of most recent games.
             recent_game_count++;
@@ -399,7 +394,7 @@
     
 }
 
--(void)processAchievements:(NSDictionary *)responseData forPlayer:(NSDictionary *)player forGame:(NSDictionary *)game
+-(void)processAchievements:(NSDictionary *)responseData
 {
     int unlockedCount = 0;
     if (responseData[@"Achievements"] != [NSNull null]) {
@@ -410,9 +405,10 @@
     
             long earnedOn = [achievement[@"EarnedOn-UNIX"] boolValue];
             if (earnedOn != 0) {
+                
                 // Save the Game and Player info with the Achievement.
-                [self.achievementsUnsorted addObject: @{@"Player": player,
-                                                        @"Game": game,
+                [self.achievementsUnsorted addObject: @{@"Player": responseData[@"Player"],
+                                                        @"Game": responseData[@"Game"],
                                                         @"Achievement": achievement}];
                 
                 // Get achievement image.
@@ -420,7 +416,6 @@
                 if (![achievement_image_url_str isKindOfClass:[NSString class]]) {
                     achievement_image_url_str = achievement[@"TileUrl"];
                 }
-                
                 [self imageRequestWithURL:achievement_image_url_str success:
                     ^(NSString *savedImagePath) { [self processImage:savedImagePath]; }];
                 
@@ -429,7 +424,7 @@
         }
     }
     NSLog(@"Added %i achievements for %@ for game %@", unlockedCount,
-          player[@"Gamertag"], game[@"Name"]);
+          responseData[@"Player"][@"Gamertag"], responseData[@"Player"][@"Name"]);
 }
 
 -(void)processImage:(NSString *)savedImagePath

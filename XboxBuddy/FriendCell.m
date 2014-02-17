@@ -51,9 +51,6 @@
     self.gameName.text = profileObj.gameName;
     self.gamerscore.text = [NSString stringWithFormat:@"%i G", profileObj.gamerscore];
     self.achievementEarnedOn.text = [Achievement timeAgoWithDate:profileObj.achievementEarnedOn];
-    
-    
-    
 }
 
 @end

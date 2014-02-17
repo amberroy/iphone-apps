@@ -49,9 +49,8 @@
 -(void)requestsDidComplete;
 
 // Called from our async request completion block to handle received data.
--(void)processProfile:(NSDictionary *)responseData;
--(void)processFriends:(NSDictionary *)responseData;
--(void)processGames:(NSDictionary *)responseData;
+-(void)processProfiles:(NSDictionary *)responseData;
+-(void)processGames:(NSDictionary *)responseData forPlayer:(NSDictionary *)player;
 -(void)processImage:(NSString *)savedImagePath;
 
 @end
@@ -289,19 +288,24 @@
                                      @"http://xboxapi.com/v1/games/%@",
                                      friendGamertag];
         [self sendRequestWithURL:games_url_str success:
-         ^(NSDictionary *responseData) { [self processGames:responseData]; }];
+         ^(NSDictionary *responseData) { [self processGames:responseData forPlayer:friend]; }];
         
     }
     
     // Get games for current user.
     NSString *games_url_str = [NSString stringWithFormat: @"http://xboxapi.com/v1/games/%@", self.userGamertag];
     [self sendRequestWithURL:games_url_str success:
-     ^(NSDictionary *responseData) { [self processGames:responseData]; }];
+     ^(NSDictionary *responseData) { [self processGames:responseData forPlayer:self.userProfileFromJSON[@"Player"]]; }];
     
 }
 
--(void)fetchProfiles:(NSArray *)friends     // UNUSED for now.
+-(void)fetchFriendProfiles:(NSArray *)friends     // UNUSED for now.
 {
+    // Get profile for current user.
+    NSString *profile_url_str = [NSString stringWithFormat: @"http://xboxapi.com/v1/profile/%@", self.userGamertag];
+    [self sendRequestWithURL:profile_url_str success:
+        ^(NSDictionary *responseData) { [self processProfiles:responseData]; }];
+
     // Get profiles for all my friends.
     for (NSDictionary *friend in friends) {
         NSString *friendGamertag = friend[@"GamerTag"];
@@ -309,17 +313,11 @@
                                      @"http://xboxapi.com/v1/profile/%@",
                                      friendGamertag];
         [self sendRequestWithURL:profile_url_str success:
-            ^(NSDictionary *responseData) { [self processProfile:responseData]; }];
+            ^(NSDictionary *responseData) { [self processProfiles:responseData]; }];
     }
-
-    // Get profile for current user.
-    NSString *profile_url_str = [NSString stringWithFormat: @"http://xboxapi.com/v1/profile/%@", self.userGamertag];
-    [self sendRequestWithURL:profile_url_str success:
-        ^(NSDictionary *responseData) { [self processProfile:responseData]; }];
-
 }
 
--(void)processProfile:(NSDictionary *)responseData      // UNUSED for now.
+-(void)processProfiles:(NSDictionary *)responseData      // UNUSED for now.
 {
     NSString *friendGamertag = responseData[@"Player"][@"Gamertag"];
     if ([friendGamertag isEqualToString:self.userGamertag]) {
@@ -331,7 +329,7 @@
     }
 }
 
--(void)processGames:(NSDictionary *)responseData
+-(void)processGames:(NSDictionary *)responseData forPlayer:(NSDictionary *)player
 {
     // Download gamerpic and avatar images.
     NSString *gamerpic_url_str = responseData[@"Player"][@"Avatar"][@"Gamerpic"][@"Large"];
@@ -347,9 +345,19 @@
     }
     
     // Save a summary of the player info with the achievement.
-    NSDictionary *player_dict = @{@"Gamertag": responseData[@"Player"][@"Gamertag"],
-                                  @"Gamerscore": responseData[@"Player"][@"Gamerscore"],
-                                  @"Avatar": responseData[@"Player"][@"Avatar"]};
+    NSDictionary *player_dict;
+    if ([responseData[@"Player"][@"Gamertag"] isEqualToString:self.userGamertag]) {
+        // No "last seen" available for current user, only for our friends.
+        player_dict = @{@"Gamertag": responseData[@"Player"][@"Gamertag"],
+                        @"Gamerscore": responseData[@"Player"][@"Gamerscore"],
+                        @"Avatar": responseData[@"Player"][@"Avatar"]};
+    } else {
+        player_dict = @{@"Gamertag": responseData[@"Player"][@"Gamertag"],
+                        @"Gamerscore": responseData[@"Player"][@"Gamerscore"],
+                        @"Avatar": responseData[@"Player"][@"Avatar"],
+                        @"IsOnline": player[@"IsOnline"],
+                        @"LastSeen-UNIX": player[@"LastSeen-UNIX"]};
+    }
     
     // Get Acheivements for a handful of the most recently played games.
     NSString *friendGamertag = responseData[@"Player"][@"Gamertag"];

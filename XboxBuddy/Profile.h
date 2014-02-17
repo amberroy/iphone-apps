@@ -15,6 +15,8 @@
 @property NSInteger gamerscore;
 @property NSString *gamerpicImageUrl;
 @property NSString *avatarImageUrl;
+@property BOOL isOnline;
+@property NSDate *lastSeen;
 
 // Game info for most recently earned achievement.
 @property NSString *gameName;

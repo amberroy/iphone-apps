@@ -36,8 +36,11 @@
             self.gameAchievementsEarned = [dict[@"LastAchievement"][@"Game"][@"Progress"][@"Achievements"] integerValue];
             self.gameImageUrl = dict[@"LastAchievement"][@"Game"][@"BoxArt"][@"Large"];
             self.gameProgress = round((float)self.gameAchievementsEarned / self.gameAchievementsPossible);
-            double earnedOn = [dict[@"Achievement"][@"EarnedOn-UNIX"] doubleValue];
-            self.achievementEarnedOn = [NSDate dateWithTimeIntervalSince1970:earnedOn];
+            double earnedOnSeconds = [dict[@"LastAchievement"][@"Achievement"][@"EarnedOn-UNIX"] doubleValue];
+            self.achievementEarnedOn = [NSDate dateWithTimeIntervalSince1970:earnedOnSeconds];
+            self.isOnline = [dict[@"LastAchievement"][@"Player"][@"IsOnline"] boolValue];
+            double lastSeenSeconds = [dict[@"LastAchievement"][@"Player"][@"LastSeen-UNIX"] doubleValue];
+            self.lastSeen = [NSDate dateWithTimeIntervalSince1970:lastSeenSeconds];
         }
     }
     

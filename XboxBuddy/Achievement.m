@@ -26,7 +26,7 @@
     if (self) {
         if ([dict[@"Achievement"][@"Name"] isEqualToString:@""]) {
             self.name = @"Secret Achievement";
-            self.detail = @"Unlock it to find out more about it.";
+            self.detail = @"Unlock it to find out more.";
         } else {
             self.name = dict[@"Achievement"][@"Name"];
             self.detail = dict[@"Achievement"][@"Description"];
@@ -70,13 +70,20 @@
     if (timeAgoInSeconds == 0) {
         return @"Just Now";
     } else if (timeAgoInSeconds < 60) {
-        return [NSString stringWithFormat:@"%.0fs ago", timeAgoInSeconds];
+        NSString *s = [NSString stringWithFormat:(timeAgoInSeconds > 1) ? @"s" : @""];
+        return [NSString stringWithFormat:@"%.0f second%@ ago", timeAgoInSeconds, s];
     } else if (timeAgoInSeconds < 3600) {
-        return [NSString stringWithFormat:@"%.0fm ago", floor(timeAgoInSeconds/60)];
+        double seconds = floor(timeAgoInSeconds/60);
+        NSString *s = [NSString stringWithFormat:(seconds > 1) ? @"s" : @""];
+        return [NSString stringWithFormat:@"%.0f minute%@ ago", seconds, s];
     } else if (timeAgoInSeconds < 86400) {
-        return [NSString stringWithFormat:@"%.0fh ago", floor(timeAgoInSeconds/3600)];
+        double minutes = floor(timeAgoInSeconds/3600);
+        NSString *s = [NSString stringWithFormat:(minutes > 1) ? @"s" : @""];
+        return [NSString stringWithFormat:@"%.0f hour%@ ago", minutes, s];
     } else if (timeAgoInSeconds < 86400 * 7) {
-        return [NSString stringWithFormat:@"%.0fd ago", floor(timeAgoInSeconds/86400)];
+        double hours = floor(timeAgoInSeconds/86400);
+        NSString *s = [NSString stringWithFormat:(hours > 1) ? @"s" : @""];
+        return [NSString stringWithFormat:@"%.0f day%@ ago", hours, s];
     } else {
         NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
         [dateFormat setDateFormat:@"MM/dd/yy"];

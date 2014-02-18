@@ -8,7 +8,6 @@
 
 #import "FriendCell.h"
 #import "Profile.h"
-#import "XboxLiveClient.h"
 
 @interface FriendCell ()
 

@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "XboxLiveClient.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 

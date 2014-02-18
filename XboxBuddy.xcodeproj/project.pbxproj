@@ -21,6 +21,10 @@
 		26D2F66B1899F18700EFB93A /* HomeTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 26D2F66A1899F18700EFB93A /* HomeTableViewController.m */; };
 		26D2F6741899F27200EFB93A /* AchievementViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 26D2F6721899F27200EFB93A /* AchievementViewController.m */; };
 		26D2F6781899F2A300EFB93A /* Achievement.m in Sources */ = {isa = PBXBuildFile; fileRef = 26D2F6771899F2A300EFB93A /* Achievement.m */; };
+		26F13BE618B0055B005C1ECE /* SignedOutViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 26F13BE518B0055B005C1ECE /* SignedOutViewController.m */; };
+		26F13BE918B28CD1005C1ECE /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 26F13BE818B28CD1005C1ECE /* User.m */; };
+		26F13BED18B296E7005C1ECE /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 26F13BEC18B296E7005C1ECE /* SettingsViewController.m */; };
+		26F13BF018B2996A005C1ECE /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 26F13BEF18B2996A005C1ECE /* LoginViewController.m */; };
 		962084501899B915006AD8E9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9620844F1899B915006AD8E9 /* Foundation.framework */; };
 		962084521899B915006AD8E9 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 962084511899B915006AD8E9 /* CoreGraphics.framework */; };
 		962084541899B915006AD8E9 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 962084531899B915006AD8E9 /* UIKit.framework */; };
@@ -71,6 +75,15 @@
 		26D2F6721899F27200EFB93A /* AchievementViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AchievementViewController.m; sourceTree = "<group>"; };
 		26D2F6761899F2A300EFB93A /* Achievement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Achievement.h; sourceTree = "<group>"; };
 		26D2F6771899F2A300EFB93A /* Achievement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Achievement.m; sourceTree = "<group>"; };
+		26F13BE418B0055B005C1ECE /* SignedOutViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SignedOutViewController.h; sourceTree = "<group>"; };
+		26F13BE518B0055B005C1ECE /* SignedOutViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SignedOutViewController.m; sourceTree = "<group>"; };
+		26F13BE718B28CD1005C1ECE /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
+		26F13BE818B28CD1005C1ECE /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
+		26F13BEA18B29070005C1ECE /* XboxBuddyCommon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XboxBuddyCommon.h; sourceTree = "<group>"; };
+		26F13BEB18B296E7005C1ECE /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
+		26F13BEC18B296E7005C1ECE /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
+		26F13BEE18B2996A005C1ECE /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
+		26F13BEF18B2996A005C1ECE /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
 		9620844C1899B915006AD8E9 /* XboxBuddy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = XboxBuddy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9620844F1899B915006AD8E9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		962084511899B915006AD8E9 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -197,6 +210,7 @@
 				962084581899B915006AD8E9 /* InfoPlist.strings */,
 				9620845B1899B915006AD8E9 /* main.m */,
 				9620845D1899B915006AD8E9 /* XboxBuddy-Prefix.pch */,
+				26F13BEA18B29070005C1ECE /* XboxBuddyCommon.h */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -239,6 +253,12 @@
 				2681874A18A20701003D281B /* UserTableViewController.m */,
 				2681874C18A213A2003D281B /* FriendsTableViewController.h */,
 				2681874D18A213A2003D281B /* FriendsTableViewController.m */,
+				26F13BE418B0055B005C1ECE /* SignedOutViewController.h */,
+				26F13BE518B0055B005C1ECE /* SignedOutViewController.m */,
+				26F13BEB18B296E7005C1ECE /* SettingsViewController.h */,
+				26F13BEC18B296E7005C1ECE /* SettingsViewController.m */,
+				26F13BEE18B2996A005C1ECE /* LoginViewController.h */,
+				26F13BEF18B2996A005C1ECE /* LoginViewController.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -250,6 +270,8 @@
 				26D2F6771899F2A300EFB93A /* Achievement.m */,
 				9693F760189F032B00D3C80A /* Profile.h */,
 				9693F761189F032B00D3C80A /* Profile.m */,
+				26F13BE718B28CD1005C1ECE /* User.h */,
+				26F13BE818B28CD1005C1ECE /* User.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -371,10 +393,14 @@
 				2681875418A213E8003D281B /* FriendCell.m in Sources */,
 				962084601899B915006AD8E9 /* AppDelegate.m in Sources */,
 				2681874818A206A3003D281B /* UserAchievementCell.m in Sources */,
+				26F13BE618B0055B005C1ECE /* SignedOutViewController.m in Sources */,
 				2681874E18A213A2003D281B /* FriendsTableViewController.m in Sources */,
+				26F13BF018B2996A005C1ECE /* LoginViewController.m in Sources */,
+				26F13BE918B28CD1005C1ECE /* User.m in Sources */,
 				9664566A1899E49600E5C691 /* XboxLiveClient.m in Sources */,
 				2681874B18A20701003D281B /* UserTableViewController.m in Sources */,
 				9693F762189F032B00D3C80A /* Profile.m in Sources */,
+				26F13BED18B296E7005C1ECE /* SettingsViewController.m in Sources */,
 				26D2F6741899F27200EFB93A /* AchievementViewController.m in Sources */,
 				9620845C1899B915006AD8E9 /* main.m in Sources */,
 			);

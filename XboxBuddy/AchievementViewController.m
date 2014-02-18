@@ -8,6 +8,7 @@
 
 #import "AchievementViewController.h"
 #import "XboxLiveClient.h"
+#import "HomeTableViewController.h"
 
 @interface AchievementViewController ()
 
@@ -76,6 +77,7 @@
                               self.achievement.gamePointsEarned,
                               self.achievement.gamePointsPossible];
     
+   [HomeTableViewController customizeNavigationBar:self];
 }
 
 @end

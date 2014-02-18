@@ -11,6 +11,7 @@
 #import "FriendCell.h"
 #import "Profile.h"
 #import "UserTableViewController.h"
+#import "HomeTableViewController.h"
 
 @interface FriendsTableViewController ()
 
@@ -22,6 +23,7 @@
 
 - (void)setup {
     self.friends = [[XboxLiveClient instance] friendProfiles];
+    [HomeTableViewController customizeNavigationBar:self];
 }
 
 - (id)initWithStyle:(UITableViewStyle)style

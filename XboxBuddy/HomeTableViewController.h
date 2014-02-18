@@ -10,4 +10,6 @@
 
 @interface HomeTableViewController : UITableViewController
 
++(void)customizeNavigationBar:(UIViewController *)viewController;
+
 @end

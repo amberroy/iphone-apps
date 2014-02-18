@@ -424,7 +424,7 @@
         }
     }
     NSLog(@"Added %i achievements for %@ for game %@", unlockedCount,
-          responseData[@"Player"][@"Gamertag"], responseData[@"Player"][@"Name"]);
+          responseData[@"Player"][@"Gamertag"], responseData[@"Game"][@"Name"]);
 }
 
 -(void)processImage:(NSString *)savedImagePath

@@ -20,6 +20,30 @@
 
 @implementation HomeTableViewController
 
++ (void)customizeNavigationBar:(UIViewController *)viewController
+{
+    UIColor *backgroundColor = [UIColor darkGrayColor];
+    //UIColor *backgroundColor = [UIColor colorWithRed:0.0/255.0
+    //                                           green:159.0/255.0
+    //                                            blue:0.0/255.0 alpha:1.0];
+    UIColor *textColor = [UIColor whiteColor];
+    
+    // Custom Nav Bar colors:
+    // * NavBar translucent: YES by default, change to NO when adding colors.
+    // * NavBar barTintColor: Background color of the nav bar.
+    // * NavBar tintcolor: Text color of the back arrow (e.g. "<").
+    // * NavBar "NSForgroundColorAttributeName": Text color of title (e.g. "Home").
+    // * BarButtonItem "NSForgroundColorAttributeName": Text color of the title when on left ("back") nav button.
+    
+    // TODO: Move this to util file.
+    viewController.navigationController.navigationBar.translucent = NO;
+    viewController.navigationController.navigationBar.barTintColor = backgroundColor;
+    viewController.navigationController.navigationBar.tintColor = textColor;
+    viewController.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: textColor};
+    UIBarButtonItem *barButtonItem = [UIBarButtonItem appearanceWhenContainedIn:[UINavigationBar class], nil];
+    [barButtonItem setTitleTextAttributes:@{NSForegroundColorAttributeName: textColor} forState:UIControlStateNormal];
+}
+
 - (id)initWithStyle:(UITableViewStyle)style
 {
     self = [super initWithStyle:style];
@@ -43,6 +67,7 @@
         [self.tableView setSeparatorInset:UIEdgeInsetsZero];
     }
 
+    [HomeTableViewController customizeNavigationBar:self];
 }
 
 #pragma mark - Table view data source

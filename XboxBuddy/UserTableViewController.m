@@ -11,6 +11,7 @@
 #import "UserAchievementCell.h"
 #import "Achievement.h"
 #import "XboxLiveClient.h"
+#import "HomeTableViewController.h"
 
 @interface UserTableViewController ()
 
@@ -69,6 +70,8 @@
         NSLog(@"Gamerpic image not found, using placeholder instead of %@", gamerpicPath);
     }
     self.gamerImage.image = gamerpicImage;
+    
+    [HomeTableViewController customizeNavigationBar:self];
 }
 
 #pragma mark - Table view data source

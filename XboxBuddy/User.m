@@ -14,13 +14,16 @@ NSString * const kCurrentUserKey = @"kCurrentUserKey";
 
 @implementation User
 
+static BOOL isOfflineMode = YES;    // USE LOCAL DATA INSTEAD FETCHING FROM API
+
 static User *_currentUser;
 
 + (User *)currentUser {
     if (!_currentUser) {
         NSString *gamerTag = [[NSUserDefaults standardUserDefaults] stringForKey:kCurrentUserKey];
         if (gamerTag) {
-            _currentUser = [[User alloc] initWithGamerTag:gamerTag];
+            _currentUser = [[User alloc] initWithGamerTag:gamerTag]; // Needs to be set before calling initInstance.
+            [[XboxLiveClient instance] initInstance];
         }
     }
     return _currentUser;
@@ -43,10 +46,19 @@ static User *_currentUser;
     }
 }
 
++ (BOOL) isOfflineMode
+{
+    return isOfflineMode;
+}
++ (void) setIsOfflineMode:(BOOL)newVal
+{
+    isOfflineMode = newVal;
+}
+
+
 - (id)initWithGamerTag:(NSString *)gamerTag {
     self = [super init];
     if (self) {
-        /* encorporate offline data here */
         self.gamerTag = gamerTag;
     }
     return self;

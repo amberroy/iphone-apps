@@ -11,8 +11,6 @@
 
 @interface AppDelegate ()
 
-- (void)updateRootVC;
-
 @property (nonatomic, strong) SignedOutViewController *signedOutViewController;
 @property (nonatomic, strong) UITabBarController *tabBarViewController;
 @property (nonatomic, strong) UIViewController *currentVC;
@@ -28,8 +26,8 @@
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateRootVC) name:UserDidLoginNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateRootVC) name:UserDidLogoutNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidLogin) name:UserDidLoginNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidLogout) name:UserDidLogoutNotification object:nil];
     
     return YES;
 }
@@ -91,8 +89,14 @@
     return _signedOutViewController;
 }
 
-- (void)updateRootVC {
+- (void)userDidLogin {
     self.window.rootViewController = self.currentVC;
+    [[XboxLiveClient instance] initInstance];
+}
+
+- (void)userDidLogout {
+    self.window.rootViewController = self.currentVC;
+    [XboxLiveClient resetInstance];
 }
 
 @end

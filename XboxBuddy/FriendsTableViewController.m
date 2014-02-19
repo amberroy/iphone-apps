@@ -25,6 +25,12 @@
     [HomeTableViewController customizeNavigationBar:self];
 }
 
+
+- (void)reloadTable:(NSNotification *)notification {
+    self.friends = [[XboxLiveClient instance] friendProfiles];
+    [self.tableView reloadData];
+}
+
 - (id)initWithStyle:(UITableViewStyle)style
 {
     self = [super initWithStyle:style];
@@ -45,8 +51,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTable:) name:@"InitialDataLoaded" object:nil];
 
-    // TODO: temporary call to setup, doing this here for now to pick up the data after its been initially loaded
     [self setup];
 }
 

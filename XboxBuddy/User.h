@@ -16,6 +16,8 @@ extern NSString *const UserDidLogoutNotification;
 + (User *)currentUser;
 + (void)setCurrentUser:(User *)currentUser;
 
++ (BOOL)isOfflineMode;
+
 - (id)initWithGamerTag:(NSString *)gamerTag;
 
 @property (nonatomic, strong) NSString *gamerTag;

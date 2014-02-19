@@ -30,9 +30,7 @@
 @property int defaultRetries;
 @property int defaultCachePolicy;
 @property int maxRecentGames;
-
-// Callback to the object that envoked our init method.
-@property (nonatomic, copy) void (^completionBlock)(NSString *errorDescription);
+@property BOOL isOfflineMode;
 
 // Only methods that sends requests to the remote Xbox Live API.
 -(void)sendRequestWithURL:(NSString *)url success:(void(^)(NSDictionary *responseDictionary))success;
@@ -58,16 +56,25 @@
 
 @implementation XboxLiveClient
 
+static XboxLiveClient *Instance;
+
 +(XboxLiveClient *)instance
 {
-    static dispatch_once_t once;
-    static XboxLiveClient *instance;
-    
-    dispatch_once(&once, ^{
-        instance = [[XboxLiveClient alloc] init];
-    });
-    
-    return instance;
+    @synchronized(self) {
+        if (!Instance) {
+            Instance = [[XboxLiveClient alloc] init];
+        }
+    }
+    return Instance;
+}
+
++(void)resetInstance
+{
+    @synchronized(self) {
+        // Destroy old instance by overwriting with an uninitialized one.
+        NSLog(@"Destroyed instance of XboxLiveClient initialized for %@.", Instance.userGamertag);
+        Instance = [[XboxLiveClient alloc] init];
+    }
 }
 
 +(NSArray *)gamertagsForTesting
@@ -127,11 +134,14 @@
     return filePath;
 }
 
--(void)initWithGamertag:(NSString *)userGamertag
-             completion:(void (^)(NSString *errorDescription))completion
+-(void)initInstance
 {
-    self.userGamertag = userGamertag;
-    self.completionBlock = completion;
+    if (![User currentUser]) {
+        [self initializationDidFail:@"No currentUser."];
+        return;
+    }
+    
+    self.userGamertag = [User currentUser].gamerTag;
     self.pendingRequests = [[NSMutableArray alloc] init];
     self.achievementsUnsorted = [[NSMutableArray alloc] init];
     self.friendProfilesUnsorted = [[NSMutableArray alloc] init];
@@ -139,13 +149,14 @@
     self.defaultRetries = 3;
     self.defaultCachePolicy = NSURLRequestUseProtocolCachePolicy;
     self.maxRecentGames = 3;
+    self.isOfflineMode = [User isOfflineMode];
     
     if (self.isOfflineMode) {
         [self checkSavedDataExists];
     }
     
     NSLog(@"XboxLiveClient initializing %@with gamertag %@",
-          (self.isOfflineMode) ? @"in OFFLINE MODE " : @"", userGamertag);
+          (self.isOfflineMode) ? @"in OFFLINE MODE " : @"", self.userGamertag);
     self.startInit = [NSDate date];
     
     // Send Friends request.
@@ -178,18 +189,16 @@
 
 -(void)checkPendingRequests
 {
-    static dispatch_once_t once;
+    @synchronized(self) {
+        
+        if (self.isInitializationError) {
+            // Error already returned to caller.
+            return;
+        }
     
-    if (self.isInitializationError) {
-        // Error already returned to caller.
-        return;
-    }
-    
-    if ([self.pendingRequests count] == 0) {
-        dispatch_once(&once, ^{
-            // Avoid race condition where final two requests complete at the same time.
+        if ([self.pendingRequests count] == 0) {
             [self requestsDidComplete];
-        });
+        }
     }
 }
 
@@ -265,12 +274,19 @@
     NSLog(@"XboxLiveClient initialized %@for %@ with %i achievements (%0.f seconds)",
           (self.isOfflineMode) ? @"in OFFLINE MODE " : @"", self.userGamertag, count, self.secondsToInit);
     
-    // Done, notify caller.
-    dispatch_async(dispatch_get_main_queue(), ^{
-        self.completionBlock(nil);
-    });
+    // Done, post notification.
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"InitialDataLoaded" object:nil userInfo:nil];
+    
 }
 
+-(void)initializationDidFail:(NSString *)errorMessage
+{
+    self.isInitializationError = YES;
+    NSLog(@"Failed to initialize xboxLiveClient: %@", errorMessage);
+    
+    // TODO: No one is listening for this right now.
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"InitialDataLoadFailed" object:nil userInfo:nil];
+}
 
 -(void)processFriends:(NSDictionary *)responseData
 {
@@ -471,10 +487,7 @@
             }
         }
         if (errorMessage && !self.isInitializationError) {
-            self.isInitializationError = YES;
-            dispatch_async(dispatch_get_main_queue(), ^{
-                self.completionBlock(errorMessage);
-            });
+            [self initializationDidFail:errorMessage];
         }
         return;
     }
@@ -510,11 +523,8 @@
                       withCachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData];
              } else {
                  if (!self.isInitializationError) {
-                     self.isInitializationError = YES;
                      NSLog(@"Request failed at %@: %@", url_encoded, myErrorMessage);
-                     dispatch_async(dispatch_get_main_queue(), ^{
-                         self.completionBlock(myErrorMessage);
-                     });
+                     [self initializationDidFail:myErrorMessage];
                  }
              }
          } else {
@@ -554,9 +564,7 @@
                 self.isInitializationError = YES;
                 NSString *errorMessage = [NSString stringWithFormat:@"OfflineMode enabled, but no saved image found: %@", savedDataPath];
                 NSLog(@"%@", errorMessage);
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    self.completionBlock(errorMessage);
-                });
+                [self initializationDidFail:errorMessage];
             }
             return;
         }
@@ -584,9 +592,7 @@
                  if (!self.isInitializationError) {
                      self.isInitializationError = YES;
                      NSLog(@"Request for image failed %@: %@", url_encoded, myErrorMessage);
-                     dispatch_async(dispatch_get_main_queue(), ^{
-                         self.completionBlock(myErrorMessage);
-                     });
+                     [self initializationDidFail:myErrorMessage];
                  }
              }
          } else {

@@ -30,6 +30,25 @@
         self.profile = [[XboxLiveClient instance] userProfile];
     }
     self.achievements = [[XboxLiveClient instance] achievementsWithGamertag:self.profile.gamertag];
+    
+    // Setup the view.
+    self.gamertag.text = self.profile.gamertag;
+    self.gamerscore.text = [NSString stringWithFormat:@"%i G", self.profile.gamerscore];
+    UIImage *gamerpicImage;
+    NSString *gamerpicPath = [XboxLiveClient filePathForImageUrl:self.profile.gamerpicImageUrl];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:gamerpicPath]) {
+        gamerpicImage = [UIImage imageWithContentsOfFile:gamerpicPath];
+    } else {
+        gamerpicImage = [UIImage imageNamed:@"TempGamerImage.png"];
+        NSLog(@"Gamerpic image not found, using placeholder instead of %@", gamerpicPath);
+    }
+    self.gamerImage.image = gamerpicImage;
+}
+
+- (void)reloadTable:(NSNotification *)notification {
+    self.profile = [[XboxLiveClient instance] userProfile];
+    [self setup];
+    [self.tableView reloadData];
 }
 
 - (id)initWithStyle:(UITableViewStyle)style
@@ -53,24 +72,11 @@
 {
     [super viewDidLoad];
 
-    // TODO: temporary call to setup, doing this here for now to pick up the data after its been initially loaded
-    // we'll need to work out how we want to do data refresh
-    [self setup];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTable:) name:@"InitialDataLoaded" object:nil];
 
-    self.gamertag.text = self.profile.gamertag;
-    self.gamerscore.text = [NSString stringWithFormat:@"%i G", self.profile.gamerscore];
-    
-    UIImage *gamerpicImage;
-    NSString *gamerpicPath = [XboxLiveClient filePathForImageUrl:self.profile.gamerpicImageUrl];
-    if ([[NSFileManager defaultManager] fileExistsAtPath:gamerpicPath]) {
-        gamerpicImage = [UIImage imageWithContentsOfFile:gamerpicPath];
-    } else {
-        gamerpicImage = [UIImage imageNamed:@"TempGamerImage.png"];
-        NSLog(@"Gamerpic image not found, using placeholder instead of %@", gamerpicPath);
-    }
-    self.gamerImage.image = gamerpicImage;
     
     [HomeTableViewController customizeNavigationBar:self];
+    [self setup];
 }
 
 #pragma mark - Table view data source

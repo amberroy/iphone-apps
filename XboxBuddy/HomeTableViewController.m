@@ -67,6 +67,7 @@
     }
 
     [HomeTableViewController customizeNavigationBar:self];
+    [self setUp];
 }
 
 #pragma mark - Table view data source
@@ -91,6 +92,12 @@
 }
 
 - (void)reloadTable:(NSNotification *)notification {
+    self.achievements = [[XboxLiveClient instance] achievements];
+    [self.tableView reloadData];
+}
+
+- (void)setUp
+{
     self.achievements = [[XboxLiveClient instance] achievements];
     [self.tableView reloadData];
 }

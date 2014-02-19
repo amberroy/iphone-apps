@@ -26,10 +26,7 @@
 -(NSArray *) friendProfiles;
 -(Profile *) friendProfileWithGamertag:(NSString *)gamertag;
 
--(void)initWithGamertag:(NSString *)userGamertag
-             completion:(void (^)(NSString *errorDescription))completion;
-
-// Defaults to NO.  Enable to use saved results from previous API calls.
-@property BOOL isOfflineMode;
+-(void)initInstance;
++(void)resetInstance;
 
 @end

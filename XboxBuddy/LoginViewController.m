@@ -40,24 +40,6 @@
 }
 
 - (IBAction)login:(id)sender {
-    // TODO: add some validation on gamer tag here and insert errors
-    // Fetch data from Xbox Live.
-    //NSString *sampleGamertag = [XboxLiveClient gamertagsForTesting][0];
-    XboxLiveClient *xboxLiveClient = [XboxLiveClient instance];
-    
-    xboxLiveClient.isOfflineMode = YES;   // USE LOCAL DATA INSTEAD FETCHING FROM API
-    [xboxLiveClient initWithGamertag:self.gamerTag.text completion: ^(NSString *errorMessage) {
-        if (errorMessage) {
-            NSLog(@"Failed to initialize XboxLiveClient: %@", errorMessage);
-        } else {
-            NSLog(@"XboxLiveClient initialization complete.");
-            
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"InitialDataLoaded"
-                                                                object:nil
-                                                              userInfo:nil];
-        }
-    }];
-    
     [User setCurrentUser:[[User alloc] initWithGamerTag:self.gamerTag.text]];
 }
 @end

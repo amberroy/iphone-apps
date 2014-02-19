@@ -7,7 +7,6 @@
 //
 
 #import "UserAchievementCell.h"
-#import "XboxLiveClient.h"
 
 @interface UserAchievementCell ()
 

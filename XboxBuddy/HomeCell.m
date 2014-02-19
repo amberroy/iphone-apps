@@ -8,7 +8,6 @@
 
 #import "HomeCell.h"
 #import "Achievement.h"
-#import "XboxLiveClient.h"
 
 @interface HomeCell ()
 

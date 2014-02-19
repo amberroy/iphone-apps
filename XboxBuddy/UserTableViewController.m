@@ -10,7 +10,6 @@
 #import "AchievementViewController.h"
 #import "UserAchievementCell.h"
 #import "Achievement.h"
-#import "XboxLiveClient.h"
 #import "HomeTableViewController.h"
 
 @interface UserTableViewController ()

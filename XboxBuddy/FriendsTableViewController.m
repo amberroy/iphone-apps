@@ -7,7 +7,6 @@
 //
 
 #import "FriendsTableViewController.h"
-#import "XboxLiveClient.h"
 #import "FriendCell.h"
 #import "Profile.h"
 #import "UserTableViewController.h"

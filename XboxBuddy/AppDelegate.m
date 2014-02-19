@@ -7,38 +7,29 @@
 //
 
 #import "AppDelegate.h"
-#import "XboxLiveClient.h"
+#import "SignedOutViewController.h"
+
+@interface AppDelegate ()
+
+- (void)updateRootVC;
+
+@property (nonatomic, strong) SignedOutViewController *signedOutViewController;
+@property (nonatomic, strong) UITabBarController *tabBarViewController;
+@property (nonatomic, strong) UIViewController *currentVC;
+
+@end
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    
-    // Initialize app from the storyboard.
-    UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    UITabBarController *initialViewController = [storyboard instantiateInitialViewController];
-    self.window.rootViewController = initialViewController;
-    
+    self.window.rootViewController = self.currentVC;
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     
-    // Fetch data from Xbox Live.
-    NSString *sampleGamertag = [XboxLiveClient gamertagsForTesting][0];
-    XboxLiveClient *xboxLiveClient = [XboxLiveClient instance];
-    
-    xboxLiveClient.isOfflineMode = YES;   // USE LOCAL DATA INSTEAD FETCHING FROM API
-    [xboxLiveClient initWithGamertag:sampleGamertag completion: ^(NSString *errorMessage) {
-        if (errorMessage) {
-            NSLog(@"Failed to initialize XboxLiveClient: %@", errorMessage);
-        } else {
-            NSLog(@"XboxLiveClient initialization complete.");
-
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"InitialDataLoaded"
-                                                                object:nil
-                                                              userInfo:nil];
-        }
-    }];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateRootVC) name:UserDidLoginNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateRootVC) name:UserDidLogoutNotification object:nil];
     
     return YES;
 }
@@ -68,6 +59,40 @@
 - (void)applicationWillTerminate:(UIApplication *)application
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+}
+
+
+#pragma mark - Private methods
+
+
+- (UIViewController *)currentVC {    
+    if ([User currentUser]) {
+        return self.tabBarViewController;
+    } else {
+        return self.signedOutViewController;
+    }
+}
+
+- (UITabBarController *)tabBarViewController {
+    if (!_tabBarViewController) {
+        UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        _tabBarViewController = [storyboard instantiateViewControllerWithIdentifier:@"TabBarViewController"];
+    }
+    
+    return _tabBarViewController;
+}
+
+- (SignedOutViewController *)signedOutViewController {
+   // if (!_signedOutViewController) {
+        UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        _signedOutViewController = [storyboard instantiateViewControllerWithIdentifier:@"SignedOutViewController"];
+    //}
+    
+    return _signedOutViewController;
+}
+
+- (void)updateRootVC {
+    self.window.rootViewController = self.currentVC;
 }
 
 @end

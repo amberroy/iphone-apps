@@ -47,9 +47,17 @@
     self.gamerImage.image = gamerpicImage;
     
     self.gamerTag.text = profileObj.gamertag;
-    self.gameName.text = profileObj.gameName;
-    self.gamerscore.text = [NSString stringWithFormat:@"%i G", profileObj.gamerscore];
-    self.achievementEarnedOn.text = [Achievement timeAgoWithDate:profileObj.achievementEarnedOn];
+    if (profileObj.gameName) {
+        NSString *gameName = profileObj.gameName;
+        NSString *timestamp = [Achievement timeAgoWithDate:profileObj.lastPlayed];
+        if ([timestamp rangeOfString:@"/"].location != NSNotFound) {
+            // If timestamp is a date, display as "on 02/14/14"
+            timestamp = [NSString stringWithFormat:@"on %@", timestamp];
+        }
+        self.lastPlayedDetail.text = [NSString stringWithFormat:@"Last played %@ %@.", gameName, timestamp];
+    } else {
+        self.lastPlayedDetail.text = @"Recent games not shared by player.";
+    }
 }
 
 @end

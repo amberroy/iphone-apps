@@ -14,9 +14,7 @@
 @property (strong, nonatomic) IBOutlet UIImageView *gamerImage;
 @property (strong, nonatomic) IBOutlet UILabel *gamerTag;
 @property (weak, nonatomic) IBOutlet UILabel *gameName;
-@property (weak, nonatomic) IBOutlet UILabel *headline1;
 
-@property (strong, nonatomic) IBOutlet UILabel *achievementName;
 @property (strong, nonatomic) IBOutlet UILabel *achievementEarnedOn;
 @property (weak, nonatomic) IBOutlet UIImageView *achievementImage;
 @property (weak, nonatomic) IBOutlet UILabel *achievementPoints;

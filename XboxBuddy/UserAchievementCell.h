@@ -11,13 +11,13 @@
 
 @interface UserAchievementCell : UITableViewCell
 
-@property (strong, nonatomic) IBOutlet UIImageView *achievementImage;
-@property (strong, nonatomic) IBOutlet UILabel *achievementName;
-@property (strong, nonatomic) IBOutlet UILabel *achievementEarnedOn;
+@property (weak, nonatomic) IBOutlet UILabel *gamertag;
 @property (weak, nonatomic) IBOutlet UILabel *achievementPoints;
-
 @property (weak, nonatomic) IBOutlet UILabel *gameName;
-@property (weak, nonatomic) IBOutlet UILabel *gamePercentComplete;
+@property (strong, nonatomic) IBOutlet UILabel *achievementEarnedOn;
+
+@property (weak, nonatomic) IBOutlet UIImageView *gamerImage;
+@property (strong, nonatomic) IBOutlet UIImageView *achievementImage;
 
 -(void)initWithAchievement:(Achievement *)achievementObj;
 

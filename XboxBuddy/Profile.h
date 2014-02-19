@@ -16,7 +16,7 @@
 @property NSString *gamerpicImageUrl;
 @property NSString *avatarImageUrl;
 
-// Game info for most recently earned achievement.
+// Game info for most recently played game.
 @property NSString *gameName;
 @property NSInteger gamePointsPossible;
 @property NSInteger gamePointsEarned;
@@ -24,7 +24,7 @@
 @property NSInteger gameAchievementsEarned;
 @property NSInteger gameProgress;
 @property NSString *gameImageUrl;
-@property NSDate *achievementEarnedOn;
+@property NSDate *lastPlayed;
 
 +(NSArray *)profilesWithArray:(NSArray *)array;
 - (Profile *)initWithDictionary:(NSDictionary *)dict;

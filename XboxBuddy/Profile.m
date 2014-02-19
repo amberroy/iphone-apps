@@ -28,16 +28,16 @@
         self.gamerpicImageUrl = dict[@"Player"][@"Avatar"][@"Gamerpic"][@"Large"];
         self.avatarImageUrl = dict[@"Player"][@"Avatar"][@"Body"];
         
-        if (dict[@"LastAchievement"] != [NSNull null]) {
-            self.gameName = dict[@"LastAchievement"][@"Game"][@"Name"];
-            self.gamePointsPossible = [dict[@"LastAchievement"][@"Game"][@"PossibleGamerscore"] integerValue];
-            self.gamePointsEarned = [dict[@"LastAchievement"][@"Game"][@"Progress"][@"Gamerscore"] integerValue];
-            self.gameAchievementsPossible = [dict[@"LastAchievement"][@"Game"][@"PossibleAchievements"] integerValue];
-            self.gameAchievementsEarned = [dict[@"LastAchievement"][@"Game"][@"Progress"][@"Achievements"] integerValue];
-            self.gameImageUrl = dict[@"LastAchievement"][@"Game"][@"BoxArt"][@"Large"];
+        if (dict[@"LastGame"] != [NSNull null]) {
+            self.gameName = dict[@"LastGame"][@"Name"];
+            self.gamePointsPossible = [dict[@"LastGame"][@"PossibleGamerscore"] integerValue];
+            self.gamePointsEarned = [dict[@"LastGame"][@"Progress"][@"Score"] integerValue];
+            self.gameAchievementsPossible = [dict[@"LastGame"][@"PossibleAchievements"] integerValue];
+            self.gameAchievementsEarned = [dict[@"LastGame"][@"Progress"][@"Achievements"] integerValue];
+            self.gameImageUrl = dict[@"LastGame"][@"BoxArt"][@"Large"];
             self.gameProgress = round((float)self.gameAchievementsEarned / self.gameAchievementsPossible);
-            double earnedOnSeconds = [dict[@"LastAchievement"][@"Achievement"][@"EarnedOn-UNIX"] doubleValue];
-            self.achievementEarnedOn = [NSDate dateWithTimeIntervalSince1970:earnedOnSeconds];
+            double lastPlayedSeconds = [dict[@"LastGame"][@"Progress"][@"LastPlayed-UNIX"] doubleValue];
+            self.lastPlayed = [NSDate dateWithTimeIntervalSince1970:lastPlayedSeconds];
         }
     }
     

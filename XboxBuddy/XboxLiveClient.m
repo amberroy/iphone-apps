@@ -22,6 +22,7 @@
 @property BOOL isImageError;
 @property NSMutableArray *achievementsUnsorted;
 @property NSMutableArray *friendProfilesUnsorted;
+@property NSMutableDictionary *lastGameWithGamertag;
 @property NSDate *startInit;
 @property NSDate *endInit;
 @property NSTimeInterval secondsToInit;
@@ -145,6 +146,7 @@ static XboxLiveClient *Instance;
     self.pendingRequests = [[NSMutableArray alloc] init];
     self.achievementsUnsorted = [[NSMutableArray alloc] init];
     self.friendProfilesUnsorted = [[NSMutableArray alloc] init];
+    self.lastGameWithGamertag = [[NSMutableDictionary alloc] init];
     self.isInitializationError = NO;
     self.defaultRetries = 3;
     self.defaultCachePolicy = NSURLRequestUseProtocolCachePolicy;
@@ -225,25 +227,26 @@ static XboxLiveClient *Instance;
         }
     }
     
-    // Add the last achievement earned to user profile and each friend profile.
+    
+    // Add the last game played to user profile and each friend profile.
     NSMutableDictionary *user_profile_mdict = [[NSMutableDictionary alloc] initWithDictionary:self.userProfileFromJSON];
-    NSMutableDictionary *user_last_achievement = lastAchievement[self.userGamertag];
-    if (user_last_achievement) {
-        user_profile_mdict[@"LastAchievement"] = user_last_achievement;
+    NSMutableDictionary *user_last_game = self.lastGameWithGamertag[self.userGamertag];
+    if (user_last_game) {
+        user_profile_mdict[@"LastGame"] = user_last_game;
     } else {
-        // Last achivement for current user could be null if they haven't earned one yet; unlikely but possible.
-        user_profile_mdict[@"LastAchievement"] = [NSNull null];
+        // Last game for current user could be null if they have their recent activity hidden.
+        user_profile_mdict[@"LastGame"] = [NSNull null];
     }
     self.userProfileFromJSON = user_profile_mdict;
     for (int i=0; i < [self.friendProfilesUnsorted count]; i++) {
         NSDictionary *profile_dict = self.friendProfilesUnsorted[i];
         NSMutableDictionary *profile_mdict = [[NSMutableDictionary alloc] initWithDictionary:profile_dict];
-        NSMutableDictionary *profile_acheivement = lastAchievement[profile_mdict[@"Player"][@"Gamertag"]];
-        if (profile_acheivement) {
-            profile_mdict[@"LastAchievement"] = profile_acheivement;
+        NSMutableDictionary *profile_game = self.lastGameWithGamertag[profile_dict[@"Player"][@"Gamertag"]];
+        if (profile_game) {
+            profile_mdict[@"LastGame"] = profile_game;
         } else {
             // Last achivement will be null if friend has their recent activity hidden.
-            profile_mdict[@"LastAchievement"] = [NSNull null];
+            profile_mdict[@"LastGame"] = [NSNull null];
         }
         self.friendProfilesUnsorted[i] = profile_mdict;
     }
@@ -373,11 +376,17 @@ static XboxLiveClient *Instance;
                 continue;   // Console app, skip it.
             }
             
-            // Skip games with no achievements unlocked.
+            // Save the most recently played game (even if it has no achievements).
+            if (!self.lastGameWithGamertag[friendGamertag]) {
+                self.lastGameWithGamertag[friendGamertag] = game;
+            }
+            
+            // No need to fetch achievements if none unlocked.
             if ([game[@"Progress"][@"Achievements"] intValue] == 0) {
                 //NSLog(@"Skipping game with no achievements unlocked for %@: %@", friendGamertag, game[@"Name"]);   // DEBUG
                 continue;
             }
+            
             
             // Get game artwork.
             [self imageRequestWithURL:game_boxart_url_str success:

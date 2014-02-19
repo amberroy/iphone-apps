@@ -57,11 +57,8 @@
     self.achievementImage.image = achievemntImage;
     
     self.gamerTag.text = achievementObj.gamertag;
-    self.headline1.text = @"unlocked an achievement";
-    self.gameName.text = [NSString stringWithFormat:@"playing %@.", achievementObj.gameName];
-    self.achievementName.text = [NSString stringWithFormat:@"%@: %@",
-                                 achievementObj.name, achievementObj.detail];
-    self.achievementPoints.text = [NSString stringWithFormat:@"%i G", achievementObj.points];
+    self.achievementPoints.text = [NSString stringWithFormat:@"%i G achievement", achievementObj.points];
+    self.gameName.text = [NSString stringWithFormat:@"%@", achievementObj.gameName];
     self.achievementEarnedOn.text = [Achievement timeAgoWithDate:achievementObj.earnedOn];
     
 }

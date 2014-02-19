@@ -14,9 +14,8 @@
 @property (strong, nonatomic) IBOutlet UIImageView *gamerImage;
 @property (strong, nonatomic) IBOutlet UILabel *gamerTag;
 
-@property (weak, nonatomic) IBOutlet UILabel *gameName;
-@property (weak, nonatomic) IBOutlet UILabel *gamerscore;
-@property (weak, nonatomic) IBOutlet UILabel *achievementEarnedOn;
+@property (weak, nonatomic) IBOutlet UILabel *lastPlayedDetail;
+
 
 -(void)initWithProfile:(Profile *)profileObj;
 

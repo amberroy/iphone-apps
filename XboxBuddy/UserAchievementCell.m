@@ -37,6 +37,16 @@
 {
     self.achievementObj = achievementObj;
     
+    UIImage *gamerpicImage;
+    NSString *gamerpicPath = [XboxLiveClient filePathForImageUrl:achievementObj.gamerpicImageUrl];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:gamerpicPath]) {
+        gamerpicImage = [UIImage imageWithContentsOfFile:gamerpicPath];
+    } else {
+        NSLog(@"Gamerpic image not found, using placeholder instead of %@", gamerpicPath);
+        gamerpicImage = [UIImage imageNamed:@"TempGamerImage.png"];
+    }
+    self.gamerImage.image = gamerpicImage;
+    
     UIImage *achievementImage;
     NSString *achievementPath = [XboxLiveClient filePathForImageUrl:achievementObj.imageUrl];
     if ([[NSFileManager defaultManager] fileExistsAtPath:achievementPath]) {
@@ -47,11 +57,9 @@
     }
     self.achievementImage.image = achievementImage;
     
-    self.achievementPoints.text = [NSString stringWithFormat:@"%i G", achievementObj.points];
+    self.gamertag.text = achievementObj.gamertag;
+    self.achievementPoints.text = [NSString stringWithFormat:@"%i G achievement", achievementObj.points];
     self.gameName.text = achievementObj.gameName;
-    self.gamePercentComplete.text = [NSString stringWithFormat:@"%i%%", achievementObj.gamePercentComplete];
-    self.achievementName.text = [NSString stringWithFormat:@"%@: %@",
-                                 achievementObj.name, achievementObj.detail];
     self.achievementEarnedOn.text = [Achievement timeAgoWithDate:achievementObj.earnedOn];
 }
 

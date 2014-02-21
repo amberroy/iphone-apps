@@ -21,10 +21,9 @@
 
 + (void)customizeNavigationBar:(UIViewController *)viewController
 {
-    UIColor *backgroundColor = [UIColor darkGrayColor];
-    //UIColor *backgroundColor = [UIColor colorWithRed:0.0/255.0
-    //                                           green:159.0/255.0
-    //                                            blue:0.0/255.0 alpha:1.0];
+    UIColor *backgroundColor = [UIColor colorWithRed:49.0/255.0
+                                               green:162.0/255.0
+                                                blue:66.0/255.0 alpha:1.0];
     UIColor *textColor = [UIColor whiteColor];
     
     // Custom Nav Bar colors:

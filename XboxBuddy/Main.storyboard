@@ -157,10 +157,11 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
+                    <navigationItem key="navigationItem" id="DdK-Ff-79m"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zaf-oo-0Kc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-3868" y="909"/>
+            <point key="canvasLocation" x="-3342" y="909"/>
         </scene>
         <!--Login View Controller - Login-->
         <scene sceneID="3Em-iD-56q">
@@ -203,16 +204,38 @@
                                     <action selector="touchDownLogin:" destination="4V3-1Y-Trc" eventType="touchDown" id="4i1-vp-G6a"/>
                                 </connections>
                             </button>
+                            <navigationBar contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Kdt-K3-dI4">
+                                <rect key="frame" x="0.0" y="19" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <items>
+                                    <navigationItem id="vBd-8o-M40">
+                                        <barButtonItem key="leftBarButtonItem" title="Cancel" id="EJr-rp-sKE">
+                                            <color key="tintColor" red="0.13333334029999999" green="0.66666668650000005" blue="0.29019609089999998" alpha="1" colorSpace="deviceRGB"/>
+                                            <connections>
+                                                <segue destination="rHQ-dR-5oc" kind="modal" id="mfM-wZ-hRf"/>
+                                            </connections>
+                                        </barButtonItem>
+                                    </navigationItem>
+                                </items>
+                            </navigationBar>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PLe-xC-HNf">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="20"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="0.96862751245498657" green="0.96862751245498657" blue="0.96862751245498657" alpha="1" colorSpace="deviceRGB"/>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" id="fTy-fU-n6V"/>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="gamerTag" destination="7U4-8p-VET" id="Joa-AM-A0y"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ykX-Ge-6vQ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-3425" y="909"/>
+            <point key="canvasLocation" x="-2899" y="909"/>
         </scene>
         <!--Navigation Controller - Home-->
         <scene sceneID="VUn-F3-p8Q">

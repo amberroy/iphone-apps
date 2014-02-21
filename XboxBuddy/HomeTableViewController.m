@@ -21,10 +21,12 @@
 
 + (void)customizeNavigationBar:(UIViewController *)viewController
 {
-    UIColor *backgroundColor = [UIColor colorWithRed:49.0/255.0
-                                               green:162.0/255.0
-                                                blue:66.0/255.0 alpha:1.0];
-    UIColor *textColor = [UIColor whiteColor];
+    UIColor *green = [UIColor colorWithRed:49.0/255.0
+                                    green:162.0/255.0
+                                     blue:66.0/255.0 alpha:1.0];
+    UIColor *backgroundColor = green;
+    UIColor *textColor = [UIColor blackColor];
+    UIColor *borderColor = [UIColor blackColor];
     
     // Custom Nav Bar colors:
     // * NavBar translucent: YES by default, change to NO when adding colors.
@@ -34,12 +36,20 @@
     // * BarButtonItem "NSForgroundColorAttributeName": Text color of the title when on left ("back") nav button.
     
     // TODO: Move this to util file.
-    viewController.navigationController.navigationBar.translucent = NO;
-    viewController.navigationController.navigationBar.barTintColor = backgroundColor;
-    viewController.navigationController.navigationBar.tintColor = textColor;
-    viewController.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: textColor};
+    UINavigationBar *navigationBar = viewController.navigationController.navigationBar;
+    navigationBar.translucent = NO;
+    navigationBar.barTintColor = backgroundColor;
+    navigationBar.tintColor = textColor;
+    navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: textColor};
     UIBarButtonItem *barButtonItem = [UIBarButtonItem appearanceWhenContainedIn:[UINavigationBar class], nil];
     [barButtonItem setTitleTextAttributes:@{NSForegroundColorAttributeName: textColor} forState:UIControlStateNormal];
+    
+
+    CGRect frame = CGRectMake(0, navigationBar.frame.size.height-1,navigationBar.frame.size.width, 1);
+    UIView *navBorder = [[UIView alloc] initWithFrame:frame];
+    [navBorder setBackgroundColor:borderColor];
+    [navBorder setOpaque:YES];
+    [navigationBar addSubview:navBorder];
 }
 
 - (id)initWithStyle:(UITableViewStyle)style

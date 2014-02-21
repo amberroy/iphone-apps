@@ -64,7 +64,7 @@
 
 - (IBAction)signOut:(id)sender {
     [User setCurrentUser:nil];
-    [self.navigationController popToRootViewControllerAnimated:NO];
+    [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
 @end

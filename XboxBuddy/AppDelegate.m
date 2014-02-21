@@ -97,6 +97,8 @@
 - (void)userDidLogout {
     self.window.rootViewController = self.currentVC;
     [XboxLiveClient resetInstance];
+    
+    // Reset to first tab.
 }
 
 @end

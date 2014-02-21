@@ -31,6 +31,7 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    [self.gamerTag becomeFirstResponder];
 }
 
 - (void)didReceiveMemoryWarning
@@ -39,7 +40,22 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (IBAction)login:(id)sender {
+- (IBAction)login:(id)sender
+{
     [User setCurrentUser:[[User alloc] initWithGamerTag:self.gamerTag.text]];
 }
+
+- (IBAction)touchDownLogin:(id)sender {
+    [self.gamerTag resignFirstResponder];
+}
+
+#pragma mark - UITextFieldDelegate
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    [self.gamerTag resignFirstResponder];
+    return YES;
+}
+
+
 @end

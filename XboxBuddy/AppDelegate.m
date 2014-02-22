@@ -8,6 +8,7 @@
 
 #import "AppDelegate.h"
 #import "SignedOutViewController.h"
+#import <Parse/Parse.h>
 
 @interface AppDelegate ()
 
@@ -26,8 +27,14 @@
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     
+    // Add Notifications for Login/Logout
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidLogin) name:UserDidLoginNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidLogout) name:UserDidLogoutNotification object:nil];
+    
+    // Add Parse keys.
+    [Parse setApplicationId:@"XBQ1N1MT6o7rz71junys5aguU8vlJ8J5mCjUbVE9"
+                  clientKey:@"Ychj0QYNppyWNBFD9GUJoFE8AxhEldW75hoNdwff"];
+    [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     
     return YES;
 }

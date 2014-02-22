@@ -21,12 +21,13 @@
 
 + (void)customizeNavigationBar:(UIViewController *)viewController
 {
-    UIColor *green = [UIColor colorWithRed:49.0/255.0
-                                    green:162.0/255.0
-                                     blue:66.0/255.0 alpha:1.0];
-    UIColor *backgroundColor = green;
-    UIColor *textColor = [UIColor blackColor];
-    UIColor *borderColor = [UIColor blackColor];
+    //UIColor *green = [UIColor colorWithRed:0.0/255.0
+    //                                 green:159.0/255.0
+    //                                  blue:0.0/255.0 alpha:1.0];
+    
+    UIColor *backgroundColor = [UIColor darkGrayColor];
+    UIColor *textColor = [UIColor whiteColor];
+    //UIColor *borderColor = [UIColor blackColor];
     
     // Custom Nav Bar colors:
     // * NavBar translucent: YES by default, change to NO when adding colors.
@@ -44,12 +45,13 @@
     UIBarButtonItem *barButtonItem = [UIBarButtonItem appearanceWhenContainedIn:[UINavigationBar class], nil];
     [barButtonItem setTitleTextAttributes:@{NSForegroundColorAttributeName: textColor} forState:UIControlStateNormal];
     
-
-    CGRect frame = CGRectMake(0, navigationBar.frame.size.height-1,navigationBar.frame.size.width, 1);
-    UIView *navBorder = [[UIView alloc] initWithFrame:frame];
-    [navBorder setBackgroundColor:borderColor];
-    [navBorder setOpaque:YES];
-    [navigationBar addSubview:navBorder];
+    // Set bottom border for NavBar.
+    //CGRect frame = CGRectMake(0, navigationBar.frame.size.height-1,navigationBar.frame.size.width, 1);
+    //UIView *navBorder = [[UIView alloc] initWithFrame:frame];
+    //[navBorder setBackgroundColor:borderColor];
+    //[navBorder setOpaque:YES];
+    //[navigationBar addSubview:navBorder];
+    
 }
 
 - (id)initWithStyle:(UITableViewStyle)style

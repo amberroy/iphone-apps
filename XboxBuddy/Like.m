@@ -1,17 +1,17 @@
 //
-//  Comment.m
+//  Like.m
 //  XboxBuddy
 //
 //  Created by Amber Roy on 2/22/14.
 //  Copyright (c) 2014 XboxBuddy. All rights reserved.
 //
 
-#import "Comment.h"
+#import "Like.h"
 #import <Parse/PFObject+Subclass.h>
+#import <Parse/PFQuery.h>
 
-@implementation Comment
+@implementation Like
 
-@dynamic content;
 @dynamic timestamp;
 @dynamic authorGamertag;
 @dynamic authorImageUrl;
@@ -19,13 +19,12 @@
 @dynamic achievementName;
 @dynamic achievementGamertag;
 
-- (Comment *)initWithContent:(NSString *)content
+- (Like *)initWithContent:(NSString *)content
                  withAchievement:(Achievement *)achievement
 {
     
     self = [super init];
     if (self) {
-        self.content = content;
         self.timestamp = [NSDate date];
         
         self.gameName = achievement.gameName;
@@ -41,10 +40,9 @@
     return self;
 }
 
-
 + (NSString *)parseClassName
 {
-    return @"Comment";
+    return @"Like";
 }
 
 @end

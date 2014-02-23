@@ -7,6 +7,7 @@
 //
 
 #import "Profile.h"
+#import "Game.h"
 
 @implementation Profile
 
@@ -28,17 +29,15 @@
         self.gamerpicImageUrl = dict[@"Player"][@"Avatar"][@"Gamerpic"][@"Large"];
         self.avatarImageUrl = dict[@"Player"][@"Avatar"][@"Body"];
         
-        if (dict[@"LastGame"] != [NSNull null]) {
-            self.gameName = dict[@"LastGame"][@"Name"];
-            self.gamePointsPossible = [dict[@"LastGame"][@"PossibleGamerscore"] integerValue];
-            self.gamePointsEarned = [dict[@"LastGame"][@"Progress"][@"Score"] integerValue];
-            self.gameAchievementsPossible = [dict[@"LastGame"][@"PossibleAchievements"] integerValue];
-            self.gameAchievementsEarned = [dict[@"LastGame"][@"Progress"][@"Achievements"] integerValue];
-            self.gameImageUrl = dict[@"LastGame"][@"BoxArt"][@"Large"];
-            self.gameProgress = round((float)self.gameAchievementsEarned / self.gameAchievementsPossible);
-            double lastPlayedSeconds = [dict[@"LastGame"][@"Progress"][@"LastPlayed-UNIX"] doubleValue];
-            self.lastPlayed = [NSDate dateWithTimeIntervalSince1970:lastPlayedSeconds];
+        if (dict[@"RecentGames"] != [NSNull null]) {
+            NSMutableArray *games = [[NSMutableArray alloc] init];
+            for (NSDictionary *game in dict[@"RecentGames"]) {
+                Game *gameObj = [[Game alloc] initWithDictionary:game];
+                [games addObject:gameObj];
+            }
+            self.recentGames = games;
         }
+
     }
     
     return self;

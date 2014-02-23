@@ -49,6 +49,9 @@
 		9654F4BD18B83ACD0035025F /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9654F4BC18B83ACD0035025F /* StoreKit.framework */; };
 		9654F4BF18B83AD80035025F /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9654F4BE18B83AD80035025F /* SystemConfiguration.framework */; };
 		9654F4C218B9527C0035025F /* Comment.m in Sources */ = {isa = PBXBuildFile; fileRef = 9654F4C118B9527C0035025F /* Comment.m */; };
+		9654F4C718B9942D0035025F /* Like.m in Sources */ = {isa = PBXBuildFile; fileRef = 9654F4C618B9942D0035025F /* Like.m */; };
+		9654F4CA18BA5F120035025F /* ParseClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 9654F4C918BA5F120035025F /* ParseClient.m */; };
+		9654F4CD18BA6B860035025F /* Game.m in Sources */ = {isa = PBXBuildFile; fileRef = 9654F4CC18BA6B860035025F /* Game.m */; };
 		9664566A1899E49600E5C691 /* XboxLiveClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 966456691899E49600E5C691 /* XboxLiveClient.m */; };
 		9693F762189F032B00D3C80A /* Profile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9693F761189F032B00D3C80A /* Profile.m */; };
 /* End PBXBuildFile section */
@@ -124,6 +127,12 @@
 		9654F4BE18B83AD80035025F /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		9654F4C018B9527C0035025F /* Comment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Comment.h; sourceTree = "<group>"; };
 		9654F4C118B9527C0035025F /* Comment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Comment.m; sourceTree = "<group>"; };
+		9654F4C518B994170035025F /* Like.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Like.h; sourceTree = "<group>"; };
+		9654F4C618B9942D0035025F /* Like.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Like.m; sourceTree = "<group>"; };
+		9654F4C818BA5F120035025F /* ParseClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParseClient.h; sourceTree = "<group>"; };
+		9654F4C918BA5F120035025F /* ParseClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParseClient.m; sourceTree = "<group>"; };
+		9654F4CB18BA6B860035025F /* Game.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Game.h; sourceTree = "<group>"; };
+		9654F4CC18BA6B860035025F /* Game.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Game.m; sourceTree = "<group>"; };
 		966456681899E49600E5C691 /* XboxLiveClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XboxLiveClient.h; sourceTree = "<group>"; };
 		966456691899E49600E5C691 /* XboxLiveClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XboxLiveClient.m; sourceTree = "<group>"; };
 		9693F760189F032B00D3C80A /* Profile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Profile.h; sourceTree = "<group>"; };
@@ -317,6 +326,10 @@
 				26F13BE818B28CD1005C1ECE /* User.m */,
 				9654F4C018B9527C0035025F /* Comment.h */,
 				9654F4C118B9527C0035025F /* Comment.m */,
+				9654F4C518B994170035025F /* Like.h */,
+				9654F4C618B9942D0035025F /* Like.m */,
+				9654F4CB18BA6B860035025F /* Game.h */,
+				9654F4CC18BA6B860035025F /* Game.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -326,6 +339,8 @@
 			children = (
 				966456681899E49600E5C691 /* XboxLiveClient.h */,
 				966456691899E49600E5C691 /* XboxLiveClient.m */,
+				9654F4C818BA5F120035025F /* ParseClient.h */,
+				9654F4C918BA5F120035025F /* ParseClient.m */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -443,14 +458,17 @@
 				962084601899B915006AD8E9 /* AppDelegate.m in Sources */,
 				2681874818A206A3003D281B /* UserAchievementCell.m in Sources */,
 				26F13BE618B0055B005C1ECE /* SignedOutViewController.m in Sources */,
+				9654F4CA18BA5F120035025F /* ParseClient.m in Sources */,
 				2681874E18A213A2003D281B /* FriendsTableViewController.m in Sources */,
 				26F13BF018B2996A005C1ECE /* LoginViewController.m in Sources */,
 				26F13BE918B28CD1005C1ECE /* User.m in Sources */,
 				9664566A1899E49600E5C691 /* XboxLiveClient.m in Sources */,
 				2681874B18A20701003D281B /* UserTableViewController.m in Sources */,
 				9693F762189F032B00D3C80A /* Profile.m in Sources */,
+				9654F4CD18BA6B860035025F /* Game.m in Sources */,
 				26F13BED18B296E7005C1ECE /* SettingsViewController.m in Sources */,
 				26D2F6741899F27200EFB93A /* AchievementViewController.m in Sources */,
+				9654F4C718B9942D0035025F /* Like.m in Sources */,
 				9620845C1899B915006AD8E9 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

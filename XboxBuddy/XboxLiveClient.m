@@ -22,7 +22,7 @@
 @property BOOL isImageError;
 @property NSMutableArray *achievementsUnsorted;
 @property NSMutableArray *friendProfilesUnsorted;
-@property NSMutableDictionary *lastGameWithGamertag;
+@property NSMutableDictionary *recentGamesWithGamertag;
 @property NSDate *startInit;
 @property NSDate *endInit;
 @property NSTimeInterval secondsToInit;
@@ -31,7 +31,6 @@
 @property int defaultRetries;
 @property int defaultCachePolicy;
 @property int maxRecentGames;
-@property BOOL isOfflineMode;
 
 // Only methods that sends requests to the remote Xbox Live API.
 -(void)sendRequestWithURL:(NSString *)url success:(void(^)(NSDictionary *responseDictionary))success;
@@ -58,6 +57,7 @@
 @implementation XboxLiveClient
 
 static XboxLiveClient *Instance;
+static BOOL IsOfflineMode;
 
 +(XboxLiveClient *)instance
 {
@@ -77,6 +77,9 @@ static XboxLiveClient *Instance;
         Instance = [[XboxLiveClient alloc] init];
     }
 }
+
++(BOOL)isOfflineMode { return IsOfflineMode; }
++(void)setIsOfflineMode:(BOOL)isOfflineMode { IsOfflineMode = isOfflineMode; }
 
 +(NSArray *)gamertagsForTesting
 {
@@ -146,19 +149,18 @@ static XboxLiveClient *Instance;
     self.pendingRequests = [[NSMutableArray alloc] init];
     self.achievementsUnsorted = [[NSMutableArray alloc] init];
     self.friendProfilesUnsorted = [[NSMutableArray alloc] init];
-    self.lastGameWithGamertag = [[NSMutableDictionary alloc] init];
+    self.recentGamesWithGamertag = [[NSMutableDictionary alloc] init];
     self.isInitializationError = NO;
     self.defaultRetries = 3;
     self.defaultCachePolicy = NSURLRequestUseProtocolCachePolicy;
     self.maxRecentGames = 3;
-    self.isOfflineMode = [User isOfflineMode];
     
-    if (self.isOfflineMode) {
+    if (IsOfflineMode) {
         [self checkSavedDataExists];
     }
     
     NSLog(@"XboxLiveClient initializing %@with gamertag %@",
-          (self.isOfflineMode) ? @"in OFFLINE MODE " : @"", self.userGamertag);
+          (IsOfflineMode) ? @"in OFFLINE MODE " : @"", self.userGamertag);
     self.startInit = [NSDate date];
     
     // Send Friends request.
@@ -181,7 +183,7 @@ static XboxLiveClient *Instance;
                               delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
         NSLog(@"No Saved Data found at %@", savedDataPath);
         NSLog(@"Overriding OFFLINE MODE for this run.");
-        self.isOfflineMode = NO;
+        IsOfflineMode = NO;
         [alert show];
     } else {
         NSLog(@"Saved Data found at %@", savedDataPath);
@@ -227,26 +229,26 @@ static XboxLiveClient *Instance;
         }
     }
     
-    
+    // HERE
     // Add the last game played to user profile and each friend profile.
     NSMutableDictionary *user_profile_mdict = [[NSMutableDictionary alloc] initWithDictionary:self.userProfileFromJSON];
-    NSMutableDictionary *user_last_game = self.lastGameWithGamertag[self.userGamertag];
-    if (user_last_game) {
-        user_profile_mdict[@"LastGame"] = user_last_game;
+    NSMutableArray *user_recent_games = self.recentGamesWithGamertag[self.userGamertag];
+    if (user_recent_games) {
+        user_profile_mdict[@"RecentGames"] = user_recent_games;
     } else {
-        // Last game for current user could be null if they have their recent activity hidden.
-        user_profile_mdict[@"LastGame"] = [NSNull null];
+        // Recent games for current user could be null if they have their recent activity hidden.
+        user_profile_mdict[@"RecentGames"] = [NSNull null];
     }
     self.userProfileFromJSON = user_profile_mdict;
     for (int i=0; i < [self.friendProfilesUnsorted count]; i++) {
         NSDictionary *profile_dict = self.friendProfilesUnsorted[i];
         NSMutableDictionary *profile_mdict = [[NSMutableDictionary alloc] initWithDictionary:profile_dict];
-        NSMutableDictionary *profile_game = self.lastGameWithGamertag[profile_dict[@"Player"][@"Gamertag"]];
-        if (profile_game) {
-            profile_mdict[@"LastGame"] = profile_game;
+        NSMutableArray *profile_recent_games = self.recentGamesWithGamertag[profile_dict[@"Player"][@"Gamertag"]];
+        if (profile_recent_games) {
+            profile_mdict[@"RecentGames"] = profile_recent_games;
         } else {
             // Last achivement will be null if friend has their recent activity hidden.
-            profile_mdict[@"LastGame"] = [NSNull null];
+            profile_mdict[@"RecentGames"] = [NSNull null];
         }
         self.friendProfilesUnsorted[i] = profile_mdict;
     }
@@ -275,7 +277,7 @@ static XboxLiveClient *Instance;
     int count = (int)[self.achievementsFromJSON count];
     
     NSLog(@"XboxLiveClient initialized %@for %@ with %i achievements (%0.f seconds)",
-          (self.isOfflineMode) ? @"in OFFLINE MODE " : @"", self.userGamertag, count, self.secondsToInit);
+          (IsOfflineMode) ? @"in OFFLINE MODE " : @"", self.userGamertag, count, self.secondsToInit);
     
     // Done, post notification.
     [[NSNotificationCenter defaultCenter] postNotificationName:@"InitialDataLoaded" object:nil userInfo:nil];
@@ -376,10 +378,11 @@ static XboxLiveClient *Instance;
                 continue;   // Console app, skip it.
             }
             
-            // Save the most recently played game (even if it has no achievements).
-            if (!self.lastGameWithGamertag[friendGamertag]) {
-                self.lastGameWithGamertag[friendGamertag] = game;
+            // Save the recent games (even if they have no achievements).
+            if (!self.recentGamesWithGamertag[friendGamertag]) {
+                self.recentGamesWithGamertag[friendGamertag] = [[NSMutableArray alloc] init];
             }
+            [self.recentGamesWithGamertag[friendGamertag] addObject:game];
             
             // No need to fetch achievements if none unlocked.
             if ([game[@"Progress"][@"Achievements"] intValue] == 0) {
@@ -473,7 +476,7 @@ static XboxLiveClient *Instance;
 
     NSString *errorMessage = nil;
     NSString *savedDataPath = [self filePathForUrl:url withExtension:@"json"];
-    if (self.isOfflineMode) {
+    if (IsOfflineMode) {
         // If we are running in Offline Mode, check if we have saved response for this request.
         BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:savedDataPath];
         if (!fileExists) {
@@ -568,7 +571,7 @@ static XboxLiveClient *Instance;
         success(savedDataPath);
         return;
     } else {
-        if (self.isOfflineMode) {
+        if (IsOfflineMode) {
             if (!self.isInitializationError) {
                 self.isInitializationError = YES;
                 NSString *errorMessage = [NSString stringWithFormat:@"OfflineMode enabled, but no saved image found: %@", savedDataPath];
@@ -658,8 +661,6 @@ static XboxLiveClient *Instance;
 
 
 @end
-
-
 
 
 

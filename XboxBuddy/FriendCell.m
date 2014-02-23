@@ -47,9 +47,10 @@
     self.gamerImage.image = gamerpicImage;
     
     self.gamerTag.text = profileObj.gamertag;
-    if (profileObj.gameName) {
-        NSString *gameName = profileObj.gameName;
-        NSString *timestamp = [Achievement timeAgoWithDate:profileObj.lastPlayed];
+    if (profileObj.recentGames) {
+        Game *lastGame = profileObj.recentGames[0];
+        NSString *gameName = lastGame.name;
+        NSString *timestamp = [Achievement timeAgoWithDate:lastGame.lastPlayed];
         if ([timestamp rangeOfString:@"/"].location != NSNotFound) {
             // If timestamp is a date, display as "on 02/14/14"
             timestamp = [NSString stringWithFormat:@"on %@", timestamp];

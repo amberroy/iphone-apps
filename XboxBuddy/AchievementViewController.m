@@ -20,8 +20,13 @@
 @property (strong, nonatomic) IBOutlet UILabel *achievementDescription;
 @property (strong, nonatomic) IBOutlet UILabel *achievementEarnedOn;
 @property (weak, nonatomic) IBOutlet UILabel *achievementPoints;
-
 @property (weak, nonatomic) IBOutlet UILabel *gameName;
+
+@property (weak, nonatomic) IBOutlet UILabel *numberOfLikes;
+@property (weak, nonatomic) IBOutlet UIButton *likeButton;
+
+- (IBAction)like:(id)sender;
+
 
 @end
 
@@ -69,34 +74,10 @@
     self.achievementImage.image = achievmentImage;
     [HomeTableViewController customizeNavigationBar:self];
     
-    // -------------------------------------------
-    // TEST/EXAMPLE of DOWNLOAD/UPLOAD with Parse.
-    // TODO: Move this to correct location, such as CommentViewController.
-
-    // Retrieve comments for this achievement.
-    PFQuery *query = [Comment queryWithAchievement:self.achievement];
-    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        if (!error) {
-            NSLog(@"Comments downloaded:");
-            for (Comment *comment in objects) {
-                NSLog(@"\t%@\tby %@ on %@", comment.content, comment.authorGamertag, comment.timestamp);
-            }
-        } else {
-            NSLog(@"Error: %@", [error userInfo][@"error"]);
-        }
-    }];
-    
-    // Add a new comment.
-    Comment *comment = [[Comment alloc] initWithContent:@"Test comment" withAchievement:self.achievement];
-    [comment saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-        if (succeeded) {
-            NSLog(@"Comment uploaded: %@ by %@ on %@", comment.content, comment.authorGamertag, comment.timestamp);
-        } else {
-            NSLog(@"Error: %@", [error userInfo][@"error"]);
-        }
-    }];
-    // -------------------------------------------
-    
 }
+
+- (IBAction)like:(id)sender {
+}
+
 
 @end

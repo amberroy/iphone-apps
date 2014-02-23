@@ -1,5 +1,5 @@
 //
-//  Comment.h
+//  Like.h
 //  XboxBuddy
 //
 //  Created by Amber Roy on 2/22/14.
@@ -10,14 +10,13 @@
 #import <Parse/PFSubclassing.h>
 #import <Parse/PFObject.h>
 
-@interface Comment : PFObject<PFSubclassing>
+@interface Like : PFObject<PFSubclassing>
 
-// Comment
-@property NSString *content;
+// Like
 @property NSDate *timestamp;
 
 // Author
-@property NSString *authorGamertag;  // Commented on achievement.
+@property NSString *authorGamertag;  // Liked achievement.
 @property NSString *authorImageUrl;
 
 // Achievement
@@ -25,7 +24,7 @@
 @property NSString *achievementName;
 @property NSString *achievementGamertag;  // Earned achievement.
 
-- (Comment *)initWithContent:(NSString *)content
+- (Like *)initWithContent:(NSString *)content
                  withAchievement:(Achievement *)achievement;
 
 @end

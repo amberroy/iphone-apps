@@ -10,21 +10,11 @@
 
 @interface Profile : NSObject
 
-// Player info.
 @property NSString *gamertag;
 @property NSInteger gamerscore;
 @property NSString *gamerpicImageUrl;
 @property NSString *avatarImageUrl;
-
-// Game info for most recently played game.
-@property NSString *gameName;
-@property NSInteger gamePointsPossible;
-@property NSInteger gamePointsEarned;
-@property NSInteger gameAchievementsPossible;
-@property NSInteger gameAchievementsEarned;
-@property NSInteger gameProgress;
-@property NSString *gameImageUrl;
-@property NSDate *lastPlayed;
+@property NSArray *recentGames;
 
 +(NSArray *)profilesWithArray:(NSArray *)array;
 - (Profile *)initWithDictionary:(NSDictionary *)dict;

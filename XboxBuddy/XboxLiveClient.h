@@ -9,10 +9,12 @@
 #import <Foundation/Foundation.h>
 #import "Achievement.h"
 #import "Profile.h"
+#import "Game.h"
 
 @class XboxLiveClient;
 
 @interface XboxLiveClient : NSObject <UIAlertViewDelegate>
+
 
 +(XboxLiveClient *) instance;
 +(NSArray *)gamertagsForTesting;
@@ -28,5 +30,9 @@
 
 -(void)initInstance;
 +(void)resetInstance;
+
++(BOOL)isOfflineMode;
++(void)setIsOfflineMode:(BOOL)isOfflineMode;
+
 
 @end

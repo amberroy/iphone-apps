@@ -9,6 +9,8 @@
 #import "AppDelegate.h"
 #import "SignedOutViewController.h"
 #import "Comment.h"
+#import "ParseClient.h"
+#import "XboxLiveClient.h"
 #import <Parse/Parse.h>
 
 @interface AppDelegate ()
@@ -23,20 +25,24 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    self.window.rootViewController = self.currentVC;
-    self.window.backgroundColor = [UIColor whiteColor];
-    [self.window makeKeyAndVisible];
+    XboxLiveClient.isOfflineMode = YES;    // USE LOCAL DATA INSTEAD FETCHING FROM API
     
-    // Add Notifications for Login/Logout
+    // Add observers for notifications.
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidLogin) name:UserDidLoginNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidLogout) name:UserDidLogoutNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(xboxLiveClientDidInit) name:@"InitialDataLoaded" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(parseClientDidInit) name:@"ParseClientDidInit" object:nil];
     
     // Add Parse keys.
     [Comment registerSubclass];
     [Parse setApplicationId:@"XBQ1N1MT6o7rz71junys5aguU8vlJ8J5mCjUbVE9"
                   clientKey:@"Ychj0QYNppyWNBFD9GUJoFE8AxhEldW75hoNdwff"];
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
+    
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    self.window.rootViewController = self.currentVC;
+    self.window.backgroundColor = [UIColor whiteColor];
+    [self.window makeKeyAndVisible];
     
     return YES;
 }
@@ -106,8 +112,22 @@
 - (void)userDidLogout {
     self.window.rootViewController = self.currentVC;
     [XboxLiveClient resetInstance];
+    [ParseClient resetInstance];
     
     // Reset to first tab.
 }
+
+- (void)xboxLiveClientDidInit
+{
+    // Now init the ParseClient.
+    XboxLiveClient *xlc = [XboxLiveClient instance];
+    [[ParseClient instance] initInstance:xlc.userProfile withProfiles:xlc.friendProfiles];
+}
+
+- (void)parseClientDidInit
+{
+    // ParseClient initlaized.
+}
+
 
 @end

@@ -14,8 +14,6 @@ NSString * const kCurrentUserKey = @"kCurrentUserKey";
 
 @implementation User
 
-static BOOL isOfflineMode = YES;    // USE LOCAL DATA INSTEAD FETCHING FROM API
-
 static User *_currentUser;
 
 + (User *)currentUser {
@@ -45,16 +43,6 @@ static User *_currentUser;
         [[NSNotificationCenter defaultCenter] postNotificationName:UserDidLogoutNotification object:nil];
     }
 }
-
-+ (BOOL) isOfflineMode
-{
-    return isOfflineMode;
-}
-+ (void) setIsOfflineMode:(BOOL)newVal
-{
-    isOfflineMode = newVal;
-}
-
 
 - (id)initWithGamerTag:(NSString *)gamerTag {
     self = [super init];

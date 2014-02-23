@@ -8,6 +8,7 @@
 
 #import "AppDelegate.h"
 #import "SignedOutViewController.h"
+#import "Comment.h"
 #import <Parse/Parse.h>
 
 @interface AppDelegate ()
@@ -32,6 +33,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidLogout) name:UserDidLogoutNotification object:nil];
     
     // Add Parse keys.
+    [Comment registerSubclass];
     [Parse setApplicationId:@"XBQ1N1MT6o7rz71junys5aguU8vlJ8J5mCjUbVE9"
                   clientKey:@"Ychj0QYNppyWNBFD9GUJoFE8AxhEldW75hoNdwff"];
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];

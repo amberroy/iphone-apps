@@ -8,6 +8,8 @@
 
 #import "AchievementViewController.h"
 #import "HomeTableViewController.h"
+#import "Comment.h"
+#import <Parse/PFQuery.h>
 
 @interface AchievementViewController ()
 
@@ -65,9 +67,36 @@
         NSLog(@"Achievement image not found, using placeholder instead of %@", achievementPath);
     }
     self.achievementImage.image = achievmentImage;
-
+    [HomeTableViewController customizeNavigationBar:self];
     
-   [HomeTableViewController customizeNavigationBar:self];
+    // -------------------------------------------
+    // TEST/EXAMPLE of DOWNLOAD/UPLOAD with Parse.
+    // TODO: Move this to correct location, such as CommentViewController.
+
+    // Retrieve comments for this achievement.
+    PFQuery *query = [Comment queryWithAchievement:self.achievement];
+    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if (!error) {
+            NSLog(@"Comments downloaded:");
+            for (Comment *comment in objects) {
+                NSLog(@"\t%@\tby %@ on %@", comment.content, comment.authorGamertag, comment.timestamp);
+            }
+        } else {
+            NSLog(@"Error: %@", [error userInfo][@"error"]);
+        }
+    }];
+    
+    // Add a new comment.
+    Comment *comment = [[Comment alloc] initWithContent:@"Test comment" withAchievement:self.achievement];
+    [comment saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if (succeeded) {
+            NSLog(@"Comment uploaded: %@ by %@ on %@", comment.content, comment.authorGamertag, comment.timestamp);
+        } else {
+            NSLog(@"Error: %@", [error userInfo][@"error"]);
+        }
+    }];
+    // -------------------------------------------
+    
 }
 
 @end

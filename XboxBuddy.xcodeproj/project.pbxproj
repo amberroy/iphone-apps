@@ -48,6 +48,7 @@
 		9654F4BB18B83AC30035025F /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9654F4BA18B83AC30035025F /* Security.framework */; };
 		9654F4BD18B83ACD0035025F /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9654F4BC18B83ACD0035025F /* StoreKit.framework */; };
 		9654F4BF18B83AD80035025F /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9654F4BE18B83AD80035025F /* SystemConfiguration.framework */; };
+		9654F4C218B9527C0035025F /* Comment.m in Sources */ = {isa = PBXBuildFile; fileRef = 9654F4C118B9527C0035025F /* Comment.m */; };
 		9664566A1899E49600E5C691 /* XboxLiveClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 966456691899E49600E5C691 /* XboxLiveClient.m */; };
 		9693F762189F032B00D3C80A /* Profile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9693F761189F032B00D3C80A /* Profile.m */; };
 /* End PBXBuildFile section */
@@ -121,6 +122,8 @@
 		9654F4BA18B83AC30035025F /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		9654F4BC18B83ACD0035025F /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		9654F4BE18B83AD80035025F /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		9654F4C018B9527C0035025F /* Comment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Comment.h; sourceTree = "<group>"; };
+		9654F4C118B9527C0035025F /* Comment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Comment.m; sourceTree = "<group>"; };
 		966456681899E49600E5C691 /* XboxLiveClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XboxLiveClient.h; sourceTree = "<group>"; };
 		966456691899E49600E5C691 /* XboxLiveClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XboxLiveClient.m; sourceTree = "<group>"; };
 		9693F760189F032B00D3C80A /* Profile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Profile.h; sourceTree = "<group>"; };
@@ -312,6 +315,8 @@
 				9693F761189F032B00D3C80A /* Profile.m */,
 				26F13BE718B28CD1005C1ECE /* User.h */,
 				26F13BE818B28CD1005C1ECE /* User.m */,
+				9654F4C018B9527C0035025F /* Comment.h */,
+				9654F4C118B9527C0035025F /* Comment.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -434,6 +439,7 @@
 				26D2F6781899F2A300EFB93A /* Achievement.m in Sources */,
 				26D2F6661899E8FD00EFB93A /* HomeCell.m in Sources */,
 				2681875418A213E8003D281B /* FriendCell.m in Sources */,
+				9654F4C218B9527C0035025F /* Comment.m in Sources */,
 				962084601899B915006AD8E9 /* AppDelegate.m in Sources */,
 				2681874818A206A3003D281B /* UserAchievementCell.m in Sources */,
 				26F13BE618B0055B005C1ECE /* SignedOutViewController.m in Sources */,

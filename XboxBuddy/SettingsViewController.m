@@ -63,13 +63,6 @@
 #pragma mark - Private methods
 
 - (IBAction)signOut:(id)sender {
-    
-    // Sign out of Xbox Live.
-    NSString *logout_url_str = @"https://login.live.com/logout.srf";
-    NSURL *url = [NSURL URLWithString:logout_url_str];
-    NSURLRequest *request = [NSURLRequest requestWithURL:url];
-    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:nil];
-    
     [User setCurrentUser:nil];
     [self.navigationController popToRootViewControllerAnimated:YES];
 }

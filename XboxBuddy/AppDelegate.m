@@ -30,8 +30,9 @@
     // Add observers for notifications.
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidLogin) name:UserDidLoginNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidLogout) name:UserDidLogoutNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(xboxLiveClientDidInit) name:@"InitialDataLoaded" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(parseClientDidInit) name:@"ParseClientDidInit" object:nil];
+    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(xboxLiveClientDidInit) name:@"InitialDataLoaded" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(xboxLiveClientDidInit) name:XboxLiveClientDidInitNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(parseClientDidInit) name:ParseClientDidInitNotification object:nil];
     
     // Add Parse keys.
     [Comment registerSubclass];
@@ -115,6 +116,7 @@
     [ParseClient resetInstance];
     
     // Reset to first tab.
+    self.tabBarViewController.selectedIndex = 0;
 }
 
 - (void)xboxLiveClientDidInit
@@ -126,7 +128,8 @@
 
 - (void)parseClientDidInit
 {
-    // ParseClient initlaized.
+    // Initial data loaded, post notification so controllers can reload tables.
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"InitialDataLoaded" object:nil];
 }
 
 

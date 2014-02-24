@@ -11,6 +11,8 @@
 #import "Profile.h"
 #import "Game.h"
 
+extern NSString *const XboxLiveClientDidInitNotification;
+
 @class XboxLiveClient;
 
 @interface XboxLiveClient : NSObject <UIAlertViewDelegate>

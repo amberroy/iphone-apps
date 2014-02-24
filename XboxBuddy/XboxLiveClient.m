@@ -8,6 +8,8 @@
 
 #import "XboxLiveClient.h"
 
+NSString * const XboxLiveClientDidInitNotification = @"XboxLiveClientDidInitNotification";
+
 @interface XboxLiveClient ()
 
 // Interface methods return data from these properties.
@@ -229,7 +231,6 @@ static BOOL IsOfflineMode;
         }
     }
     
-    // HERE
     // Add the last game played to user profile and each friend profile.
     NSMutableDictionary *user_profile_mdict = [[NSMutableDictionary alloc] initWithDictionary:self.userProfileFromJSON];
     NSMutableArray *user_recent_games = self.recentGamesWithGamertag[self.userGamertag];
@@ -280,7 +281,7 @@ static BOOL IsOfflineMode;
           (IsOfflineMode) ? @"in OFFLINE MODE " : @"", self.userGamertag, count, self.secondsToInit);
     
     // Done, post notification.
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"InitialDataLoaded" object:nil userInfo:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:XboxLiveClientDidInitNotification object:nil];
     
 }
 

@@ -11,6 +11,8 @@
 #import "Comment.h"
 #import "Like.h"
 
+extern NSString * const ParseClientDidInitNotification;
+
 @interface ParseClient : NSObject
 
 + (ParseClient *) instance;

@@ -9,7 +9,7 @@
 #import "AchievementViewController.h"
 #import "HomeTableViewController.h"
 #import "Comment.h"
-#import <Parse/PFQuery.h>
+#import "ParseClient.h"
 
 @interface AchievementViewController ()
 
@@ -21,12 +21,6 @@
 @property (strong, nonatomic) IBOutlet UILabel *achievementEarnedOn;
 @property (weak, nonatomic) IBOutlet UILabel *achievementPoints;
 @property (weak, nonatomic) IBOutlet UILabel *gameName;
-
-@property (weak, nonatomic) IBOutlet UILabel *numberOfLikes;
-@property (weak, nonatomic) IBOutlet UIButton *likeButton;
-
-- (IBAction)like:(id)sender;
-
 
 @end
 
@@ -74,6 +68,14 @@
     self.achievementImage.image = achievmentImage;
     [HomeTableViewController customizeNavigationBar:self];
     
+    // TODO: Put comments in a table.
+    NSArray *comments = [[ParseClient instance] commentsForAchievement:self.achievement];
+    if (comments) {
+        NSLog(@"Comments on %@ achievement %@:", self.achievement.gamertag, self.achievement.name);
+    }
+    for (Comment *comment in comments) {
+        NSLog(@"\t\"%@\" by %@ on %@", comment.content, comment.authorGamertag, comment.timestamp);
+    }
 }
 
 - (IBAction)like:(id)sender {

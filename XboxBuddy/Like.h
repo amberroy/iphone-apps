@@ -24,7 +24,6 @@
 @property NSString *achievementName;
 @property NSString *achievementGamertag;  // Earned achievement.
 
-- (Like *)initWithContent:(NSString *)content
-                 withAchievement:(Achievement *)achievement;
+- (Like *)initWithAchievement:(Achievement *)achievement;
 
 @end

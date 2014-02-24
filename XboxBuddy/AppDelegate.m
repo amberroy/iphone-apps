@@ -36,6 +36,7 @@
     
     // Add Parse keys.
     [Comment registerSubclass];
+    [Like registerSubclass];
     [Parse setApplicationId:@"XBQ1N1MT6o7rz71junys5aguU8vlJ8J5mCjUbVE9"
                   clientKey:@"Ychj0QYNppyWNBFD9GUJoFE8AxhEldW75hoNdwff"];
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];

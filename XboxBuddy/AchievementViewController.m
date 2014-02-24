@@ -74,8 +74,23 @@
         NSLog(@"Comments on %@ achievement %@:", self.achievement.gamertag, self.achievement.name);
     }
     for (Comment *comment in comments) {
-        NSLog(@"\t\"%@\" by %@ on %@", comment.content, comment.authorGamertag, comment.timestamp);
+        NSLog(@"    \"%@\" by %@ on %@", comment.content, comment.authorGamertag, comment.timestamp);
     }
+    
+    // TODO: Display Like count on UI.
+    NSArray *likes = [[ParseClient instance] likesForAchievement:self.achievement];
+    if (likes) {
+        NSLog(@"Likes on %@ achievement %@:", self.achievement.gamertag, self.achievement.name);
+    }
+    for (Like *like in likes) {
+        NSLog(@"    %@ on %@", like.authorGamertag, like.timestamp);
+    }
+    
+    
+//    // EXAMPLE CODE how to create and save Like
+//    Like *like = [[Like alloc] initWithAchievement:self.achievement];
+//    [[ParseClient instance] saveLike:like];
+    
 }
 
 - (IBAction)like:(id)sender {

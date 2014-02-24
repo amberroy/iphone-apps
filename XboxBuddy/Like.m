@@ -19,8 +19,7 @@
 @dynamic achievementName;
 @dynamic achievementGamertag;
 
-- (Like *)initWithContent:(NSString *)content
-                 withAchievement:(Achievement *)achievement
+- (Like *)initWithAchievement:(Achievement *)achievement
 {
     
     self = [super init];

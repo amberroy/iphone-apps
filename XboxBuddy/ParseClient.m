@@ -140,10 +140,20 @@ static BOOL IsOfflineMode;
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         
         if (!error) {
+            NSMutableArray *authors = [[NSMutableArray alloc] init];
             for (Like *like in objects) {
                 if (!gameDict[like.achievementName]) {
                     gameDict[like.achievementName] = [[NSMutableArray alloc] init];
                 }
+                if ([authors containsObject:like.authorGamertag]) {
+                    // Somehow a user liked this achievement more than once, delete extra Likes.
+                    // Shouldn't happen but Parse will allow it (no unique constraints).
+                    NSLog(@"Warning: multiple likes by %@ on %@:%@:%@",
+                          like.authorGamertag, like.achievementGamertag, like.gameName, like.achievementName);
+                    [self deleteLike:like];
+                    continue;
+                }
+                [authors addObject:like.authorGamertag];
                 [gameDict[like.achievementName] addObject:like];
             }
             int count = [objects count];
@@ -211,7 +221,7 @@ static BOOL IsOfflineMode;
     
     [comment saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (succeeded) {
-            NSLog(@"Comment on %@:%@:%@ saved", comment.achievementGamertag, comment.gameName, comment.achievementName);
+            NSLog(@"Saved Comment on %@:%@:%@", comment.achievementGamertag, comment.gameName, comment.achievementName);
         } else {
             NSLog(@"Error saving Comment on %@:%@:%@ : %@", comment.achievementGamertag, comment.gameName, comment.achievementName, [error userInfo][@"error"]);
         }
@@ -228,7 +238,7 @@ static BOOL IsOfflineMode;
     
     [like saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (succeeded) {
-            NSLog(@"Like %@:%@:%@ saved", like.achievementGamertag, like.gameName, like.achievementName);
+            NSLog(@"Saved Like %@:%@:%@", like.achievementGamertag, like.gameName, like.achievementName);
         } else {
             NSLog(@"Error saving Like %@:%@:%@ : %@", like.achievementGamertag, like.gameName, like.achievementName, [error userInfo][@"error"]);
         }
@@ -241,7 +251,7 @@ static BOOL IsOfflineMode;
     [gameDict[comment.achievementName] removeObject:comment];
     [comment deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (succeeded) {
-            NSLog(@"Comment %@:%@:%@ deleted", comment.achievementGamertag, comment.gameName, comment.achievementName);
+            NSLog(@"Deleted Comment %@:%@:%@", comment.achievementGamertag, comment.gameName, comment.achievementName);
         } else {
             NSLog(@"Error deleting Comment %@:%@:%@ : %@", comment.achievementGamertag, comment.gameName, comment.achievementName, [error userInfo][@"error"]);
         }
@@ -254,7 +264,7 @@ static BOOL IsOfflineMode;
     [gameDict[like.achievementName] removeObject:like];
     [like deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (succeeded) {
-            NSLog(@"Like %@:%@:%@ deleted", like.achievementGamertag, like.gameName, like.achievementName);
+            NSLog(@"Deleted Like %@:%@:%@", like.achievementGamertag, like.gameName, like.achievementName);
         } else {
             NSLog(@"Error deleting Like %@:%@:%@ : %@", like.achievementGamertag, like.gameName, like.achievementName, [error userInfo][@"error"]);
         }

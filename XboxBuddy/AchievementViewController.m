@@ -78,42 +78,23 @@
     // Get Comments and Likes (already downloaded by ParseClient on app load).
     self.comments = [[ParseClient instance] commentsForAchievement:self.achievement];
     self.likes = [[ParseClient instance] likesForAchievement:self.achievement];
-    self.currentUserLike = [self uniqueCurrentUserLike];
+    self.currentUserLike = nil;
+    for (Like *like in self.likes) {
+        if ([like.authorGamertag isEqualToString:[User currentUser].gamerTag]) {
+            self.currentUserLike = like;
+            break;
+        }
+    }
     [self updateLikeButtonImage];
     
     // TODO: Put comments in a table, for now dump to log.
-    if (self.comments) {
+    if ([self.comments count] > 0) {
         NSLog(@"Comments on %@ achievement %@:", self.achievement.gamertag, self.achievement.name);
         for (Comment *comment in self.comments) {
             NSLog(@"    \"%@\" by %@ on %@", comment.content, comment.authorGamertag, comment.timestamp);
         }
     }
     
-}
-
-- (Like *)uniqueCurrentUserLike
-{
-    Like *resultLike = nil;
-    
-    // Use copy in case we need to modify the array within the loop.
-    NSMutableArray *likesCopy = [[NSMutableArray alloc] initWithArray:self.likes];
-    for (Like *like in likesCopy) {
-        
-        // Determine if the current user has already Liked this achievement.
-        if ([like.authorGamertag isEqualToString:[User currentUser].gamerTag]) {
-            if (!resultLike) {
-                resultLike = like;
-            } else {
-                // Somehow the user liked this achievement more than once, delete extra Likes.
-                // Shouldn't happen but Parse will allow it (no unique constraints).
-                [self.likes removeObject:like];
-                [[ParseClient instance] deleteLike:like];
-                NSLog(@"Warning: multiple likes by %@ on %@:%@:%@",
-                      like.authorGamertag, like.achievementGamertag, like.gameName, like.achievementName);
-            }
-        }
-    }
-    return resultLike;
 }
 
 - (IBAction)like:(id)sender {

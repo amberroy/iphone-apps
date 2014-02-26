@@ -10,6 +10,7 @@
 #import "AchievementViewController.h"
 #import "Achievement.h"
 #import "HomeCell.h"
+#import "AppDelegate.h"
 
 @interface HomeTableViewController ()
 
@@ -62,6 +63,41 @@
         //self.achievements = [[XboxLiveClient instance] achievements];
     }
     return self;
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    // Before loading table, check for special case: App launched from Push Notification.
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    if (appDelegate.didLaunchWithNotification) {
+        appDelegate.didLaunchWithNotification = NO;
+    
+        // Extract Achievement from payload.
+        NSDictionary *notificationPayload = appDelegate.notificationPayload;
+        NSString *gamertag = notificationPayload[@"gamertag"];
+        NSString *gameName = notificationPayload[@"gameName"];
+        NSString *achievementName = notificationPayload[@"achievementName"];
+        NSString *userGamertag = [User currentUser].gamerTag;
+        if ([gamertag isEqualToString:userGamertag]) {
+            Achievement *achievement = [[XboxLiveClient instance] achievementWithGamertag:gamertag withGameName:gameName withAchievementName:achievementName];
+            if (achievement) {
+                NSLog(@"Push notification processed, found Achievement: %@:%@:%@", gamertag, gameName, achievementName);
+                
+                // Show AchievementDetail immediately.
+                UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+                AchievementViewController *avc = [storyboard instantiateViewControllerWithIdentifier:@"AchievementViewController"];
+                avc.achievement = achievement;
+                [self.navigationController pushViewController:avc animated:YES];
+            } else {
+                NSLog(@"Ignoring Push notification, achievemnt not found: %@:%@:%@", gamertag, gameName, achievementName);
+            }
+        } else {
+            NSLog(@"Ignoring Push notification, sent to %@ but current user is %@", gamertag, userGamertag);
+        }
+    }
+    
 }
 
 - (void)viewDidLoad

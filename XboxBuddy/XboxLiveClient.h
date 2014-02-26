@@ -25,6 +25,9 @@ extern NSString *const XboxLiveClientDidInitNotification;
 
 -(NSArray *) achievements;
 -(NSArray *) achievementsWithGamertag:(NSString *)gamertag;
+-(Achievement *) achievementWithGamertag:(NSString *)gamertag
+                            withGameName:(NSString *)gameName
+                     withAchievementName:(NSString *)achievementName;
 
 -(Profile *) userProfile;
 -(NSArray *) friendProfiles;

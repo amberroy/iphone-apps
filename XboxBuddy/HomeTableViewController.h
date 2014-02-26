@@ -12,4 +12,6 @@
 
 +(void)customizeNavigationBar:(UIViewController *)viewController;
 
+@property Achievement *achievementForModal;
+
 @end

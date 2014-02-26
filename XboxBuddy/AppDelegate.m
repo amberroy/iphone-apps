@@ -8,6 +8,7 @@
 
 #import "AppDelegate.h"
 #import "SignedOutViewController.h"
+#import "AchievementViewController.h"
 #import "Comment.h"
 #import "ParseClient.h"
 #import "XboxLiveClient.h"
@@ -19,9 +20,11 @@
 @property (nonatomic, strong) UITabBarController *tabBarViewController;
 @property (nonatomic, strong) UIViewController *currentVC;
 
+
 @end
 
 @implementation AppDelegate
+
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -43,6 +46,13 @@
     [application registerForRemoteNotificationTypes:UIRemoteNotificationTypeBadge|
                                                     UIRemoteNotificationTypeAlert|
                                                     UIRemoteNotificationTypeSound];
+    NSDictionary *notificationPayload = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
+    if (notificationPayload) {
+        self.didLaunchWithNotification = YES;
+        self.notificationPayload = notificationPayload;
+        NSLog(@"App launched from Push Notification, payload: %@", notificationPayload);
+        // Will be handled by the HomeTableViewController.
+    }
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.rootViewController = self.currentVC;
@@ -51,6 +61,7 @@
     
     return YES;
 }
+
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {

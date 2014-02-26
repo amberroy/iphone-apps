@@ -7,6 +7,7 @@
 //
 
 #import "XboxLiveClient.h"
+#import "Achievement.h"
 
 NSString * const XboxLiveClientDidInitNotification = @"XboxLiveClientDidInitNotification";
 
@@ -637,6 +638,20 @@ static BOOL IsOfflineMode;
         }
     }
     return [Achievement achievementsWithArray:filtered];
+}
+
+-(Achievement *) achievementWithGamertag:(NSString *)gamertag withGameName:(NSString *)gameName withAchievementName:(NSString *)achievementName
+{
+    for (NSDictionary *achievementDict in self.achievementsFromJSON) {
+        if ([achievementDict[@"Player"][@"Gamertag"] isEqualToString:gamertag]) {
+            if ([achievementDict[@"Game"][@"Name"] isEqualToString:gameName]) {
+                if ([achievementDict[@"Achievement"][@"Name"] isEqualToString:achievementName]) {
+                    return [[Achievement alloc] initWithDictionary:achievementDict];
+                }
+            }
+        }
+    }
+    return nil;
 }
 
 -(Profile *) userProfile

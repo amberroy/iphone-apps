@@ -41,5 +41,6 @@
 
 +(NSArray *)achievementsWithArray:(NSArray *)array;
 
+- (Achievement *)initWithDictionary:(NSDictionary *)dict;
 
 @end

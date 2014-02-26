@@ -89,12 +89,25 @@
     
     
     // EXAMPLE CODE for Push Notifications
-//    PFQuery *pushQuery = [PFInstallation query];
-//    [pushQuery whereKey:@"deviceType" equalTo:@"ios"];
-//    [pushQuery whereKey:@"gamertag" equalTo:self.achievement.gamertag];
-//    NSString *message = [NSString stringWithFormat:@"%@ liked your achievement %@: %@",
-//                         [User currentUser].gamerTag, self.achievement.gameName, self.achievement.name];
-//    [PFPush sendPushMessageToQueryInBackground:pushQuery withMessage:message];
+    PFQuery *pushQuery = [PFInstallation query];
+    [pushQuery whereKey:@"deviceType" equalTo:@"ios"];
+    [pushQuery whereKey:@"gamertag" equalTo:self.achievement.gamertag];
+    NSString *message = [NSString stringWithFormat:@"%@ liked your achievement %@: %@",
+                         [User currentUser].gamerTag, self.achievement.gameName, self.achievement.name];
+    //[PFPush sendPushMessageToQueryInBackground:pushQuery withMessage:message];
+    NSDictionary *data = [NSDictionary dictionaryWithObjectsAndKeys:
+                          message, @"alert",
+                          //@"Increment", @"badge",
+                          //@"cheering.caf", @"sound",
+                          self.achievement.gamertag, @"gamertag",
+                          self.achievement.gameName, @"gameName",
+                          self.achievement.name, @"achievementName",
+                          nil];
+    PFPush *push = [[PFPush alloc] init];
+    [push setData:data];
+    [push setQuery:pushQuery];
+    [push sendPushInBackground];
+    NSLog(@"Sent Push Notification for %@:%@:%@", data[@"gamertag"], data[@"gameName"], data[@"achievementName"]);
     
     
 //    // EXAMPLE CODE how to create and save Like

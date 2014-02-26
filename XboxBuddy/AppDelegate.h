@@ -12,4 +12,8 @@
 
 @property (strong, nonatomic) UIWindow *window;
 
+// Handle special case where app launches from Push Notification.
+@property BOOL didLaunchWithNotification;
+@property NSDictionary *notificationPayload;
+
 @end

@@ -23,7 +23,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *achievementPoints;
 @property (weak, nonatomic) IBOutlet UILabel *gameName;
 
-@property (weak, nonatomic) IBOutlet UIButton *likeButton;
+@property (weak, nonatomic) IBOutlet UIButton *heartButton;
 
 @property BOOL isLiked;
 @property NSMutableArray *likes;
@@ -123,9 +123,9 @@
 - (void)updateLikeButtonImage
 {
     if (self.isLiked) {
-        [self.likeButton setImage:[UIImage imageNamed:@"like-26.png"] forState:UIControlStateNormal];
+        [self.heartButton setImage:[UIImage imageNamed:@"like-26.png"] forState:UIControlStateNormal];
     } else {
-        [self.likeButton setImage:[UIImage imageNamed:@"like_outline-26.png"] forState:UIControlStateNormal];
+        [self.heartButton setImage:[UIImage imageNamed:@"like_outline-26.png"] forState:UIControlStateNormal];
     }
     
 }

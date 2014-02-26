@@ -498,15 +498,30 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2Rb-zO-Asm">
-                                <rect key="frame" x="211" y="266" width="53" height="26"/>
+                            <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2Rb-zO-Asm">
+                                <rect key="frame" x="258" y="263" width="20" height="20"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="20" id="3cU-M0-tj1"/>
+                                    <constraint firstAttribute="width" constant="20" id="eeU-IS-17T"/>
+                                </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <state key="normal" title="Like" image="like_outline-26">
+                                <state key="normal" image="like_outline-26">
                                     <color key="titleColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 </state>
                                 <connections>
                                     <action selector="like:" destination="EsV-EW-HG1" eventType="touchUpInside" id="Oe9-Qt-KQ7"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="75W-Da-h8C">
+                                <rect key="frame" x="227" y="258" width="30" height="29"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <state key="normal" title="Like">
+                                    <color key="titleColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="like:" destination="EsV-EW-HG1" eventType="touchUpInside" id="VbD-gJ-Ntz"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -525,14 +540,16 @@
                             <constraint firstItem="2gk-Qu-bbs" firstAttribute="top" secondItem="C5h-Wz-Nbs" secondAttribute="bottom" constant="16" id="NAA-nF-8ac"/>
                             <constraint firstItem="9GM-Lw-OvK" firstAttribute="leading" secondItem="LrP-SN-KMh" secondAttribute="trailing" constant="8" id="NUU-7d-onh"/>
                             <constraint firstItem="Gws-ZB-S3x" firstAttribute="top" secondItem="FDz-Fd-cyy" secondAttribute="bottom" constant="8" id="avJ-Wn-ftp"/>
-                            <constraint firstItem="2Rb-zO-Asm" firstAttribute="top" secondItem="Gws-ZB-S3x" secondAttribute="bottom" constant="8" id="dW8-fk-Loy"/>
+                            <constraint firstItem="2Rb-zO-Asm" firstAttribute="top" secondItem="Gws-ZB-S3x" secondAttribute="bottom" constant="5" id="cC0-U2-eym"/>
+                            <constraint firstAttribute="trailing" secondItem="2Rb-zO-Asm" secondAttribute="trailing" constant="42" id="duE-YV-VxV"/>
                             <constraint firstAttribute="centerX" secondItem="WSZ-Wf-8bx" secondAttribute="centerX" id="eyq-IF-tuB"/>
                             <constraint firstItem="LrP-SN-KMh" firstAttribute="top" secondItem="C5h-Wz-Nbs" secondAttribute="bottom" constant="14" id="iHe-W8-6ZR"/>
                             <constraint firstAttribute="centerX" secondItem="QBM-Zt-RHb" secondAttribute="centerX" id="iYn-Yd-pDb"/>
+                            <constraint firstItem="2Rb-zO-Asm" firstAttribute="leading" secondItem="75W-Da-h8C" secondAttribute="trailing" constant="1" id="k5w-PN-aiA"/>
                             <constraint firstItem="6ye-x8-sXa" firstAttribute="top" secondItem="Gws-ZB-S3x" secondAttribute="bottom" constant="8" id="k8G-uI-Vn9"/>
                             <constraint firstItem="FDz-Fd-cyy" firstAttribute="top" secondItem="WSZ-Wf-8bx" secondAttribute="bottom" constant="27" id="knd-Tt-K9F"/>
+                            <constraint firstItem="75W-Da-h8C" firstAttribute="top" secondItem="Gws-ZB-S3x" secondAttribute="bottom" id="lSo-be-jn7"/>
                             <constraint firstAttribute="trailing" secondItem="EnC-mI-c7e" secondAttribute="trailing" constant="44" id="qZs-ip-QbL"/>
-                            <constraint firstAttribute="trailing" secondItem="2Rb-zO-Asm" secondAttribute="trailing" constant="56" id="t3G-c8-bZl"/>
                             <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="9GM-Lw-OvK" secondAttribute="trailing" constant="10" id="tpt-Xh-v5g"/>
                         </constraints>
                     </view>
@@ -546,7 +563,7 @@
                         <outlet property="gameName" destination="9GM-Lw-OvK" id="RHR-Vp-uKV"/>
                         <outlet property="gamerImage" destination="LrP-SN-KMh" id="1Fz-mw-h7N"/>
                         <outlet property="gamerTag" destination="2gk-Qu-bbs" id="Vig-oa-f4T"/>
-                        <outlet property="likeButton" destination="2Rb-zO-Asm" id="pIB-xo-54X"/>
+                        <outlet property="heartButton" destination="2Rb-zO-Asm" id="ZcZ-zo-rvG"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kst-3H-p8j" userLabel="First Responder" sceneMemberID="firstResponder"/>

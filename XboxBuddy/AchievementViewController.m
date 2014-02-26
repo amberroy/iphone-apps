@@ -10,6 +10,7 @@
 #import "HomeTableViewController.h"
 #import "Comment.h"
 #import "ParseClient.h"
+#import <Parse/Parse.h>
 
 @interface AchievementViewController ()
 
@@ -87,14 +88,19 @@
     }
     
     
+    // EXAMPLE CODE for Push Notifications
+//    PFQuery *pushQuery = [PFInstallation query];
+//    [pushQuery whereKey:@"deviceType" equalTo:@"ios"];
+//    [pushQuery whereKey:@"gamertag" equalTo:self.achievement.gamertag];
+//    NSString *message = [NSString stringWithFormat:@"%@ liked your achievement %@: %@",
+//                         [User currentUser].gamerTag, self.achievement.gameName, self.achievement.name];
+//    [PFPush sendPushMessageToQueryInBackground:pushQuery withMessage:message];
+    
+    
 //    // EXAMPLE CODE how to create and save Like
 //    Like *like = [[Like alloc] initWithAchievement:self.achievement];
 //    [[ParseClient instance] saveLike:like];
     
 }
-
-- (IBAction)like:(id)sender {
-}
-
 
 @end

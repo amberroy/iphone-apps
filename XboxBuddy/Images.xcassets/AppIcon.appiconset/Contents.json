@@ -11,8 +11,9 @@
       "scale" : "2x"
     },
     {
-      "idiom" : "iphone",
       "size" : "60x60",
+      "idiom" : "iphone",
+      "filename" : "Option4-120Pixels_v.png",
       "scale" : "2x"
     }
   ],

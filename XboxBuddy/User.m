@@ -7,6 +7,7 @@
 //
 
 #import "User.h"
+#import <Parse/Parse.h>
 
 NSString * const UserDidLoginNotification = @"UserDidLoginNotification";
 NSString * const UserDidLogoutNotification = @"UserDidLogoutNotification";
@@ -22,6 +23,12 @@ static User *_currentUser;
         if (gamerTag) {
             _currentUser = [[User alloc] initWithGamerTag:gamerTag]; // Needs to be set before calling initInstance.
             [[XboxLiveClient instance] initInstance];
+            
+            if ([User currentUser].gamerTag) {
+                [[PFInstallation currentInstallation] setObject:[User currentUser].gamerTag forKey:@"gamertag"];
+                [[PFInstallation currentInstallation] saveEventually];
+                NSLog(@"Registering this Parse Installation to gamertag %@", [User currentUser].gamerTag);
+            }
         }
     }
     return _currentUser;

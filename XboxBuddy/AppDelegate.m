@@ -40,6 +40,9 @@
     [Parse setApplicationId:@"XBQ1N1MT6o7rz71junys5aguU8vlJ8J5mCjUbVE9"
                   clientKey:@"Ychj0QYNppyWNBFD9GUJoFE8AxhEldW75hoNdwff"];
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
+    [application registerForRemoteNotificationTypes:UIRemoteNotificationTypeBadge|
+                                                    UIRemoteNotificationTypeAlert|
+                                                    UIRemoteNotificationTypeSound];
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.rootViewController = self.currentVC;
@@ -109,6 +112,12 @@
 - (void)userDidLogin {
     self.window.rootViewController = self.currentVC;
     [[XboxLiveClient instance] initInstance];
+    
+    if ([User currentUser].gamerTag) {
+        [[PFInstallation currentInstallation] setObject:[User currentUser].gamerTag forKey:@"gamertag"];
+        [[PFInstallation currentInstallation] saveEventually];
+        NSLog(@"Registering this Parse Installation to gamertag %@", [User currentUser].gamerTag);
+    }
 }
 
 - (void)userDidLogout {
@@ -131,6 +140,22 @@
 {
     // Initial data loaded, post notification so controllers can reload tables.
     [[NSNotificationCenter defaultCenter] postNotificationName:@"InitialDataLoaded" object:nil];
+}
+
+#pragma mark - Parse Push notifications
+
+- (void)application:(UIApplication *)application
+  didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
+{
+    // Store the deviceToken in the current installation and save it to Parse.
+    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+    [currentInstallation setDeviceTokenFromData:deviceToken];
+    [currentInstallation saveInBackground];
+}
+
+- (void)application:(UIApplication *)application
+  didReceiveRemoteNotification:(NSDictionary *)userInfo {
+    [PFPush handlePush:userInfo];
 }
 
 

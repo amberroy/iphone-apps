@@ -25,9 +25,9 @@
 
 @property (weak, nonatomic) IBOutlet UIButton *heartButton;
 
-@property BOOL isLiked;
 @property NSMutableArray *likes;
 @property NSMutableArray *comments;
+@property Like *currentUserLike;
 
 @end
 
@@ -45,6 +45,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [HomeTableViewController customizeNavigationBar:self];
 
     self.gamerTag.text = self.achievement.gamertag;
     self.gameName.text = [NSString stringWithFormat:@"%@", self.achievement.gameName];
@@ -73,61 +74,78 @@
         NSLog(@"Achievement image not found, using placeholder instead of %@", achievementPath);
     }
     self.achievementImage.image = achievmentImage;
-    [HomeTableViewController customizeNavigationBar:self];
     
-    // Change Like icon if this user has liked this achievement already.
+    // Get Comments and Likes (already downloaded by ParseClient on app load).
+    self.comments = [[ParseClient instance] commentsForAchievement:self.achievement];
     self.likes = [[ParseClient instance] likesForAchievement:self.achievement];
-    for (Like *like in self.likes) {
-        if ([like.authorGamertag isEqualToString:[User currentUser].gamerTag]) {
-            self.isLiked = YES;
-            break;
-        }
-    }
+    self.currentUserLike = [self uniqueCurrentUserLike];
     [self updateLikeButtonImage];
     
-    // TODO: Display Like count on UI, for now dump to log.
-    if (self.likes) {
-        NSLog(@"Likes on %@ achievement %@:", self.achievement.gamertag, self.achievement.name);
-    }
-    for (Like *like in self.likes) {
-        NSLog(@"    %@ on %@", like.authorGamertag, like.timestamp);
-    }
-             
     // TODO: Put comments in a table, for now dump to log.
-    self.comments = [[ParseClient instance] commentsForAchievement:self.achievement];
     if (self.comments) {
         NSLog(@"Comments on %@ achievement %@:", self.achievement.gamertag, self.achievement.name);
-    }
-    for (Comment *comment in self.comments) {
-        NSLog(@"    \"%@\" by %@ on %@", comment.content, comment.authorGamertag, comment.timestamp);
+        for (Comment *comment in self.comments) {
+            NSLog(@"    \"%@\" by %@ on %@", comment.content, comment.authorGamertag, comment.timestamp);
+        }
     }
     
+}
+
+- (Like *)uniqueCurrentUserLike
+{
+    Like *resultLike = nil;
+    
+    // Use copy in case we need to modify the array within the loop.
+    NSMutableArray *likesCopy = [[NSMutableArray alloc] initWithArray:self.likes];
+    for (Like *like in likesCopy) {
+        
+        // Determine if the current user has already Liked this achievement.
+        if ([like.authorGamertag isEqualToString:[User currentUser].gamerTag]) {
+            if (!resultLike) {
+                resultLike = like;
+            } else {
+                // Somehow the user liked this achievement more than once, delete extra Likes.
+                // Shouldn't happen but Parse will allow it (no unique constraints).
+                [self.likes removeObject:like];
+                [[ParseClient instance] deleteLike:like];
+                NSLog(@"Warning: multiple likes by %@ on %@:%@:%@",
+                      like.authorGamertag, like.achievementGamertag, like.gameName, like.achievementName);
+            }
+        }
+    }
+    return resultLike;
 }
 
 - (IBAction)like:(id)sender {
     
-    if (self.isLiked) {
-        // Don't let this user like the same achievement twice.
-        return;
+    ParseClient *parseClient = [ParseClient instance];
+    
+    if (!self.currentUserLike) {
+        Like *like = [[Like alloc] initWithAchievement:self.achievement];
+        self.currentUserLike = like;
+        [self.likes addObject:like];
+        [parseClient saveLike:like];
+        
+        // Don't send notification if use liked their own achievement.
+        if (![self.achievement.gamertag isEqualToString:[User currentUser].gamerTag]) {
+            [ParseClient sendPushNotification:@"liked" withAchievement:self.achievement];
+        }
+    } else {
+        // Un-like.
+        [self.likes removeObject:self.currentUserLike];
+        [parseClient deleteLike:self.currentUserLike];
+        self.currentUserLike = nil;
     }
-    self.isLiked = YES;
     [self updateLikeButtonImage];
-    
-    Like *like = [[Like alloc] initWithAchievement:self.achievement];
-    [self.likes addObject:like];
-    [[ParseClient instance] saveLike:like];
-    
-    [ParseClient sendPushNotification:@"liked" withAchievement:self.achievement];
 }
 
 - (void)updateLikeButtonImage
 {
-    if (self.isLiked) {
+    if (self.currentUserLike) {
         [self.heartButton setImage:[UIImage imageNamed:@"like-26.png"] forState:UIControlStateNormal];
     } else {
         [self.heartButton setImage:[UIImage imageNamed:@"like_outline-26.png"] forState:UIControlStateNormal];
     }
-    
 }
 
 

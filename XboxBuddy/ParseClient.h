@@ -27,8 +27,10 @@ extern NSString * const ParseClientDidInitNotification;
 - (NSMutableArray *) likesForAchievement:(Achievement *)achievement;
 
 - (void) saveComment:(Comment *)comment;
+- (void) deleteComment:(Comment *)comment;
 - (void) saveLike:(Like *)like;
+- (void) deleteLike:(Like *)like;
 
-+ (void)sendPushNotification:(NSString *)type withAchievement:(Achievement *)achievement;
++ (void)sendPushNotification:(NSString *)action withAchievement:(Achievement *)achievement;
 
 @end

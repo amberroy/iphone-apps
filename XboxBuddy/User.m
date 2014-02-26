@@ -25,8 +25,13 @@ static User *_currentUser;
             [[XboxLiveClient instance] initInstance];
             
             if ([User currentUser].gamerTag) {
-                [[PFInstallation currentInstallation] setObject:[User currentUser].gamerTag forKey:@"gamertag"];
-                [[PFInstallation currentInstallation] saveEventually];
+                PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+                [currentInstallation setObject:[User currentUser].gamerTag forKey:@"gamertag"];
+                if (currentInstallation.badge != 0) {
+                    // We're not using badges right now but this is the place to clear it.
+                    currentInstallation.badge = 0;
+                }
+                [currentInstallation saveEventually];
                 NSLog(@"Registering this Parse Installation to gamertag %@", [User currentUser].gamerTag);
             }
         }

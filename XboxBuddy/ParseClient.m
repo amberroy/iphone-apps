@@ -185,14 +185,20 @@ static BOOL IsOfflineMode;
     [[NSNotificationCenter defaultCenter] postNotificationName:ParseClientDidInitNotification object:nil];
 }
 
+#pragma mark - interface methods
+
 - (NSMutableArray *) commentsForAchievement:(Achievement *)achievement
 {
-    return self.commentsForGamertagForGame[achievement.gamertag][achievement.gameName][achievement.name];
+    NSMutableArray *array = self.commentsForGamertagForGame[achievement.gamertag][achievement.gameName][achievement.name];
+    NSMutableArray *copy = [[NSMutableArray alloc] initWithArray:array];
+    return copy;
 }
 
 - (NSMutableArray *) likesForAchievement:(Achievement *)achievement
 {
-    return self.likesForGamertagForGame[achievement.gamertag][achievement.gameName][achievement.name];
+    NSMutableArray *array = self.likesForGamertagForGame[achievement.gamertag][achievement.gameName][achievement.name];
+    NSMutableArray *copy = [[NSMutableArray alloc] initWithArray:array];
+    return copy;
 }
 
 - (void) saveComment:(Comment *)comment
@@ -205,9 +211,9 @@ static BOOL IsOfflineMode;
     
     [comment saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (succeeded) {
-            NSLog(@"Comment uploaded: \"%@\" by %@ on %@", comment.content, comment.authorGamertag, comment.timestamp);
+            NSLog(@"Comment on %@:%@:%@ saved", comment.achievementGamertag, comment.gameName, comment.achievementName);
         } else {
-            NSLog(@"Error: %@", [error userInfo][@"error"]);
+            NSLog(@"Error saving Comment on %@:%@:%@ : %@", comment.achievementGamertag, comment.gameName, comment.achievementName, [error userInfo][@"error"]);
         }
     }];
 }
@@ -222,22 +228,47 @@ static BOOL IsOfflineMode;
     
     [like saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (succeeded) {
-            NSLog(@"Like uploaded by %@ on %@", like.authorGamertag, like.timestamp);
+            NSLog(@"Like %@:%@:%@ saved", like.achievementGamertag, like.gameName, like.achievementName);
         } else {
-            NSLog(@"Error: %@", [error userInfo][@"error"]);
+            NSLog(@"Error saving Like %@:%@:%@ : %@", like.achievementGamertag, like.gameName, like.achievementName, [error userInfo][@"error"]);
+        }
+    }];
+}
+
+- (void) deleteComment:(Comment *)comment
+{
+    NSMutableDictionary *gameDict = self.commentsForGamertagForGame[comment.achievementGamertag][comment.gameName];
+    [gameDict[comment.achievementName] removeObject:comment];
+    [comment deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if (succeeded) {
+            NSLog(@"Comment %@:%@:%@ deleted", comment.achievementGamertag, comment.gameName, comment.achievementName);
+        } else {
+            NSLog(@"Error deleting Comment %@:%@:%@ : %@", comment.achievementGamertag, comment.gameName, comment.achievementName, [error userInfo][@"error"]);
+        }
+    }];
+}
+
+- (void) deleteLike:(Like *)like
+{
+    NSMutableDictionary *gameDict = self.likesForGamertagForGame[like.achievementGamertag][like.gameName];
+    [gameDict[like.achievementName] removeObject:like];
+    [like deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if (succeeded) {
+            NSLog(@"Like %@:%@:%@ deleted", like.achievementGamertag, like.gameName, like.achievementName);
+        } else {
+            NSLog(@"Error deleting Like %@:%@:%@ : %@", like.achievementGamertag, like.gameName, like.achievementName, [error userInfo][@"error"]);
         }
     }];
 }
 
 
-// TODO: Make enums for type instead of string.
-+ (void)sendPushNotification:(NSString *)type withAchievement:(Achievement *)achievement
++ (void)sendPushNotification:(NSString *)action withAchievement:(Achievement *)achievement
 {
     PFQuery *pushQuery = [PFInstallation query];
     [pushQuery whereKey:@"deviceType" equalTo:@"ios"];
     [pushQuery whereKey:@"gamertag" equalTo:achievement.gamertag];
     NSString *message = [NSString stringWithFormat:@"%@ %@ your achievement %@: %@",
-                         [User currentUser].gamerTag, type, achievement.gameName, achievement.name];
+                         [User currentUser].gamerTag, action, achievement.gameName, achievement.name];
     //[PFPush sendPushMessageToQueryInBackground:pushQuery withMessage:message];
     NSDictionary *data = [NSDictionary dictionaryWithObjectsAndKeys:
                           message, @"alert",

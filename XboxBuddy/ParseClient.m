@@ -69,9 +69,7 @@ static BOOL IsOfflineMode;
     
     self.pendingRequests = [[NSMutableArray alloc] init];
     self.commentsForGamertagForGame = [[NSMutableDictionary alloc] init];
-    self.commentsForGamertagForGame[userProfile.gamertag] = [[NSMutableDictionary alloc] init];
     self.likesForGamertagForGame = [[NSMutableDictionary alloc] init];
-    self.likesForGamertagForGame[userProfile.gamertag] = [[NSMutableDictionary alloc] init];
     
     NSMutableArray *profiles = [[NSMutableArray alloc] initWithArray:friendProfiles];
     [profiles insertObject:userProfile atIndex:0];
@@ -89,6 +87,9 @@ static BOOL IsOfflineMode;
 - (void) fetchCommentsWithProfile:(Profile *)profile withGame:(Game *)game
 {
     //NSLog(@"Fetching comments for %@'s achievements for game %@", profile.gamertag, game.name);  // DEBUG
+    if (!self.commentsForGamertagForGame[profile.gamertag]) {
+        self.commentsForGamertagForGame[profile.gamertag] = [[NSMutableDictionary alloc] init];
+    }
     
     PFQuery *query = [PFQuery queryWithClassName:[Comment parseClassName]];
     [query whereKey:@"achievementGamertag" equalTo:profile.gamertag];
@@ -123,6 +124,9 @@ static BOOL IsOfflineMode;
 - (void) fetchLikesWithProfile:(Profile *)profile withGame:(Game *)game
 {
     //NSLog(@"Fetching likes for %@'s achievements for game %@", profile.gamertag, game.name);  // DEBUG
+    if (!self.likesForGamertagForGame[profile.gamertag]) {
+        self.likesForGamertagForGame[profile.gamertag] = [[NSMutableDictionary alloc] init];
+    }
     
     PFQuery *query = [PFQuery queryWithClassName:[Like parseClassName]];
     [query whereKey:@"achievementGamertag" equalTo:profile.gamertag];
@@ -181,19 +185,23 @@ static BOOL IsOfflineMode;
     [[NSNotificationCenter defaultCenter] postNotificationName:ParseClientDidInitNotification object:nil];
 }
 
-- (NSArray *) commentsForAchievement:(Achievement *)achievement
+- (NSMutableArray *) commentsForAchievement:(Achievement *)achievement
 {
     return self.commentsForGamertagForGame[achievement.gamertag][achievement.gameName][achievement.name];
 }
 
-- (NSArray *) likesForAchievement:(Achievement *)achievement
+- (NSMutableArray *) likesForAchievement:(Achievement *)achievement
 {
     return self.likesForGamertagForGame[achievement.gamertag][achievement.gameName][achievement.name];
 }
 
 - (void) saveComment:(Comment *)comment
 {
-    [self.commentsForGamertagForGame[comment.achievementGamertag][comment.gameName][comment.achievementName] addObject:comment];
+    NSMutableDictionary *gameDict = self.commentsForGamertagForGame[comment.achievementGamertag][comment.gameName];
+    if (!gameDict[comment.achievementName]) {
+        gameDict[comment.achievementName] = [[NSMutableArray alloc] init];
+    }
+    [gameDict[comment.achievementName] addObject:comment];
     
     [comment saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (succeeded) {
@@ -206,7 +214,11 @@ static BOOL IsOfflineMode;
 
 - (void) saveLike:(Like *)like
 {
-    [self.likesForGamertagForGame[like.achievementGamertag][like.gameName][like.achievementName] addObject:like];
+    NSMutableDictionary *gameDict = self.likesForGamertagForGame[like.achievementGamertag][like.gameName];
+    if (!gameDict[like.achievementName]) {
+        gameDict[like.achievementName] = [[NSMutableArray alloc] init];
+    }
+    [gameDict[like.achievementName] addObject:like];
     
     [like saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (succeeded) {

@@ -23,8 +23,8 @@ extern NSString * const ParseClientDidInitNotification;
 
 - (void) initInstance:(Profile *)userProfile withProfiles:(NSArray *)friendProfiles;
 
-- (NSArray *) commentsForAchievement:(Achievement *)achievement;
-- (NSArray *) likesForAchievement:(Achievement *)achievement;
+- (NSMutableArray *) commentsForAchievement:(Achievement *)achievement;
+- (NSMutableArray *) likesForAchievement:(Achievement *)achievement;
 
 - (void) saveComment:(Comment *)comment;
 - (void) saveLike:(Like *)like;

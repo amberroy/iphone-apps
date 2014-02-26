@@ -26,6 +26,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *likeButton;
 
 @property BOOL isLiked;
+@property NSMutableArray *likes;
+@property NSMutableArray *comments;
 
 @end
 
@@ -74,8 +76,8 @@
     [HomeTableViewController customizeNavigationBar:self];
     
     // Change Like icon if this user has liked this achievement already.
-    NSArray *likes = [[ParseClient instance] likesForAchievement:self.achievement];
-    for (Like *like in likes) {
+    self.likes = [[ParseClient instance] likesForAchievement:self.achievement];
+    for (Like *like in self.likes) {
         if ([like.authorGamertag isEqualToString:[User currentUser].gamerTag]) {
             self.isLiked = YES;
             break;
@@ -84,19 +86,19 @@
     [self updatedIsLiked];
     
     // TODO: Display Like count on UI, for now dump to log.
-    if (likes) {
+    if (self.likes) {
         NSLog(@"Likes on %@ achievement %@:", self.achievement.gamertag, self.achievement.name);
     }
-    for (Like *like in likes) {
+    for (Like *like in self.likes) {
         NSLog(@"    %@ on %@", like.authorGamertag, like.timestamp);
     }
              
     // TODO: Put comments in a table, for now dump to log.
-    NSArray *comments = [[ParseClient instance] commentsForAchievement:self.achievement];
-    if (comments) {
+    self.comments = [[ParseClient instance] commentsForAchievement:self.achievement];
+    if (self.comments) {
         NSLog(@"Comments on %@ achievement %@:", self.achievement.gamertag, self.achievement.name);
     }
-    for (Comment *comment in comments) {
+    for (Comment *comment in self.comments) {
         NSLog(@"    \"%@\" by %@ on %@", comment.content, comment.authorGamertag, comment.timestamp);
     }
     
@@ -113,6 +115,7 @@
     [self updatedIsLiked];
     
     Like *like = [[Like alloc] initWithAchievement:self.achievement];
+    [self.likes addObject:like];
     [[ParseClient instance] saveLike:like];
     
     [ParseClient sendPushNotification:@"liked" withAchievement:self.achievement];

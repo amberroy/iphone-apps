@@ -96,18 +96,18 @@ static BOOL IsOfflineMode;
     [query whereKey:@"gameName" equalTo:game.name];
 
     // Pass the result array into the block (accessing the dict gives us Parse warning).
-    self.commentsForGamertagForGame[profile.gamertag][game.name] = [[NSMutableDictionary alloc] init];
-    NSMutableDictionary *gameDict = self.commentsForGamertagForGame[profile.gamertag][game.name];
+    self.commentsForGamertagForGame[profile.gamertag][game.gameID] = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *gameDict = self.commentsForGamertagForGame[profile.gamertag][game.gameID];
 
     [self.pendingRequests addObject:query];
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
 
         if (!error) {
             for (Comment *comment in objects) {
-                if (!gameDict[comment.achievementName]) {
-                    gameDict[comment.achievementName] = [[NSMutableArray alloc] init];
+                if (!gameDict[comment.achievementID]) {
+                    gameDict[comment.achievementID] = [[NSMutableArray alloc] init];
                 }
-                [gameDict[comment.achievementName] addObject:comment];
+                [gameDict[comment.achievementID] addObject:comment];
             }
             int count = [objects count];
             self.totalComments += count;
@@ -136,7 +136,7 @@ static BOOL IsOfflineMode;
     
     // Pass the result array into the block (accessing the dict gives us Parse warning).
     self.likesForGamertagForGame[profile.gamertag][game.name] = [[NSMutableDictionary alloc] init];
-    NSMutableDictionary *gameDict = self.likesForGamertagForGame[profile.gamertag][game.name];
+    NSMutableDictionary *gameDict = self.likesForGamertagForGame[profile.gamertag][game.gameID];
     
     [self.pendingRequests addObject:query];
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
@@ -144,8 +144,8 @@ static BOOL IsOfflineMode;
         if (!error) {
             NSMutableArray *authors = [[NSMutableArray alloc] init];
             for (Like *like in objects) {
-                if (!gameDict[like.achievementName]) {
-                    gameDict[like.achievementName] = [[NSMutableArray alloc] init];
+                if (!gameDict[like.achievementID]) {
+                    gameDict[like.achievementID] = [[NSMutableArray alloc] init];
                 }
                 if ([authors containsObject:like.authorGamertag]) {
                     // Somehow a user liked this achievement more than once, delete extra Likes.
@@ -156,7 +156,7 @@ static BOOL IsOfflineMode;
                     continue;
                 }
                 [authors addObject:like.authorGamertag];
-                [gameDict[like.achievementName] addObject:like];
+                [gameDict[like.achievementID] addObject:like];
             }
             int count = [objects count];
             self.totalLikes += count;
@@ -203,25 +203,25 @@ static BOOL IsOfflineMode;
 
 - (NSMutableArray *) commentsForAchievement:(Achievement *)achievement
 {
-    NSMutableArray *array = self.commentsForGamertagForGame[achievement.gamertag][achievement.gameName][achievement.name];
+    NSMutableArray *array = self.commentsForGamertagForGame[achievement.gamertag][achievement.game.gameID][achievement.achievementID];
     NSMutableArray *copy = [[NSMutableArray alloc] initWithArray:array];
     return copy;
 }
 
 - (NSMutableArray *) likesForAchievement:(Achievement *)achievement
 {
-    NSMutableArray *array = self.likesForGamertagForGame[achievement.gamertag][achievement.gameName][achievement.name];
+    NSMutableArray *array = self.likesForGamertagForGame[achievement.gamertag][achievement.game.gameID][achievement.achievementID];
     NSMutableArray *copy = [[NSMutableArray alloc] initWithArray:array];
     return copy;
 }
 
 - (void) saveComment:(Comment *)comment
 {
-    NSMutableDictionary *gameDict = self.commentsForGamertagForGame[comment.achievementGamertag][comment.gameName];
-    if (!gameDict[comment.achievementName]) {
-        gameDict[comment.achievementName] = [[NSMutableArray alloc] init];
+    NSMutableDictionary *gameDict = self.commentsForGamertagForGame[comment.achievementGamertag][comment.gameID];
+    if (!gameDict[comment.achievementID]) {
+        gameDict[comment.achievementID] = [[NSMutableArray alloc] init];
     }
-    [gameDict[comment.achievementName] addObject:comment];
+    [gameDict[comment.achievementID] addObject:comment];
     
     [comment saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (succeeded) {
@@ -234,11 +234,11 @@ static BOOL IsOfflineMode;
 
 - (void) saveLike:(Like *)like
 {
-    NSMutableDictionary *gameDict = self.likesForGamertagForGame[like.achievementGamertag][like.gameName];
-    if (!gameDict[like.achievementName]) {
-        gameDict[like.achievementName] = [[NSMutableArray alloc] init];
+    NSMutableDictionary *gameDict = self.likesForGamertagForGame[like.achievementGamertag][like.gameID];
+    if (!gameDict[like.achievementID]) {
+        gameDict[like.achievementID] = [[NSMutableArray alloc] init];
     }
-    [gameDict[like.achievementName] addObject:like];
+    [gameDict[like.achievementID] addObject:like];
     
     [like saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (succeeded) {
@@ -282,14 +282,14 @@ static BOOL IsOfflineMode;
     [pushQuery whereKey:@"deviceType" equalTo:@"ios"];
     [pushQuery whereKey:@"gamertag" equalTo:achievement.gamertag];
     NSString *message = [NSString stringWithFormat:@"%@ %@ your achievement %@: %@",
-                         [User currentUser].gamerTag, action, achievement.gameName, achievement.name];
+                         [User currentUser].gamerTag, action, achievement.game.name, achievement.name];
     //[PFPush sendPushMessageToQueryInBackground:pushQuery withMessage:message];
     NSDictionary *data = [NSDictionary dictionaryWithObjectsAndKeys:
                           message, @"alert",
                           //@"Increment", @"badge",
                           //@"cheering.caf", @"sound",
                           achievement.gamertag, @"gamertag",
-                          achievement.gameName, @"gameName",
+                          achievement.game.name, @"gameName",
                           achievement.name, @"achievementName",
                           nil];
     PFPush *push = [[PFPush alloc] init];

@@ -59,7 +59,7 @@
     
     self.gamertag.text = achievementObj.gamertag;
     self.achievementPoints.text = [NSString stringWithFormat:@"%i G achievement", achievementObj.points];
-    self.gameName.text = achievementObj.gameName;
+    self.gameName.text = achievementObj.game.name;
     self.achievementEarnedOn.text = [Achievement timeAgoWithDate:achievementObj.earnedOn];
 }
 

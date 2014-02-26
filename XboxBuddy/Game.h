@@ -18,6 +18,7 @@
 @property NSInteger progress;
 @property NSString *imageUrl;
 @property NSDate *lastPlayed;
+@property NSString *gameID;
 
 - (Game *)initWithDictionary:(NSDictionary *)dict;
 

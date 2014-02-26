@@ -50,7 +50,7 @@
     [HomeTableViewController customizeNavigationBar:self];
 
     self.gamerTag.text = self.achievement.gamertag;
-    self.gameName.text = [NSString stringWithFormat:@"%@", self.achievement.gameName];
+    self.gameName.text = [NSString stringWithFormat:@"%@", self.achievement.game.name];
     
     self.achievementName.text = self.achievement.name;
     self.achievementPoints.text = [NSString stringWithFormat:@"%ld G", (long)self.achievement.points];
@@ -131,7 +131,7 @@
         [self.likes addObject:like];
         [parseClient saveLike:like];
         
-        // Don't send notification if use liked their own achievement.
+        // Don't send notification if user liked their own achievement.
         if (![self.achievement.gamertag isEqualToString:[User currentUser].gamerTag]) {
             [ParseClient sendPushNotification:@"liked" withAchievement:self.achievement];
         }
@@ -165,6 +165,11 @@
     textField.text = nil;
     
     [[ParseClient instance] saveComment:comment];
+    
+    // Don't send notification if user commented on their own achievement.
+    if (![self.achievement.gamertag isEqualToString:[User currentUser].gamerTag]) {
+        [ParseClient sendPushNotification:@"commented on" withAchievement:self.achievement];
+    }
     
     return YES;
 }

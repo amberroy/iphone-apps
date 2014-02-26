@@ -15,6 +15,8 @@
 @dynamic timestamp;
 @dynamic authorGamertag;
 @dynamic authorImageUrl;
+@dynamic gameID;
+@dynamic achievementID;
 @dynamic gameName;
 @dynamic achievementName;
 @dynamic achievementGamertag;
@@ -28,7 +30,10 @@
         self.content = content;
         self.timestamp = [NSDate date];
         
-        self.gameName = achievement.gameName;
+        self.gameID = achievement.game.gameID;
+        self.achievementID = achievement.achievementID;
+        
+        self.gameName = achievement.game.name;
         self.achievementName = achievement.name;
         self.achievementGamertag = achievement.gamertag;
         

@@ -21,6 +21,8 @@
 @property NSString *authorImageUrl;
 
 // Achievement
+@property NSString *gameID;
+@property NSString *achievementID;
 @property NSString *gameName;
 @property NSString *achievementName;
 @property NSString *achievementGamertag;  // Earned achievement.

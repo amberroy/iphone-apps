@@ -24,6 +24,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *gameName;
 
 @property (weak, nonatomic) IBOutlet UIButton *heartButton;
+@property (weak, nonatomic) IBOutlet UIImageView *currentUserImage;
+@property (weak, nonatomic) IBOutlet UILabel *commentsLabel;
 
 @property NSMutableArray *likes;
 @property NSMutableArray *comments;
@@ -75,6 +77,17 @@
     }
     self.achievementImage.image = achievmentImage;
     
+    UIImage *userImage;
+    Profile *userProfile = [[XboxLiveClient instance] userProfile];
+    NSString *userImagePath = [XboxLiveClient filePathForImageUrl:userProfile.gamerpicImageUrl];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:userImagePath]) {
+        userImage = [UIImage imageWithContentsOfFile:userImagePath];
+    } else {
+        userImage = [UIImage imageNamed:@"TempAchievementImage.jpg"];
+        NSLog(@"Achievement image not found, using placeholder instead of %@", userImagePath);
+    }
+    self.currentUserImage.image = userImage;
+    
     // Get Comments and Likes (already downloaded by ParseClient on app load).
     self.comments = [[ParseClient instance] commentsForAchievement:self.achievement];
     self.likes = [[ParseClient instance] likesForAchievement:self.achievement];
@@ -87,12 +100,23 @@
     }
     [self updateLikeButtonImage];
     
-    // TODO: Put comments in a table, for now dump to log.
+    [self reloadComments];
+    
+}
+
+- (void)reloadComments
+{
+    // TODO: Put comments in a table, for now dump to label.
+    
+    self.commentsLabel.text = nil;  // clear placeholder text
     if ([self.comments count] > 0) {
-        NSLog(@"Comments on %@ achievement %@:", self.achievement.gamertag, self.achievement.name);
+        NSMutableArray *comments = [[NSMutableArray alloc]init];
         for (Comment *comment in self.comments) {
-            NSLog(@"    \"%@\" by %@ on %@", comment.content, comment.authorGamertag, comment.timestamp);
+            NSString *s = [NSString stringWithFormat:@"\"%@\" --%@",
+                           comment.content, comment.authorGamertag];
+            [comments addObject:s];
         }
+        self.commentsLabel.text = [comments componentsJoinedByString:@"\n"];
     }
     
 }
@@ -127,6 +151,22 @@
     } else {
         [self.heartButton setImage:[UIImage imageNamed:@"like_outline-26.png"] forState:UIControlStateNormal];
     }
+}
+
+#pragma mark - UITextFieldDelegate
+
+-(BOOL)textFieldShouldReturn:(UITextField *)textField {
+    
+    [textField resignFirstResponder];
+    
+    Comment *comment = [[Comment alloc] initWithContent:textField.text withAchievement:self.achievement];
+    [self.comments addObject:comment];
+    [self reloadComments];
+    textField.text = nil;
+    
+    [[ParseClient instance] saveComment:comment];
+    
+    return YES;
 }
 
 

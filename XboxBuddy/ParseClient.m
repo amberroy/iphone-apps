@@ -111,7 +111,9 @@ static BOOL IsOfflineMode;
             }
             int count = [objects count];
             self.totalComments += count;
-            NSLog(@"Added %i comments for %@ for game %@", count, profile.gamertag, game.name);
+            if (count > 0) {
+                NSLog(@"Added %i comments for %@ for game %@", count, profile.gamertag, game.name);
+            }
         } else {
             NSLog(@"ParseClient download error for %@ game %@: %@", profile.gamertag, game.name, [error userInfo][@"error"]);
         }
@@ -158,7 +160,9 @@ static BOOL IsOfflineMode;
             }
             int count = [objects count];
             self.totalLikes += count;
-            NSLog(@"Added %i likes for %@ for game %@", count, profile.gamertag, game.name);
+            if (count > 0) {
+                NSLog(@"Added %i likes for %@ for game %@", count, profile.gamertag, game.name);
+            }
         } else {
             NSLog(@"ParseClient download error for %@ game %@: %@", profile.gamertag, game.name, [error userInfo][@"error"]);
         }

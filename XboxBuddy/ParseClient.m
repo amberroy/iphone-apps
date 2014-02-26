@@ -8,6 +8,7 @@
 
 #import "ParseClient.h"
 #import "Comment.h"
+#import <Parse/Parse.h>
 
 NSString * const ParseClientDidInitNotification = @"ParseClientDidInitNotification";
 
@@ -187,13 +188,13 @@ static BOOL IsOfflineMode;
 
 - (NSArray *) likesForAchievement:(Achievement *)achievement
 {
-    NSArray *array = self.likesForGamertagForGame[achievement.gamertag][achievement.gameName][achievement.name];
-    return array;
-    //return self.likesForGamertagForGame[achievement.gamertag][achievement.gameName][achievement.name];
+    return self.likesForGamertagForGame[achievement.gamertag][achievement.gameName][achievement.name];
 }
 
 - (void) saveComment:(Comment *)comment
 {
+    [self.commentsForGamertagForGame[comment.achievementGamertag][comment.gameName][comment.achievementName] addObject:comment];
+    
     [comment saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (succeeded) {
             NSLog(@"Comment uploaded: \"%@\" by %@ on %@", comment.content, comment.authorGamertag, comment.timestamp);
@@ -205,6 +206,8 @@ static BOOL IsOfflineMode;
 
 - (void) saveLike:(Like *)like
 {
+    [self.likesForGamertagForGame[like.achievementGamertag][like.gameName][like.achievementName] addObject:like];
+    
     [like saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (succeeded) {
             NSLog(@"Like uploaded by %@ on %@", like.authorGamertag, like.timestamp);
@@ -212,6 +215,32 @@ static BOOL IsOfflineMode;
             NSLog(@"Error: %@", [error userInfo][@"error"]);
         }
     }];
+}
+
+
+// TODO: Make enums for type instead of string.
++ (void)sendPushNotification:(NSString *)type withAchievement:(Achievement *)achievement
+{
+    PFQuery *pushQuery = [PFInstallation query];
+    [pushQuery whereKey:@"deviceType" equalTo:@"ios"];
+    [pushQuery whereKey:@"gamertag" equalTo:achievement.gamertag];
+    NSString *message = [NSString stringWithFormat:@"%@ %@ your achievement %@: %@",
+                         [User currentUser].gamerTag, type, achievement.gameName, achievement.name];
+    //[PFPush sendPushMessageToQueryInBackground:pushQuery withMessage:message];
+    NSDictionary *data = [NSDictionary dictionaryWithObjectsAndKeys:
+                          message, @"alert",
+                          //@"Increment", @"badge",
+                          //@"cheering.caf", @"sound",
+                          achievement.gamertag, @"gamertag",
+                          achievement.gameName, @"gameName",
+                          achievement.name, @"achievementName",
+                          nil];
+    PFPush *push = [[PFPush alloc] init];
+    [push setData:data];
+    [push setQuery:pushQuery];
+    [push sendPushInBackground];
+    NSLog(@"Sent Push Notification for %@:%@:%@", data[@"gamertag"], data[@"gameName"], data[@"achievementName"]);
+    
 }
 
 

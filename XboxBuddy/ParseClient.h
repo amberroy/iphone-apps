@@ -29,5 +29,6 @@ extern NSString * const ParseClientDidInitNotification;
 - (void) saveComment:(Comment *)comment;
 - (void) saveLike:(Like *)like;
 
++ (void)sendPushNotification:(NSString *)type withAchievement:(Achievement *)achievement;
 
 @end

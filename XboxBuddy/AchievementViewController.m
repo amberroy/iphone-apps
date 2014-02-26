@@ -83,7 +83,7 @@
             break;
         }
     }
-    [self updatedIsLiked];
+    [self updateLikeButtonImage];
     
     // TODO: Display Like count on UI, for now dump to log.
     if (self.likes) {
@@ -108,11 +108,10 @@
     
     if (self.isLiked) {
         // Don't let this user like the same achievement twice.
-        [self updatedIsLiked];
         return;
     }
     self.isLiked = YES;
-    [self updatedIsLiked];
+    [self updateLikeButtonImage];
     
     Like *like = [[Like alloc] initWithAchievement:self.achievement];
     [self.likes addObject:like];
@@ -121,13 +120,12 @@
     [ParseClient sendPushNotification:@"liked" withAchievement:self.achievement];
 }
 
-- (void)updatedIsLiked
+- (void)updateLikeButtonImage
 {
-    // TODO: There is some bug with changing the image.
     if (self.isLiked) {
-        self.likeButton.imageView.image = [UIImage imageNamed:@"like-26.png"];
+        [self.likeButton setImage:[UIImage imageNamed:@"like-26.png"] forState:UIControlStateNormal];
     } else {
-        self.likeButton.imageView.image = [UIImage imageNamed:@"like_outline-26.png"];
+        [self.likeButton setImage:[UIImage imageNamed:@"like_outline-26.png"] forState:UIControlStateNormal];
     }
     
 }

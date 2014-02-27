@@ -9,6 +9,7 @@
 #import "AchievementViewController.h"
 #import "HomeTableViewController.h"
 #import "Comment.h"
+#import "CommentCell.h"
 #import "ParseClient.h"
 #import <Parse/Parse.h>
 
@@ -173,6 +174,25 @@
     return YES;
 }
 
+#pragma mark - Table view data source
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 1;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return [self.comments count];
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    static NSString *CellIdentifier = @"Cell";
+    
+    CommentCell *cell = (CommentCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+    Comment *commentObj = self.comments[indexPath.row];
+    cell = [cell initWithComment:commentObj];
+    
+    return cell;
+}
 
 
 @end

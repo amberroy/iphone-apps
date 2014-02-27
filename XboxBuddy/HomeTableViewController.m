@@ -161,6 +161,7 @@
         AchievementViewController *achieveViewController = (AchievementViewController *)segue.destinationViewController;
 
         achieveViewController.achievement = achievement;
+        achieveViewController.hidesBottomBarWhenPushed = YES;
     }
 }
 -(void)dealloc {

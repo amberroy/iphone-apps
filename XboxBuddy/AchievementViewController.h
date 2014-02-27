@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "Achievement.h"
 
-@interface AchievementViewController : UIViewController <UITextFieldDelegate>
+@interface AchievementViewController : UIViewController <UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate>
 
 @property (nonatomic, strong) Achievement *achievement;
 

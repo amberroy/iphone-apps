@@ -54,6 +54,7 @@
 		9654F4CD18BA6B860035025F /* Game.m in Sources */ = {isa = PBXBuildFile; fileRef = 9654F4CC18BA6B860035025F /* Game.m */; };
 		9664566A1899E49600E5C691 /* XboxLiveClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 966456691899E49600E5C691 /* XboxLiveClient.m */; };
 		9693F762189F032B00D3C80A /* Profile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9693F761189F032B00D3C80A /* Profile.m */; };
+		969B203018BF15D500968D36 /* CommentCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 969B202F18BF15D500968D36 /* CommentCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -137,6 +138,8 @@
 		966456691899E49600E5C691 /* XboxLiveClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XboxLiveClient.m; sourceTree = "<group>"; };
 		9693F760189F032B00D3C80A /* Profile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Profile.h; sourceTree = "<group>"; };
 		9693F761189F032B00D3C80A /* Profile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Profile.m; sourceTree = "<group>"; };
+		969B202E18BF15D500968D36 /* CommentCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentCell.h; sourceTree = "<group>"; };
+		969B202F18BF15D500968D36 /* CommentCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -189,6 +192,8 @@
 		26D2F67D189AD45F00EFB93A /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				969B202E18BF15D500968D36 /* CommentCell.h */,
+				969B202F18BF15D500968D36 /* CommentCell.m */,
 				26D2F6641899E8FD00EFB93A /* HomeCell.h */,
 				26D2F6651899E8FD00EFB93A /* HomeCell.m */,
 				2681874618A206A3003D281B /* UserAchievementCell.h */,
@@ -466,6 +471,7 @@
 				2681874B18A20701003D281B /* UserTableViewController.m in Sources */,
 				9693F762189F032B00D3C80A /* Profile.m in Sources */,
 				9654F4CD18BA6B860035025F /* Game.m in Sources */,
+				969B203018BF15D500968D36 /* CommentCell.m in Sources */,
 				26F13BED18B296E7005C1ECE /* SettingsViewController.m in Sources */,
 				26D2F6741899F27200EFB93A /* AchievementViewController.m in Sources */,
 				9654F4C718B9942D0035025F /* Like.m in Sources */,

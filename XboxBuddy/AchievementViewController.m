@@ -88,18 +88,7 @@
     }
     self.currentUserImage.image = userImage;
     
-    // Get Comments and Likes (already downloaded by ParseClient on app load).
-    self.comments = [[ParseClient instance] commentsForAchievement:self.achievement];
-    self.likes = [[ParseClient instance] likesForAchievement:self.achievement];
-    self.currentUserLike = nil;
-    for (Like *like in self.likes) {
-        if ([like.authorGamertag isEqualToString:[User currentUser].gamerTag]) {
-            self.currentUserLike = like;
-            break;
-        }
-    }
-    [self updateLikeButtonImage];
-    
+    [self reloadLikes];
     [self reloadComments];
     
 }
@@ -119,6 +108,25 @@
         self.commentsLabel.text = [comments componentsJoinedByString:@"\n"];
     }
     
+}
+
+- (void)reloadLikes
+{
+    // Get Comments and Likes (already downloaded by ParseClient on app load).
+    self.comments = [[ParseClient instance] commentsForAchievement:self.achievement];
+    self.likes = [[ParseClient instance] likesForAchievement:self.achievement];
+    self.currentUserLike = nil;
+    for (Like *like in self.likes) {
+        if ([like.authorGamertag isEqualToString:[User currentUser].gamerTag]) {
+            self.currentUserLike = like;
+            break;
+        }
+    }
+    if (self.currentUserLike) {
+        [self.heartButton setImage:[UIImage imageNamed:@"like-26.png"] forState:UIControlStateNormal];
+    } else {
+        [self.heartButton setImage:[UIImage imageNamed:@"like_outline-26.png"] forState:UIControlStateNormal];
+    }
 }
 
 - (IBAction)like:(id)sender {
@@ -141,16 +149,7 @@
         [parseClient deleteLike:self.currentUserLike];
         self.currentUserLike = nil;
     }
-    [self updateLikeButtonImage];
-}
-
-- (void)updateLikeButtonImage
-{
-    if (self.currentUserLike) {
-        [self.heartButton setImage:[UIImage imageNamed:@"like-26.png"] forState:UIControlStateNormal];
-    } else {
-        [self.heartButton setImage:[UIImage imageNamed:@"like_outline-26.png"] forState:UIControlStateNormal];
-    }
+    [self reloadLikes];
 }
 
 #pragma mark - UITextFieldDelegate

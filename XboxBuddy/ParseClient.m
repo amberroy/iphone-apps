@@ -93,7 +93,7 @@ static BOOL IsOfflineMode;
     
     PFQuery *query = [PFQuery queryWithClassName:[Comment parseClassName]];
     [query whereKey:@"achievementGamertag" equalTo:profile.gamertag];
-    [query whereKey:@"gameName" equalTo:game.name];
+    [query whereKey:@"gameID" equalTo:game.gameID];
 
     // Pass the result array into the block (accessing the dict gives us Parse warning).
     self.commentsForGamertagForGame[profile.gamertag][game.gameID] = [[NSMutableDictionary alloc] init];
@@ -132,10 +132,10 @@ static BOOL IsOfflineMode;
     
     PFQuery *query = [PFQuery queryWithClassName:[Like parseClassName]];
     [query whereKey:@"achievementGamertag" equalTo:profile.gamertag];
-    [query whereKey:@"gameName" equalTo:game.name];
+    [query whereKey:@"gameID" equalTo:game.gameID];
     
     // Pass the result array into the block (accessing the dict gives us Parse warning).
-    self.likesForGamertagForGame[profile.gamertag][game.name] = [[NSMutableDictionary alloc] init];
+    self.likesForGamertagForGame[profile.gamertag][game.gameID] = [[NSMutableDictionary alloc] init];
     NSMutableDictionary *gameDict = self.likesForGamertagForGame[profile.gamertag][game.gameID];
     
     [self.pendingRequests addObject:query];

@@ -26,11 +26,14 @@
 
 @property (weak, nonatomic) IBOutlet UIButton *heartButton;
 @property (weak, nonatomic) IBOutlet UIImageView *currentUserImage;
-@property (weak, nonatomic) IBOutlet UILabel *commentsLabel;
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
 
 @property NSMutableArray *likes;
 @property NSMutableArray *comments;
 @property Like *currentUserLike;
+
+@property CGRect textFieldFrame;
+@property CGRect userImageFrame;
 
 @end
 
@@ -90,24 +93,6 @@
     self.currentUserImage.image = userImage;
     
     [self reloadLikes];
-    [self reloadComments];
-    
-}
-
-- (void)reloadComments
-{
-    // TODO: Put comments in a table, for now dump to label.
-    
-    self.commentsLabel.text = nil;  // clear placeholder text
-    if ([self.comments count] > 0) {
-        NSMutableArray *comments = [[NSMutableArray alloc]init];
-        for (Comment *comment in self.comments) {
-            NSString *s = [NSString stringWithFormat:@"\"%@\" --%@",
-                           comment.content, comment.authorGamertag];
-            [comments addObject:s];
-        }
-        self.commentsLabel.text = [comments componentsJoinedByString:@"\n"];
-    }
     
 }
 
@@ -155,14 +140,32 @@
 
 #pragma mark - UITextFieldDelegate
 
--(BOOL)textFieldShouldReturn:(UITextField *)textField {
+-(BOOL)textFieldShouldBeginEditing:(UITextField *)textField
+{
+    // Keep textField visible when keyboard is displayed.
+    // Hide tableView and move textField up to where the table was.
+    [self.tableView setHidden:YES];
+    CGRect tableFrame = self.tableView.frame;
+    CGRect textFrame = textField.frame;
+    CGRect imageFrame = self.currentUserImage.frame;
+    self.textFieldFrame = textFrame;
+    self.userImageFrame = imageFrame;
+    textFrame.origin.y = tableFrame.origin.y;
+    imageFrame.origin.y = tableFrame.origin.y;
+    textField.frame = textFrame;
+    self.currentUserImage.frame = imageFrame;
     
-    [textField resignFirstResponder];
-    
+    return YES;
+}
+
+-(BOOL)textFieldShouldReturn:(UITextField *)textField
+{
     Comment *comment = [[Comment alloc] initWithContent:textField.text withAchievement:self.achievement];
     [self.comments addObject:comment];
-    [self reloadComments];
+    [self.tableView reloadData];
+    self.tableView.hidden = NO;
     textField.text = nil;
+    [textField resignFirstResponder];
     
     [[ParseClient instance] saveComment:comment];
     
@@ -170,6 +173,12 @@
     if (![self.achievement.gamertag isEqualToString:[User currentUser].gamerTag]) {
         [ParseClient sendPushNotification:@"commented on" withAchievement:self.achievement];
     }
+    
+    // Show table view and move image and textField back to original locations.
+    [self.tableView setHidden:NO];
+    [self.tableView reloadData];
+    textField.frame = self.textFieldFrame;
+    self.currentUserImage.frame = self.userImageFrame;
     
     return YES;
 }

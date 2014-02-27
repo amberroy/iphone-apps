@@ -45,6 +45,7 @@
     }
     self.authorImage.image = authorImage;
     
+    self.content.text = commentObj.content;
     self.authorGamertag.text = commentObj.authorGamertag;
     self.timestamp.text = [Achievement timeAgoWithDate:commentObj.timestamp];
     

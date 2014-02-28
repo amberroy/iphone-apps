@@ -35,6 +35,8 @@
 @property CGRect textFieldFrame;
 @property CGRect userImageFrame;
 
+@property Comment *commentPendingDelete;
+
 @end
 
 @implementation AchievementViewController
@@ -207,10 +209,23 @@
 -(void)deleteButtonPressed:(UIButton *)sender
 {
     CommentCell *commentCell = (CommentCell *)sender.superview.superview.superview;
-    [self.comments removeObject:commentCell.commentObj];
-    [self.tableView reloadData];
+    self.commentPendingDelete = commentCell.commentObj;
     
-    [[ParseClient instance] deleteComment:commentCell.commentObj];
+    NSString *message = @"Delete this comment?";
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Confirm Delete"
+            message:message delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Delete", nil];
+    [alert show];
 }
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex != alertView.cancelButtonIndex) {
+        [self.comments removeObject:self.commentPendingDelete];
+        [self.tableView reloadData];
+        
+        [[ParseClient instance] deleteComment:self.commentPendingDelete];
+    }
+}
+
 
 @end

@@ -16,6 +16,9 @@
 @property (weak, nonatomic) IBOutlet UILabel *content;
 @property (weak, nonatomic) IBOutlet UILabel *timestamp;
 
+@property (weak, nonatomic) IBOutlet UIButton *deleteButton;
+@property Comment *commentObj;
+
 - (CommentCell *)initWithComment:(Comment *)commentObj;
 
 @end

@@ -203,5 +203,14 @@
     return cell;
 }
 
+#pragma mark - UITableViewCell buttons
+-(void)deleteButtonPressed:(UIButton *)sender
+{
+    CommentCell *commentCell = (CommentCell *)sender.superview.superview.superview;
+    [self.comments removeObject:commentCell.commentObj];
+    [self.tableView reloadData];
+    
+    [[ParseClient instance] deleteComment:commentCell.commentObj];
+}
 
 @end

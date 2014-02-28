@@ -251,8 +251,8 @@ static BOOL IsOfflineMode;
 
 - (void) deleteComment:(Comment *)comment
 {
-    NSMutableDictionary *gameDict = self.commentsForGamertagForGame[comment.achievementGamertag][comment.gameName];
-    [gameDict[comment.achievementName] removeObject:comment];
+    NSMutableDictionary *gameDict = self.commentsForGamertagForGame[comment.achievementGamertag][comment.gameID];
+    [gameDict[comment.achievementID] removeObject:comment];
     [comment deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (succeeded) {
             NSLog(@"Deleted Comment %@:%@:%@", comment.achievementGamertag, comment.gameName, comment.achievementName);
@@ -264,8 +264,8 @@ static BOOL IsOfflineMode;
 
 - (void) deleteLike:(Like *)like
 {
-    NSMutableDictionary *gameDict = self.likesForGamertagForGame[like.achievementGamertag][like.gameName];
-    [gameDict[like.achievementName] removeObject:like];
+    NSMutableDictionary *gameDict = self.likesForGamertagForGame[like.achievementGamertag][like.gameID];
+    [gameDict[like.achievementID] removeObject:like];
     [like deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (succeeded) {
             NSLog(@"Deleted Like %@:%@:%@", like.achievementGamertag, like.gameName, like.achievementName);

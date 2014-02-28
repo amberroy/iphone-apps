@@ -13,4 +13,6 @@
 
 @property (nonatomic, strong) Achievement *achievement;
 
+-(void)deleteButtonPressed:(UIButton *)sender;
+
 @end

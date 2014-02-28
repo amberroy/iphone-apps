@@ -576,11 +576,26 @@
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GFM-kq-cP0">
+                                                    <rect key="frame" x="157" y="46" width="11" height="11"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="11" id="CuU-yS-Jcm"/>
+                                                        <constraint firstAttribute="width" constant="11" id="yUQ-M7-nar"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                                                    <state key="normal" title="X">
+                                                        <color key="titleColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                                        <color key="titleShadowColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                </button>
                                             </subviews>
                                             <constraints>
+                                                <constraint firstItem="GFM-kq-cP0" firstAttribute="top" secondItem="yUY-a3-3Fv" secondAttribute="bottom" constant="5" id="2Ty-wt-4fe"/>
                                                 <constraint firstItem="DAS-Bq-jmb" firstAttribute="leading" secondItem="99q-6x-Ypu" secondAttribute="trailing" constant="8" id="2dm-lT-HBj"/>
                                                 <constraint firstItem="99q-6x-Ypu" firstAttribute="top" secondItem="yUY-a3-3Fv" secondAttribute="bottom" constant="3" id="7J8-Hi-N99"/>
                                                 <constraint firstItem="yUY-a3-3Fv" firstAttribute="leading" secondItem="yhP-So-ZTi" secondAttribute="trailing" constant="8" id="E9w-Ez-y1Z"/>
+                                                <constraint firstItem="GFM-kq-cP0" firstAttribute="leading" secondItem="DAS-Bq-jmb" secondAttribute="trailing" constant="8" id="KK6-Cl-BcE"/>
                                                 <constraint firstItem="yhP-So-ZTi" firstAttribute="leading" secondItem="WDd-0g-jfs" secondAttribute="leading" constant="7" id="OUR-3K-aFs"/>
                                                 <constraint firstItem="yUY-a3-3Fv" firstAttribute="top" secondItem="WDd-0g-jfs" secondAttribute="top" constant="7" id="U2W-uI-RlO"/>
                                                 <constraint firstItem="yhP-So-ZTi" firstAttribute="top" secondItem="WDd-0g-jfs" secondAttribute="top" constant="7" id="U4I-5i-yTF"/>
@@ -593,6 +608,7 @@
                                             <outlet property="authorGamertag" destination="99q-6x-Ypu" id="ert-re-d3d"/>
                                             <outlet property="authorImage" destination="yhP-So-ZTi" id="4Yw-re-yAh"/>
                                             <outlet property="content" destination="yUY-a3-3Fv" id="gUL-zW-9bT"/>
+                                            <outlet property="deleteButton" destination="GFM-kq-cP0" id="mib-2m-ra8"/>
                                             <outlet property="timestamp" destination="DAS-Bq-jmb" id="IAk-RY-Mf6"/>
                                         </connections>
                                     </tableViewCell>

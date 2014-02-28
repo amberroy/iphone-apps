@@ -7,10 +7,10 @@
 //
 
 #import "CommentCell.h"
+#import "AchievementViewController.h"
 
 @interface CommentCell ()
 
-@property Comment *commentObj;
 
 @end
 
@@ -48,6 +48,15 @@
     self.content.text = commentObj.content;
     self.authorGamertag.text = commentObj.authorGamertag;
     self.timestamp.text = [Achievement timeAgoWithDate:commentObj.timestamp];
+    
+    // Only show delete button if current user authored this comment.
+    if ([self.commentObj.authorGamertag isEqual:[User currentUser].gamerTag]) {
+        UITableView *tv = (UITableView *) self.superview.superview;
+        AchievementViewController *vc = (AchievementViewController *) tv.dataSource;
+        [self.deleteButton addTarget:vc action:@selector(deleteButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    } else {
+        [self.deleteButton setTitle:@"" forState:UIControlStateNormal];
+    }
     
     return self;
 }

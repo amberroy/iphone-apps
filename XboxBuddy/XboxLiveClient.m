@@ -690,57 +690,46 @@ static BOOL IsDemoMode;
 -(void)prepDataForDemo
 {
     NSDictionary *cannedImagesForGamertag = @{
-      @"UnabatedLake1":     @{ @"avatar": @"Adam_avatar-body.png",
-                               @"gamerpic": @"Adam_avatarpic-l.png"},
-      //@"MyRazzleDazzle":    @{ @"avatar": @"avatar-FromAnotherGamer2",
-      //                         @"gamerpic": @"gamerpic-FromAnotherGamer2"},
+      @"UnabatedLake1":     @{ @"gamerpic": @"TempGamerImage2.png" },
+      @"MyRazzleDazzle":    @{ @"gamerpic": @"TempGamerImage3.png"},
+      @"sbCaliban":         @{ @"gamerpic": @"TempGamerImage4.png"},
       };
       
-    // If user or friend gamertag are in the cannedImagesForGamertag dict,
-    // overwrite their downloaded avatar and gamerpic with canned image.
-    NSFileManager *fileManager = [NSFileManager defaultManager];
     for (NSDictionary *profileDict in self.friendProfilesUnsorted) {
         NSString *gamertag = profileDict[@"Player"][@"Gamertag"];
+        
         if (cannedImagesForGamertag[gamertag]) {
-            
             // Delete downloaded images and replace with canned images from the app bundle.
-            NSString *avatar_url_str = profileDict[@"Player"][@"Avatar"][@"Body"];
-            // e.g. https://avatar-ssl.xboxlive.com/avatar/Adam/avatar-body.png
-            NSString *avatarPath = [XboxLiveClient filePathForImageUrl:avatar_url_str];
-            NSString *canned_avatar_name = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:cannedImagesForGamertag[gamertag][@"avatar"]];
-            
-            NSError *error;
-            [fileManager removeItemAtPath:avatarPath error: &error];
-            if (error) {
-                NSLog(@"Error deleting %@", avatarPath);
-            }
-            [fileManager copyItemAtPath:canned_avatar_name toPath:avatarPath error:&error];
-            if (error) {
-                NSLog(@"Error copying %@ to %@", canned_avatar_name, avatarPath);
-            }
-            
-            
-            NSString *gamerpic_url_str = profileDict[@"Player"][@"Avatar"][@"Gamerpic"][@"Large"];
-            // e.g. https://avatar-ssl.xboxlive.com/avatar/Adam/avatarpic-l.png
-            NSString *gamerpicPath = [XboxLiveClient filePathForImageUrl:gamerpic_url_str];
-            NSString *canned_gamerpic_name = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:cannedImagesForGamertag[gamertag][@"gamerpic"]];
-            
-            [fileManager removeItemAtPath:gamerpicPath error: &error];
-            if (error) {
-                NSLog(@"Error deleting %@", avatarPath);
-            }
-            [fileManager  copyItemAtPath:canned_gamerpic_name toPath:gamerpicPath error:&error];
-            if (error) {
-                NSLog(@"Error copying %@ to %@", canned_gamerpic_name, gamerpicPath);
-            }
-            
-            
+            [self replaceDownloadedImage:profileDict[@"Player"][@"Avatar"][@"Body"]
+                         withCannedImage:cannedImagesForGamertag[gamertag][@"avatar"]];
+            [self replaceDownloadedImage:profileDict[@"Player"][@"Avatar"][@"Gamerpic"][@"Large"]
+                         withCannedImage:cannedImagesForGamertag[gamertag][@"gamerpic"]];
         }
     }
     
     
 }
 
+-(void) replaceDownloadedImage:(NSString *)url withCannedImage:(NSString *)filename
+{
+    
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSString *imagePath = [XboxLiveClient filePathForImageUrl:url];
+    NSString *canned_image_name = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:filename];
+    
+    NSError *error;
+    [fileManager removeItemAtPath:imagePath error: &error];
+    if (error) {
+        NSLog(@"Error deleting %@", imagePath);
+    }
+    [fileManager copyItemAtPath:canned_image_name toPath:imagePath error:&error];
+    if (error) {
+        NSLog(@"Error copying %@ to %@", canned_image_name, imagePath);
+    }
+    
+    // e.g. https://avatar-ssl.xboxlive.com/avatar/Adam/avatarpic-l.png
+    // e.g. https://avatar-ssl.xboxlive.com/avatar/Adam/avatar-body.png
+}
 
 
 @end

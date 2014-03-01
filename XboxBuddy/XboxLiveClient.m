@@ -448,10 +448,17 @@ static BOOL IsDemoMode;
 -(void)processAchievements:(NSDictionary *)responseData
 {
     int unlockedCount = 0;
+    NSString *gamertag = responseData[@"Player"][@"Gamertag"];
+    NSString *gameName = responseData[@"Game"][@"Name"];
+    
     if (responseData[@"Achievements"] != [NSNull null]) {
     
-        //NSArray *achievements = responseData[@"Achievements"];
         NSMutableArray *achievements = [[NSMutableArray alloc] initWithArray: responseData[@"Achievements"]];
+        
+        if (IsDemoMode) {
+            achievements = [self prepAchievementsForDemo:achievements withGamertag:gamertag withGameName:gameName];
+        }
+        
         for (NSDictionary *achievement in achievements) {
     
             long earnedOn = [achievement[@"EarnedOn-UNIX"] boolValue];
@@ -474,8 +481,7 @@ static BOOL IsDemoMode;
             }
         }
     }
-    NSLog(@"Added %i achievements for %@ for game %@", unlockedCount,
-          responseData[@"Player"][@"Gamertag"], responseData[@"Game"][@"Name"]);
+    NSLog(@"Added %i achievements for %@ for game %@", unlockedCount, gamertag, gameName);
 }
 
 -(void)processImage:(NSString *)savedImagePath
@@ -786,6 +792,41 @@ static BOOL IsDemoMode;
     return gameDicts;
 }
 
+- (NSMutableArray *)prepAchievementsForDemo:(NSMutableArray *)achievementDicts withGamertag:gamertag withGameName:gameName
+{
+    NSDictionary *gamerOffset = @{ @"ambroy": @"0",
+                                   @"Freelancer": @"1",
+                                   @"sbCaliban": @"2",
+                                   @"Ariock II": @"3",
+                                   @"MyRazzleDazzle": @"4",
+                                   @"JGailor": @"5",
+                                   };
+    static int hoursAgoIncrement = 25;
+    int hoursAgo = hoursAgoIncrement;
+    int offset = [gamerOffset[gamertag] intValue];
+    
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    for (NSDictionary *dict in achievementDicts) {
+        NSMutableDictionary *mdict = [[NSMutableDictionary alloc] initWithDictionary:dict];
+    
+        // Skip hidden achievements.
+        if (![mdict[@"IsHidden"] boolValue]) {
+            
+            long unlocked = [mdict[@"EarnedOn-UNIX"] boolValue];
+            if (unlocked) {
+                // Change timestamps on achievements to be closer to the present day.
+                int randomOffset = arc4random() % 10;
+                int timeAgoInSeconds = hoursAgo * 3600 + offset + randomOffset;
+                hoursAgo += hoursAgoIncrement + randomOffset;
+                NSTimeInterval interval = [[NSDate date] timeIntervalSince1970];
+                NSDate *earnedOn = [NSDate dateWithTimeIntervalSince1970:interval - timeAgoInSeconds];
+                mdict[@"EarnedOn-UNIX"] = [NSString stringWithFormat:@"%f", [earnedOn timeIntervalSince1970]];
+                [result addObject:mdict];
+            }
+        }
+    }
+    return result;
+}
 
 @end
 

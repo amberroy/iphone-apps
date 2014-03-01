@@ -313,9 +313,16 @@ static BOOL IsDemoMode;
         return;
     }
     
-    // Get profiles for all my friends.
+    NSMutableArray *friendGamertags = [[NSMutableArray alloc] init];
     for (NSDictionary *friend in responseData[@"Friends"]) {
-        NSString *friendGamertag = friend[@"GamerTag"];
+        [friendGamertags addObject:friend[@"GamerTag"]];
+    }
+    if (IsDemoMode) {
+        friendGamertags = [self prepFriendsListForDemo:friendGamertags];
+    }
+    
+    // Get profiles for all my friends.
+    for (NSString *friendGamertag in friendGamertags) {
         NSString *profile_url_str = [NSString stringWithFormat:
                                      @"http://xboxapi.com/v1/profile/%@",
                                      friendGamertag];
@@ -329,8 +336,7 @@ static BOOL IsDemoMode;
         ^(NSDictionary *responseData) { [self processProfiles:responseData]; }];
     
     // Get Games for all my friends.
-    for (NSDictionary *friend in responseData[@"Friends"]) {
-        NSString *friendGamertag = friend[@"GamerTag"];
+    for (NSString *friendGamertag in friendGamertags) {
         NSString *games_url_str = [NSString stringWithFormat:
                                      @"http://xboxapi.com/v1/games/%@",
                                      friendGamertag];
@@ -380,6 +386,11 @@ static BOOL IsDemoMode;
     int recent_game_count = 0;
     if ([responseData[@"Games"] isKindOfClass:[NSArray class]]) {
         NSArray *games = responseData[@"Games"];
+        
+        if (IsDemoMode) {
+            games = [self prepGamesListForDemo:games withGamertag:friendGamertag];
+        }
+        
         for (NSDictionary *game in games) {
             
             // Some of these "games" are console apps like Netflix that don't have achievements.
@@ -689,10 +700,15 @@ static BOOL IsDemoMode;
 
 -(void)prepDataForDemo
 {
+    // Reference: online links to avatar and gamerpic look like this
+    // https://avatar-ssl.xboxlive.com/avatar/GAMERTAG/avatarpic-l.png
+    // https://avatar-ssl.xboxlive.com/avatar/GAMERTAG/avatar-body.png
+    // Manually download replacement images to the app bundle.
     NSDictionary *cannedImagesForGamertag = @{
-      @"UnabatedLake1":     @{ @"gamerpic": @"TempGamerImage2.png" },
+      @"Ariock II":         @{ @"gamerpic": @"TempGamerImage2.png" },
       @"MyRazzleDazzle":    @{ @"gamerpic": @"TempGamerImage3.png"},
       @"sbCaliban":         @{ @"gamerpic": @"TempGamerImage4.png"},
+      @"Freelancer":        @{ @"gamerpic": @"TempGamerImage5.png"},
       };
       
     for (NSDictionary *profileDict in self.friendProfilesUnsorted) {
@@ -712,7 +728,6 @@ static BOOL IsDemoMode;
 
 -(void) replaceDownloadedImage:(NSString *)url withCannedImage:(NSString *)filename
 {
-    
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSString *imagePath = [XboxLiveClient filePathForImageUrl:url];
     NSString *canned_image_name = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:filename];
@@ -727,9 +742,52 @@ static BOOL IsDemoMode;
         NSLog(@"Error copying %@ to %@", canned_image_name, imagePath);
     }
     
-    // e.g. https://avatar-ssl.xboxlive.com/avatar/Adam/avatarpic-l.png
-    // e.g. https://avatar-ssl.xboxlive.com/avatar/Adam/avatar-body.png
+}
+
+- (NSMutableArray *)prepFriendsListForDemo:(NSMutableArray *)friendGamertags
+{
+    // Replace friends who have private histories with gamers who are public.
+    NSDictionary *swapFriends = @{ @"Laprunminta": @"Freelancer",
+                                   @"UnabatedLake1": @"Ariock II"};
+    
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    for (NSString *gamertag in friendGamertags) {
+        if (swapFriends[gamertag]) {
+            [result addObject:swapFriends[gamertag]];
+        } else {
+            [result addObject:gamertag];
+        }
+    }
+    return result;
+}
+
+- (NSArray *)prepGamesListForDemo:(NSArray *)gameDicts withGamertag:gamertag
+{
+    NSDictionary *filterGames = @{ @"ambroy": @[ @"Diablo III"],
+                                   @"Freelancer": @[ @"BioShock Infinite"],
+                                   @"sbCaliban": @[ @"Gears of War 2"],
+                                   @"Ariock II": @[ @"Peggle"],
+                                   @"MyRazzleDazzle": @[ @"Halo 4"],
+                                   @"JGailor": @[ @"Skyrim"],
+                                   };
+    
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    if (filterGames[gamertag]) {
+        for (NSDictionary *gameDict in gameDicts) {
+            NSString *gameName = gameDict[@"Name"];
+            // If we have a filter for this gamertag, only include those games.
+            if ([filterGames[gamertag] containsObject:gameName]) {
+                [result addObject:gameDict];
+            }
+        }
+        return result;
+    }
+    
+    return gameDicts;
 }
 
 
 @end
+
+
+

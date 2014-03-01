@@ -34,7 +34,6 @@
     // Add observers for notifications.
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidLogin) name:UserDidLoginNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidLogout) name:UserDidLogoutNotification object:nil];
-    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(xboxLiveClientDidInit) name:@"InitialDataLoaded" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(xboxLiveClientDidInit) name:XboxLiveClientDidInitNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(parseClientDidInit) name:ParseClientDidInitNotification object:nil];
     

@@ -58,6 +58,7 @@
 		96AEFAD018C1B03500A27EED /* TempGamerImage2.png in Resources */ = {isa = PBXBuildFile; fileRef = 96AEFACE18C1B03500A27EED /* TempGamerImage2.png */; };
 		96AEFAD118C1B03500A27EED /* TempGamerImage3.png in Resources */ = {isa = PBXBuildFile; fileRef = 96AEFACF18C1B03500A27EED /* TempGamerImage3.png */; };
 		96AEFAD318C1B25400A27EED /* TempGamerImage4.png in Resources */ = {isa = PBXBuildFile; fileRef = 96AEFAD218C1B25400A27EED /* TempGamerImage4.png */; };
+		96AEFAD518C2741700A27EED /* TempGamerImage5.png in Resources */ = {isa = PBXBuildFile; fileRef = 96AEFAD418C2741700A27EED /* TempGamerImage5.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -146,6 +147,7 @@
 		96AEFACE18C1B03500A27EED /* TempGamerImage2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TempGamerImage2.png; sourceTree = "<group>"; };
 		96AEFACF18C1B03500A27EED /* TempGamerImage3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TempGamerImage3.png; sourceTree = "<group>"; };
 		96AEFAD218C1B25400A27EED /* TempGamerImage4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TempGamerImage4.png; sourceTree = "<group>"; };
+		96AEFAD418C2741700A27EED /* TempGamerImage5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TempGamerImage5.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -194,6 +196,7 @@
 				96AEFACE18C1B03500A27EED /* TempGamerImage2.png */,
 				96AEFACF18C1B03500A27EED /* TempGamerImage3.png */,
 				96AEFAD218C1B25400A27EED /* TempGamerImage4.png */,
+				96AEFAD418C2741700A27EED /* TempGamerImage5.png */,
 			);
 			name = Images;
 			sourceTree = "<group>";
@@ -449,6 +452,7 @@
 				2681875B18A22CDF003D281B /* TempAchievementImage.jpg in Resources */,
 				962084621899B915006AD8E9 /* Images.xcassets in Resources */,
 				2681875D18A22CDF003D281B /* TempBoxArt.jpg in Resources */,
+				96AEFAD518C2741700A27EED /* TempGamerImage5.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

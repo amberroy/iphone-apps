@@ -55,6 +55,8 @@
 		9664566A1899E49600E5C691 /* XboxLiveClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 966456691899E49600E5C691 /* XboxLiveClient.m */; };
 		9693F762189F032B00D3C80A /* Profile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9693F761189F032B00D3C80A /* Profile.m */; };
 		969B203018BF15D500968D36 /* CommentCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 969B202F18BF15D500968D36 /* CommentCell.m */; };
+		96AEFAC418C181BA00A27EED /* Adam_avatar-body.png in Resources */ = {isa = PBXBuildFile; fileRef = 96AEFAC218C181BA00A27EED /* Adam_avatar-body.png */; };
+		96AEFAC518C181BA00A27EED /* Adam_avatarpic-l.png in Resources */ = {isa = PBXBuildFile; fileRef = 96AEFAC318C181BA00A27EED /* Adam_avatarpic-l.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -140,6 +142,8 @@
 		9693F761189F032B00D3C80A /* Profile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Profile.m; sourceTree = "<group>"; };
 		969B202E18BF15D500968D36 /* CommentCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentCell.h; sourceTree = "<group>"; };
 		969B202F18BF15D500968D36 /* CommentCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentCell.m; sourceTree = "<group>"; };
+		96AEFAC218C181BA00A27EED /* Adam_avatar-body.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Adam_avatar-body.png"; sourceTree = "<group>"; };
+		96AEFAC318C181BA00A27EED /* Adam_avatarpic-l.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Adam_avatarpic-l.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -179,6 +183,8 @@
 		2681875518A2214B003D281B /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				96AEFAC218C181BA00A27EED /* Adam_avatar-body.png */,
+				96AEFAC318C181BA00A27EED /* Adam_avatarpic-l.png */,
 				268187A818A3649A003D281B /* TempHomeIcon.png */,
 				268187A918A3649A003D281B /* TempFriendsIcon.png */,
 				268187AA18A3649A003D281B /* TempUserIcon.png */,
@@ -433,8 +439,10 @@
 				268187AB18A3649A003D281B /* TempHomeIcon.png in Resources */,
 				9620847F1899B9C1006AD8E9 /* Main.storyboard in Resources */,
 				9620845A1899B915006AD8E9 /* InfoPlist.strings in Resources */,
+				96AEFAC418C181BA00A27EED /* Adam_avatar-body.png in Resources */,
 				2681875C18A22CDF003D281B /* TempGamerImage.png in Resources */,
 				2681875B18A22CDF003D281B /* TempAchievementImage.jpg in Resources */,
+				96AEFAC518C181BA00A27EED /* Adam_avatarpic-l.png in Resources */,
 				962084621899B915006AD8E9 /* Images.xcassets in Resources */,
 				2681875D18A22CDF003D281B /* TempBoxArt.jpg in Resources */,
 			);

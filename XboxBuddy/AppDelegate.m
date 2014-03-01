@@ -29,6 +29,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     XboxLiveClient.isOfflineMode = YES;    // USE LOCAL DATA INSTEAD FETCHING FROM API
+    XboxLiveClient.isDemoMode = YES;
     
     // Add observers for notifications.
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidLogin) name:UserDidLoginNotification object:nil];

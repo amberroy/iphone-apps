@@ -61,6 +61,7 @@ NSString * const XboxLiveClientDidInitNotification = @"XboxLiveClientDidInitNoti
 
 static XboxLiveClient *Instance;
 static BOOL IsOfflineMode;
+static BOOL IsDemoMode;
 
 +(XboxLiveClient *)instance
 {
@@ -83,6 +84,9 @@ static BOOL IsOfflineMode;
 
 +(BOOL)isOfflineMode { return IsOfflineMode; }
 +(void)setIsOfflineMode:(BOOL)isOfflineMode { IsOfflineMode = isOfflineMode; }
+
++(BOOL)isDemoMode { return IsDemoMode; }
++(void)setIsDemoMode:(BOOL)isDemoMode { IsDemoMode = isDemoMode; }
 
 +(NSArray *)gamertagsForTesting
 {
@@ -211,6 +215,10 @@ static BOOL IsOfflineMode;
 
 -(void)requestsDidComplete
 {
+    if (IsDemoMode) {
+        [self prepDataForDemo];
+    }
+    
     // Sort achievements by date earned.
     self.achievementsFromJSON = [self.achievementsUnsorted sortedArrayUsingComparator:
          ^NSComparisonResult(id a, id b) {
@@ -348,6 +356,8 @@ static BOOL IsOfflineMode;
         [self.friendProfilesUnsorted addObject:responseData];
         NSLog(@"Added profile for friend %@", friendGamertag);
     }
+    
+    
 }
 
 -(void)processGames:(NSDictionary *)responseData
@@ -675,11 +685,62 @@ static BOOL IsOfflineMode;
 }
 
 
+#pragma mark - Prep Data for Demo
+
+-(void)prepDataForDemo
+{
+    NSDictionary *cannedImagesForGamertag = @{
+      @"UnabatedLake1":     @{ @"avatar": @"Adam_avatar-body.png",
+                               @"gamerpic": @"Adam_avatarpic-l.png"},
+      //@"MyRazzleDazzle":    @{ @"avatar": @"avatar-FromAnotherGamer2",
+      //                         @"gamerpic": @"gamerpic-FromAnotherGamer2"},
+      };
+      
+    // If user or friend gamertag are in the cannedImagesForGamertag dict,
+    // overwrite their downloaded avatar and gamerpic with canned image.
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    for (NSDictionary *profileDict in self.friendProfilesUnsorted) {
+        NSString *gamertag = profileDict[@"Player"][@"Gamertag"];
+        if (cannedImagesForGamertag[gamertag]) {
+            
+            // Delete downloaded images and replace with canned images from the app bundle.
+            NSString *avatar_url_str = profileDict[@"Player"][@"Avatar"][@"Body"];
+            // e.g. https://avatar-ssl.xboxlive.com/avatar/Adam/avatar-body.png
+            NSString *avatarPath = [XboxLiveClient filePathForImageUrl:avatar_url_str];
+            NSString *canned_avatar_name = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:cannedImagesForGamertag[gamertag][@"avatar"]];
+            
+            NSError *error;
+            [fileManager removeItemAtPath:avatarPath error: &error];
+            if (error) {
+                NSLog(@"Error deleting %@", avatarPath);
+            }
+            [fileManager copyItemAtPath:canned_avatar_name toPath:avatarPath error:&error];
+            if (error) {
+                NSLog(@"Error copying %@ to %@", canned_avatar_name, avatarPath);
+            }
+            
+            
+            NSString *gamerpic_url_str = profileDict[@"Player"][@"Avatar"][@"Gamerpic"][@"Large"];
+            // e.g. https://avatar-ssl.xboxlive.com/avatar/Adam/avatarpic-l.png
+            NSString *gamerpicPath = [XboxLiveClient filePathForImageUrl:gamerpic_url_str];
+            NSString *canned_gamerpic_name = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:cannedImagesForGamertag[gamertag][@"gamerpic"]];
+            
+            [fileManager removeItemAtPath:gamerpicPath error: &error];
+            if (error) {
+                NSLog(@"Error deleting %@", avatarPath);
+            }
+            [fileManager  copyItemAtPath:canned_gamerpic_name toPath:gamerpicPath error:&error];
+            if (error) {
+                NSLog(@"Error copying %@ to %@", canned_gamerpic_name, gamerpicPath);
+            }
+            
+            
+        }
+    }
+    
+    
+}
+
+
 
 @end
-
-
-
-
-
-

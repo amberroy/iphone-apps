@@ -39,5 +39,8 @@ extern NSString *const XboxLiveClientDidInitNotification;
 +(BOOL)isOfflineMode;
 +(void)setIsOfflineMode:(BOOL)isOfflineMode;
 
++(BOOL)isDemoMode;
++(void)setIsDemoMode:(BOOL)isDemoMode;
+
 
 @end

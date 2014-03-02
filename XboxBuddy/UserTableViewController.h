@@ -7,9 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <MessageUI/MessageUI.h>
 #import "Profile.h"
 
-@interface UserTableViewController : UITableViewController
+@interface UserTableViewController : UITableViewController <MFMailComposeViewControllerDelegate>
 
 @property (nonatomic, strong) Profile *profile;
 

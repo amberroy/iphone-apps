@@ -402,7 +402,7 @@
                         <barButtonItem key="rightBarButtonItem" image="settings-24-transparent-bg" id="y9g-JF-VP8">
                             <color key="tintColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                             <connections>
-                                <segue destination="9w1-Qc-jaR" kind="push" identifier="" id="Xyl-lW-LOJ"/>
+                                <action selector="rightBarButton:" destination="SHc-GH-60s" id="3QP-wH-9a6"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -686,7 +686,7 @@
         <!--Settings View Controller - Settings-->
         <scene sceneID="r5y-ee-26r">
             <objects>
-                <viewController title="Settings" id="9w1-Qc-jaR" customClass="SettingsViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SettingsController" title="Settings" useStoryboardIdentifierAsRestorationIdentifier="YES" id="9w1-Qc-jaR" customClass="SettingsViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="d91-Sr-GaH"/>
                         <viewControllerLayoutGuide type="bottom" id="EXJ-MQ-SxK"/>
@@ -871,6 +871,6 @@
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
         <segue reference="KaO-uD-ybA"/>
-        <segue reference="DYk-JR-jkb"/>
+        <segue reference="gN1-At-mix"/>
     </inferredMetricsTieBreakers>
 </document>

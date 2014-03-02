@@ -20,6 +20,8 @@
 @property (strong, nonatomic) IBOutlet UILabel *gamertag;
 @property (weak, nonatomic) IBOutlet UILabel *gamerscore;
 
+@property BOOL isCurrentUser;
+
 @end
 
 @implementation UserTableViewController
@@ -28,10 +30,14 @@
     if (self.profile == nil || self.profile.gamertag == nil) {
         // Show current user's Profile
         self.profile = [[XboxLiveClient instance] userProfile];
+        self.isCurrentUser = YES;
     }
     if (![self.profile.gamertag isEqualToString:[User currentUser].gamerTag]) {
         // Hide the Settings button if this profile is not for the current user.
-        self.navigationItem.rightBarButtonItem = nil;
+        self.navigationItem.rightBarButtonItem.image = nil;
+        self.navigationItem.rightBarButtonItem.title = @"Invite";
+        self.navigationItem.rightBarButtonItem.tintColor = self.navigationController.navigationBar.tintColor;
+        self.isCurrentUser = NO;
     }
     self.achievements = [[XboxLiveClient instance] achievementsWithGamertag:self.profile.gamertag];
     
@@ -118,5 +124,61 @@
         achieveViewController.hidesBottomBarWhenPushed = YES;
     }
 }
+
+- (IBAction)rightBarButton:(id)sender {
+    // Right bar button shows Settings icon if this is the current users profile,
+    // otherwise it says "Invite" which sends mail to invite this friend to our app.
+    UIBarButtonItem *barButton = (UIBarButtonItem *)sender;
+    ([barButton.title isEqualToString:@"Invite"]) ? [self presentMail] : [self presentSettings];
+}
+
+- (void) presentSettings
+{
+    AchievementViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"SettingsController"];
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
+- (void) presentMail
+{
+    NSString *subject = [NSString stringWithFormat:@"join me on XBoxBuddy"];
+    NSString *body = [NSString stringWithFormat:
+                      @"Hello %@,\nJoin me on XboxBuddy, the new iPhone app for Xbox gamers.\n\n-%@",
+                      self.profile.gamertag, [User currentUser].gamerTag];
+        
+    MFMailComposeViewController *mailComposer = [[MFMailComposeViewController alloc] init];
+    mailComposer.mailComposeDelegate = self;
+    [mailComposer setSubject:subject];
+    [mailComposer setMessageBody:body isHTML:NO];
+    [self presentViewController:mailComposer animated:YES completion:nil];
+}
+
+- (void)mailComposeController:(MFMailComposeViewController *)controller
+         didFinishWithResult:(MFMailComposeResult)result
+                       error:(NSError *)error
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
+    
+    switch (result) {
+        case MFMailComposeResultCancelled:
+            NSLog(@"Mail compose result: Cancalled");
+            break;
+        case MFMailComposeResultSaved:
+            NSLog(@"Mail compose result: Saved");
+            break;
+        case MFMailComposeResultSent:
+            NSLog(@"Mail compose result: Sent");
+            break;
+        case MFMailComposeResultFailed:
+            NSLog(@"Mail compose result: Failed");
+            break;
+        default:
+            break;
+    }
+    
+    if (error) {
+        NSLog(@"Error sending mail: %@", error);
+    }
+}
+
 
 @end

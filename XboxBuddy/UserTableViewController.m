@@ -11,6 +11,8 @@
 #import "UserAchievementCell.h"
 #import "Achievement.h"
 #import "HomeTableViewController.h"
+#import "ParseClient.h"
+#import "Invitation.h"
 
 @interface UserTableViewController ()
 
@@ -165,9 +167,13 @@
         case MFMailComposeResultSaved:
             NSLog(@"Mail compose result: Saved");
             break;
-        case MFMailComposeResultSent:
+        case MFMailComposeResultSent: {
             NSLog(@"Mail compose result: Sent");
+            // TODO: If we already invited this friend, don't show the "Invite" button.
+            //Invitation *invitation = [[Invitation alloc] initWithRecipient:self.profile.gamertag];
+            //[[ParseClient instance] saveInvitation:invitation];
             break;
+        }
         case MFMailComposeResultFailed:
             NSLog(@"Mail compose result: Failed");
             break;

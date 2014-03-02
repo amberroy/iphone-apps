@@ -7,7 +7,6 @@
 //
 
 #import "ParseClient.h"
-#import "Comment.h"
 #import <Parse/Parse.h>
 
 NSString * const ParseClientDidInitNotification = @"ParseClientDidInitNotification";
@@ -275,6 +274,16 @@ static BOOL IsOfflineMode;
     }];
 }
 
+- (void) saveInvitation:(Invitation *)invitation
+{
+    [invitation saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if (succeeded) {
+            NSLog(@"Saved Invitation to %@", invitation.recipientGamertag);
+        } else {
+            NSLog(@"Error saving Invitation to %@: %@", invitation.recipientGamertag, [error userInfo][@"error"]);
+        }
+    }];
+}
 
 + (void)sendPushNotification:(NSString *)action withAchievement:(Achievement *)achievement
 {

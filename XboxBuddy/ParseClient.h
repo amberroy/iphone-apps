@@ -10,6 +10,7 @@
 #import <Parse/PFQuery.h>
 #import "Comment.h"
 #import "Like.h"
+#import "Invitation.h"
 
 extern NSString * const ParseClientDidInitNotification;
 
@@ -30,6 +31,7 @@ extern NSString * const ParseClientDidInitNotification;
 - (void) deleteComment:(Comment *)comment;
 - (void) saveLike:(Like *)like;
 - (void) deleteLike:(Like *)like;
+- (void) saveInvitation:(Invitation *)invitation;
 
 + (void)sendPushNotification:(NSString *)action withAchievement:(Achievement *)achievement;
 

@@ -10,6 +10,7 @@
 #import "SignedOutViewController.h"
 #import "AchievementViewController.h"
 #import "Comment.h"
+#import "Invitation.h"
 #import "ParseClient.h"
 #import "XboxLiveClient.h"
 #import <Parse/Parse.h>
@@ -40,6 +41,7 @@
     // Add Parse keys.
     [Comment registerSubclass];
     [Like registerSubclass];
+    [Invitation registerSubclass];
     [Parse setApplicationId:@"XBQ1N1MT6o7rz71junys5aguU8vlJ8J5mCjUbVE9"
                   clientKey:@"Ychj0QYNppyWNBFD9GUJoFE8AxhEldW75hoNdwff"];
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];

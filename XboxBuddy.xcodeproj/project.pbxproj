@@ -59,6 +59,7 @@
 		96AEFAD118C1B03500A27EED /* TempGamerImage3.png in Resources */ = {isa = PBXBuildFile; fileRef = 96AEFACF18C1B03500A27EED /* TempGamerImage3.png */; };
 		96AEFAD318C1B25400A27EED /* TempGamerImage4.png in Resources */ = {isa = PBXBuildFile; fileRef = 96AEFAD218C1B25400A27EED /* TempGamerImage4.png */; };
 		96AEFAD518C2741700A27EED /* TempGamerImage5.png in Resources */ = {isa = PBXBuildFile; fileRef = 96AEFAD418C2741700A27EED /* TempGamerImage5.png */; };
+		96AEFAD818C30B8100A27EED /* Invitation.m in Sources */ = {isa = PBXBuildFile; fileRef = 96AEFAD718C30B8100A27EED /* Invitation.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -148,6 +149,8 @@
 		96AEFACF18C1B03500A27EED /* TempGamerImage3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TempGamerImage3.png; sourceTree = "<group>"; };
 		96AEFAD218C1B25400A27EED /* TempGamerImage4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TempGamerImage4.png; sourceTree = "<group>"; };
 		96AEFAD418C2741700A27EED /* TempGamerImage5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TempGamerImage5.png; sourceTree = "<group>"; };
+		96AEFAD618C30B8100A27EED /* Invitation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Invitation.h; sourceTree = "<group>"; };
+		96AEFAD718C30B8100A27EED /* Invitation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Invitation.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -344,6 +347,8 @@
 				9654F4C018B9527C0035025F /* Comment.h */,
 				9654F4C118B9527C0035025F /* Comment.m */,
 				9654F4C518B994170035025F /* Like.h */,
+				96AEFAD618C30B8100A27EED /* Invitation.h */,
+				96AEFAD718C30B8100A27EED /* Invitation.m */,
 				9654F4C618B9942D0035025F /* Like.m */,
 				9654F4CB18BA6B860035025F /* Game.h */,
 				9654F4CC18BA6B860035025F /* Game.m */,
@@ -487,6 +492,7 @@
 				2681874B18A20701003D281B /* UserTableViewController.m in Sources */,
 				9693F762189F032B00D3C80A /* Profile.m in Sources */,
 				9654F4CD18BA6B860035025F /* Game.m in Sources */,
+				96AEFAD818C30B8100A27EED /* Invitation.m in Sources */,
 				969B203018BF15D500968D36 /* CommentCell.m in Sources */,
 				26F13BED18B296E7005C1ECE /* SettingsViewController.m in Sources */,
 				26D2F6741899F27200EFB93A /* AchievementViewController.m in Sources */,

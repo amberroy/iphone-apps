@@ -794,16 +794,9 @@ static BOOL IsDemoMode;
 
 - (NSMutableArray *)prepAchievementsForDemo:(NSMutableArray *)achievementDicts withGamertag:gamertag withGameName:gameName
 {
-    NSDictionary *gamerOffset = @{ @"ambroy": @"0",
-                                   @"Freelancer": @"1",
-                                   @"sbCaliban": @"2",
-                                   @"Ariock II": @"3",
-                                   @"MyRazzleDazzle": @"4",
-                                   @"JGailor": @"5",
-                                   };
-    static int hoursAgoIncrement = 25;
-    int hoursAgo = hoursAgoIncrement;
-    int offset = [gamerOffset[gamertag] intValue];
+    // Simulate each gamer getting an achievement every week, starting yesterday.
+    static int hoursAgoIncrement = (7 * 24);
+    int hoursAgo = 24;
     
     NSMutableArray *result = [[NSMutableArray alloc] init];
     for (NSDictionary *dict in achievementDicts) {
@@ -814,9 +807,9 @@ static BOOL IsDemoMode;
             
             long unlocked = [mdict[@"EarnedOn-UNIX"] boolValue];
             if (unlocked) {
-                // Change timestamps on achievements to be closer to the present day.
-                int randomOffset = arc4random() % 10;
-                int timeAgoInSeconds = hoursAgo * 3600 + offset + randomOffset;
+                // Add random offset so gamers are not always in same order.
+                int randomOffset = arc4random() % hoursAgoIncrement;
+                int timeAgoInSeconds = (hoursAgo * 3600) + (randomOffset * 3600);
                 hoursAgo += hoursAgoIncrement + randomOffset;
                 NSTimeInterval interval = [[NSDate date] timeIntervalSince1970];
                 NSDate *earnedOn = [NSDate dateWithTimeIntervalSince1970:interval - timeAgoInSeconds];

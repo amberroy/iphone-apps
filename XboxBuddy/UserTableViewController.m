@@ -29,6 +29,10 @@
         // Show current user's Profile
         self.profile = [[XboxLiveClient instance] userProfile];
     }
+    if (![self.profile.gamertag isEqualToString:[User currentUser].gamerTag]) {
+        // Hide the Settings button if this profile is not for the current user.
+        self.navigationItem.rightBarButtonItem = nil;
+    }
     self.achievements = [[XboxLiveClient instance] achievementsWithGamertag:self.profile.gamertag];
     
     // Setup the view.

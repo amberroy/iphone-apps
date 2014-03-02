@@ -16,6 +16,8 @@
 
 @property (nonatomic, strong) NSArray *achievements;
 
+@property UIActivityIndicatorView *spinner;
+
 @end
 
 @implementation HomeTableViewController
@@ -112,6 +114,8 @@
     if ([self.tableView respondsToSelector:@selector(setSeparatorInset:)]) {
         [self.tableView setSeparatorInset:UIEdgeInsetsZero];
     }
+    
+    self.spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
 
     [HomeTableViewController customizeNavigationBar:self];
     [self setUp];
@@ -124,6 +128,9 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    if ([self.achievements count] == 0) {
+        return 1;
+    }
     return [self.achievements count];
 }
 
@@ -132,6 +139,15 @@
     static NSString *CellIdentifier = @"HomeCell";
 
     HomeCell *cell = (HomeCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+    
+    if ([self.achievements count] == 0) {
+        self.spinner.center = cell.center;
+        [cell addSubview:self.spinner];
+        [self.spinner startAnimating];
+        [cell initWithAchievement:[[Achievement alloc] init]];
+        return cell;
+    }
+    
     Achievement *achievementObj = self.achievements[indexPath.row];
     [cell initWithAchievement:achievementObj];
 

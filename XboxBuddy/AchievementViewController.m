@@ -28,6 +28,8 @@
 @property (weak, nonatomic) IBOutlet UIImageView *currentUserImage;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 
+@property (weak, nonatomic) IBOutlet UIView *achievementBackgroundView;
+
 @property NSMutableArray *likes;
 @property NSMutableArray *comments;
 @property Like *currentUserLike;
@@ -93,6 +95,15 @@
         NSLog(@"Achievement image not found, using placeholder instead of %@", userImagePath);
     }
     self.currentUserImage.image = userImage;
+    
+    // Add border around achievement.
+    self.achievementBackgroundView.layer.borderColor = [UIColor blackColor].CGColor;
+    self.achievementBackgroundView.layer.borderWidth = 1.0f;
+    
+    // Don't show separators for empty rows in comments table.
+    UIView *v = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 1)];
+    v.backgroundColor = [UIColor clearColor];
+    [self.tableView setTableFooterView:v];
     
     [self reloadLikes];
     

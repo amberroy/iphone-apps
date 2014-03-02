@@ -35,6 +35,14 @@
 
 - (void)initWithAchievement:(Achievement *)achievementObj
 {
+    if (!achievementObj.gamertag) {
+        self.gamerTag.text = nil;
+        self.achievementPoints.text = nil;
+        self.gameName.text = nil;
+        self.achievementEarnedOn.text = nil;
+        return;
+    }
+    
     self.achievementObj = achievementObj;
     UIImage *gamerpicImage;
     NSString *gamerpicPath = [XboxLiveClient filePathForImageUrl:achievementObj.gamerpicImageUrl];

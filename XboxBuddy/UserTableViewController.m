@@ -16,13 +16,14 @@
 
 @interface UserTableViewController ()
 
-@property (nonatomic, strong) NSArray *achievements;
+@property NSArray *achievements;
+@property Invitation *invitation;
+@property BOOL isCurrentUser;
 
 @property (strong, nonatomic) IBOutlet UIImageView *gamerImage;
 @property (strong, nonatomic) IBOutlet UILabel *gamertag;
 @property (weak, nonatomic) IBOutlet UILabel *gamerscore;
 
-@property BOOL isCurrentUser;
 
 @end
 
@@ -32,14 +33,23 @@
     if (self.profile == nil || self.profile.gamertag == nil) {
         // Show current user's Profile
         self.profile = [[XboxLiveClient instance] userProfile];
-        self.isCurrentUser = YES;
     }
-    if (![self.profile.gamertag isEqualToString:[User currentUser].gamerTag]) {
+    self.isCurrentUser = [self.profile.gamertag isEqualToString:[User currentUser].gamerTag];
+    if (!self.isCurrentUser) {
         // Hide the Settings button if this profile is not for the current user.
         self.navigationItem.rightBarButtonItem.image = nil;
-        self.navigationItem.rightBarButtonItem.title = @"Invite";
-        self.navigationItem.rightBarButtonItem.tintColor = self.navigationController.navigationBar.tintColor;
-        self.isCurrentUser = NO;
+        
+        self.invitation = [[ParseClient instance] invitationForGamertag:self.profile.gamertag];
+        if (!self.invitation) {
+            // Only show Invite button if we haven't already invited this user.
+            self.navigationItem.rightBarButtonItem.title = @"Invite";
+            self.navigationItem.rightBarButtonItem.tintColor = self.navigationController.navigationBar.tintColor;
+        } else {
+            if (XboxLiveClient.isDemoMode) {
+                // For demo, add hidden button for undo-ing Invitations.
+                self.navigationItem.rightBarButtonItem.title = @"      ";
+            }
+        }
     }
     self.achievements = [[XboxLiveClient instance] achievementsWithGamertag:self.profile.gamertag];
     
@@ -130,8 +140,19 @@
 - (IBAction)rightBarButton:(id)sender {
     // Right bar button shows Settings icon if this is the current users profile,
     // otherwise it says "Invite" which sends mail to invite this friend to our app.
-    UIBarButtonItem *barButton = (UIBarButtonItem *)sender;
-    ([barButton.title isEqualToString:@"Invite"]) ? [self presentMail] : [self presentSettings];
+    if (self.isCurrentUser) {
+        [self presentSettings];
+    } else {
+        if (!self.invitation) {
+            [self presentMail];
+        } else {
+            // Hidden button deletes the invitation.
+            [[ParseClient instance] deleteInvitation:self.invitation];
+            self.invitation = nil;
+            [self setup];
+        }
+        
+    }
 }
 
 - (void) presentSettings
@@ -158,7 +179,6 @@
          didFinishWithResult:(MFMailComposeResult)result
                        error:(NSError *)error
 {
-    [self dismissViewControllerAnimated:YES completion:nil];
     
     switch (result) {
         case MFMailComposeResultCancelled:
@@ -169,9 +189,9 @@
             break;
         case MFMailComposeResultSent: {
             NSLog(@"Mail compose result: Sent");
-            // TODO: If we already invited this friend, don't show the "Invite" button.
-            //Invitation *invitation = [[Invitation alloc] initWithRecipient:self.profile.gamertag];
-            //[[ParseClient instance] saveInvitation:invitation];
+            Invitation *invitation = [[Invitation alloc] initWithRecipient:self.profile.gamertag];
+            [[ParseClient instance] saveInvitation:invitation];
+            [self setup];
             break;
         }
         case MFMailComposeResultFailed:
@@ -184,6 +204,8 @@
     if (error) {
         NSLog(@"Error sending mail: %@", error);
     }
+    
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 

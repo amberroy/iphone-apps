@@ -16,6 +16,7 @@ NSString * const ParseClientDidInitNotification = @"ParseClientDidInitNotificati
 // Interface methods return data from these properties.
 @property NSMutableDictionary *commentsForGamertagForGame;
 @property NSMutableDictionary *likesForGamertagForGame;
+@property NSMutableDictionary *invitationsForGamertag;
 
 // Used internally during initialization.
 @property NSMutableArray *pendingRequests;
@@ -27,8 +28,9 @@ NSString * const ParseClientDidInitNotification = @"ParseClientDidInitNotificati
 @property int totalComments;
 @property int totalLikes;
 
-- (void) fetchCommentsWithProfile:(Profile *)profile withGame:(Game *)game;
-- (void) fetchLikesWithProfile:(Profile *)profile withGame:(Game *)game;
+- (void) fetchCommentsWithGamertag:(NSString*)gamertag withGame:(Game *)game;
+- (void) fetchLikesWithGamertag:(NSString *)gamertag withGame:(Game *)game;
+- (void) fetchInvitations;
 
 @end
 
@@ -76,27 +78,28 @@ static BOOL IsOfflineMode;
     for (Profile *profile in profiles) {
         for (Game *game in profile.recentGames) {
             
-            [self fetchCommentsWithProfile:profile withGame:game];
-            [self fetchLikesWithProfile:profile withGame:game];
+            [self fetchCommentsWithGamertag:profile.gamertag withGame:game];
+            [self fetchLikesWithGamertag:profile.gamertag withGame:game];
         }
     }
+    [self fetchInvitations];
     
 }
 
-- (void) fetchCommentsWithProfile:(Profile *)profile withGame:(Game *)game
+- (void) fetchCommentsWithGamertag:(NSString *)gamertag withGame:(Game *)game
 {
-    //NSLog(@"Fetching comments for %@'s achievements for game %@", profile.gamertag, game.name);  // DEBUG
-    if (!self.commentsForGamertagForGame[profile.gamertag]) {
-        self.commentsForGamertagForGame[profile.gamertag] = [[NSMutableDictionary alloc] init];
+    //NSLog(@"Fetching comments for %@'s achievements for game %@", gamertag, game.name);  // DEBUG
+    if (!self.commentsForGamertagForGame[gamertag]) {
+        self.commentsForGamertagForGame[gamertag] = [[NSMutableDictionary alloc] init];
     }
     
     PFQuery *query = [PFQuery queryWithClassName:[Comment parseClassName]];
-    [query whereKey:@"achievementGamertag" equalTo:profile.gamertag];
+    [query whereKey:@"achievementGamertag" equalTo:gamertag];
     [query whereKey:@"gameID" equalTo:game.gameID];
 
     // Pass the result array into the block (accessing the dict gives us Parse warning).
-    self.commentsForGamertagForGame[profile.gamertag][game.gameID] = [[NSMutableDictionary alloc] init];
-    NSMutableDictionary *gameDict = self.commentsForGamertagForGame[profile.gamertag][game.gameID];
+    self.commentsForGamertagForGame[gamertag][game.gameID] = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *gameDict = self.commentsForGamertagForGame[gamertag][game.gameID];
 
     [self.pendingRequests addObject:query];
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
@@ -111,10 +114,10 @@ static BOOL IsOfflineMode;
             int count = [objects count];
             self.totalComments += count;
             if (count > 0) {
-                NSLog(@"Added %i comments for %@ for game %@", count, profile.gamertag, game.name);
+                NSLog(@"Added %i comments for %@ for game %@", count, gamertag, game.name);
             }
         } else {
-            NSLog(@"ParseClient download error for %@ game %@: %@", profile.gamertag, game.name, [error userInfo][@"error"]);
+            NSLog(@"ParseClient download error for %@ game %@: %@", gamertag, game.name, [error userInfo][@"error"]);
         }
         [self.pendingRequests removeObject:query];
         [self checkPendingRequests];
@@ -122,24 +125,24 @@ static BOOL IsOfflineMode;
     
 }
 
-- (void) fetchLikesWithProfile:(Profile *)profile withGame:(Game *)game
+- (void) fetchLikesWithGamertag:(NSString *)gamertag withGame:(Game *)game
 {
-    //NSLog(@"Fetching likes for %@'s achievements for game %@", profile.gamertag, game.name);  // DEBUG
-    if (!self.likesForGamertagForGame[profile.gamertag]) {
-        self.likesForGamertagForGame[profile.gamertag] = [[NSMutableDictionary alloc] init];
+    //NSLog(@"Fetching likes for %@'s achievements for game %@", gamertag, game.name);  // DEBUG
+    if (!self.likesForGamertagForGame[gamertag]) {
+        self.likesForGamertagForGame[gamertag] = [[NSMutableDictionary alloc] init];
     }
     
     PFQuery *query = [PFQuery queryWithClassName:[Like parseClassName]];
-    [query whereKey:@"achievementGamertag" equalTo:profile.gamertag];
+    [query whereKey:@"achievementGamertag" equalTo:gamertag];
     [query whereKey:@"gameID" equalTo:game.gameID];
     
     // Pass the result array into the block (accessing the dict gives us Parse warning).
-    self.likesForGamertagForGame[profile.gamertag][game.gameID] = [[NSMutableDictionary alloc] init];
-    NSMutableDictionary *gameDict = self.likesForGamertagForGame[profile.gamertag][game.gameID];
+    self.likesForGamertagForGame[gamertag][game.gameID] = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *gameDict = self.likesForGamertagForGame[gamertag][game.gameID];
     
     [self.pendingRequests addObject:query];
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        
+    
         if (!error) {
             NSMutableArray *authors = [[NSMutableArray alloc] init];
             for (Like *like in objects) {
@@ -160,10 +163,10 @@ static BOOL IsOfflineMode;
             int count = [objects count];
             self.totalLikes += count;
             if (count > 0) {
-                NSLog(@"Added %i likes for %@ for game %@", count, profile.gamertag, game.name);
+                NSLog(@"Added %i likes for %@ for game %@", count, gamertag, game.name);
             }
         } else {
-            NSLog(@"ParseClient download error for %@ game %@: %@", profile.gamertag, game.name, [error userInfo][@"error"]);
+            NSLog(@"ParseClient download error for %@ game %@: %@", gamertag, game.name, [error userInfo][@"error"]);
         }
         [self.pendingRequests removeObject:query];
         [self checkPendingRequests];
@@ -171,6 +174,30 @@ static BOOL IsOfflineMode;
     
 }
 
+- (void) fetchInvitations
+{
+    NSString *gamertag = [User currentUser].gamerTag;
+    PFQuery *query = [PFQuery queryWithClassName:[Invitation parseClassName]];
+    [query whereKey:@"senderGamertag" equalTo:gamertag];
+    
+    // Pass the result array into the block (accessing the dict gives us Parse warning).
+    self.invitationsForGamertag = [[NSMutableDictionary alloc] init];
+    
+    [self.pendingRequests addObject:query];
+    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if (!error) {
+            for (Invitation *invitation in objects) {
+                self.invitationsForGamertag[invitation.recipientGamertag] = invitation;
+            }
+            int count = [objects count];
+            NSLog(@"Added %i Invitations for %@", count, gamertag);
+        } else {
+            NSLog(@"ParseClient download error for %@ Invitations: %@", gamertag, [error userInfo][@"error"]);
+        }
+        [self.pendingRequests removeObject:query];
+        [self checkPendingRequests];
+    }];
+}
 
 -(void)checkPendingRequests
 {
@@ -214,6 +241,11 @@ static BOOL IsOfflineMode;
     return copy;
 }
 
+- (Invitation *) invitationForGamertag:(NSString *)gamertag
+{
+    return self.invitationsForGamertag[gamertag];
+}
+
 - (void) saveComment:(Comment *)comment
 {
     NSMutableDictionary *gameDict = self.commentsForGamertagForGame[comment.achievementGamertag][comment.gameID];
@@ -248,6 +280,18 @@ static BOOL IsOfflineMode;
     }];
 }
 
+- (void) saveInvitation:(Invitation *)invitation
+{
+    self.invitationsForGamertag[invitation.recipientGamertag] = invitation;
+    [invitation saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if (succeeded) {
+            NSLog(@"Saved Invitation to %@", invitation.recipientGamertag);
+        } else {
+            NSLog(@"Error saving Invitation to %@: %@", invitation.recipientGamertag, [error userInfo][@"error"]);
+        }
+    }];
+}
+
 - (void) deleteComment:(Comment *)comment
 {
     NSMutableDictionary *gameDict = self.commentsForGamertagForGame[comment.achievementGamertag][comment.gameID];
@@ -274,16 +318,18 @@ static BOOL IsOfflineMode;
     }];
 }
 
-- (void) saveInvitation:(Invitation *)invitation
+- (void) deleteInvitation:(Invitation *)invitation
 {
-    [invitation saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+    [self.invitationsForGamertag removeObjectForKey:invitation.recipientGamertag];
+    [invitation deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (succeeded) {
-            NSLog(@"Saved Invitation to %@", invitation.recipientGamertag);
+            NSLog(@"Deleted Invitation to %@", invitation.recipientGamertag);
         } else {
-            NSLog(@"Error saving Invitation to %@: %@", invitation.recipientGamertag, [error userInfo][@"error"]);
+            NSLog(@"Error deleting Invitation to %@: %@", invitation.recipientGamertag, [error userInfo][@"error"]);
         }
     }];
 }
+
 
 + (void)sendPushNotification:(NSString *)action withAchievement:(Achievement *)achievement
 {

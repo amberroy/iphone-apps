@@ -26,12 +26,14 @@ extern NSString * const ParseClientDidInitNotification;
 
 - (NSMutableArray *) commentsForAchievement:(Achievement *)achievement;
 - (NSMutableArray *) likesForAchievement:(Achievement *)achievement;
+- (Invitation *) invitationForGamertag:(NSString *)gamertag;
 
 - (void) saveComment:(Comment *)comment;
 - (void) deleteComment:(Comment *)comment;
 - (void) saveLike:(Like *)like;
 - (void) deleteLike:(Like *)like;
 - (void) saveInvitation:(Invitation *)invitation;
+- (void) deleteInvitation:(Invitation *)invitation;
 
 + (void)sendPushNotification:(NSString *)action withAchievement:(Achievement *)achievement;
 

@@ -16,6 +16,7 @@
 @dynamic dateSent;
 
 - (Invitation *)initWithRecipient:(NSString *)gamertag
+
 {
     self = [super init];
     if (self) {

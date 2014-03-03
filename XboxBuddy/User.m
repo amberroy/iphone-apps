@@ -7,13 +7,17 @@
 //
 
 #import "User.h"
+#import "ParseClient.h"
 #import <Parse/Parse.h>
+#import <Parse/PFObject+Subclass.h>
 
 NSString * const UserDidLoginNotification = @"UserDidLoginNotification";
 NSString * const UserDidLogoutNotification = @"UserDidLogoutNotification";
 NSString * const kCurrentUserKey = @"kCurrentUserKey";
 
 @implementation User
+
+@dynamic gamertag;
 
 static User *_currentUser;
 
@@ -23,17 +27,7 @@ static User *_currentUser;
         if (gamerTag) {
             _currentUser = [[User alloc] initWithGamerTag:gamerTag]; // Needs to be set before calling initInstance.
             [[XboxLiveClient instance] initInstance];
-            
-            if ([User currentUser].gamerTag) {
-                PFInstallation *currentInstallation = [PFInstallation currentInstallation];
-                [currentInstallation setObject:[User currentUser].gamerTag forKey:@"gamertag"];
-                if (currentInstallation.badge != 0) {
-                    // We're not using badges right now but this is the place to clear it.
-                    currentInstallation.badge = 0;
-                }
-                [currentInstallation saveEventually];
-                NSLog(@"Registering this Parse Installation to gamertag %@", [User currentUser].gamerTag);
-            }
+            [[ParseClient instance] registerInstallation];
         }
     }
     return _currentUser;
@@ -41,7 +35,7 @@ static User *_currentUser;
 
 + (void)setCurrentUser:(User *)currentUser {
     if (currentUser) {
-        [[NSUserDefaults standardUserDefaults] setObject:currentUser.gamerTag forKey:kCurrentUserKey];
+        [[NSUserDefaults standardUserDefaults] setObject:currentUser.gamertag forKey:kCurrentUserKey];
     } else {
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:kCurrentUserKey];
     }
@@ -59,9 +53,14 @@ static User *_currentUser;
 - (id)initWithGamerTag:(NSString *)gamerTag {
     self = [super init];
     if (self) {
-        self.gamerTag = gamerTag;
+        self.gamertag = gamerTag;
     }
     return self;
+}
+
++ (NSString *)parseClassName
+{
+    return @"User";
 }
 
 @end

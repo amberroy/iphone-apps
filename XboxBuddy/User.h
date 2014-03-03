@@ -7,17 +7,19 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <Parse/PFSubclassing.h>
+#import <Parse/PFObject.h>
 
 extern NSString *const UserDidLoginNotification;
 extern NSString *const UserDidLogoutNotification;
 
-@interface User : NSObject
+@interface User : PFObject <PFSubclassing>
 
 + (User *)currentUser;
 + (void)setCurrentUser:(User *)currentUser;
 
-- (id)initWithGamerTag:(NSString *)gamerTag;
+- (id)initWithGamerTag:(NSString *)gamertag;
 
-@property (nonatomic, strong) NSString *gamerTag;
+@property (nonatomic, strong) NSString *gamertag;
 
 @end

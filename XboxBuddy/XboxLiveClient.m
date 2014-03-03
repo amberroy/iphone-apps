@@ -152,7 +152,7 @@ static BOOL IsDemoMode;
         return;
     }
     
-    self.userGamertag = [User currentUser].gamerTag;
+    self.userGamertag = [User currentUser].gamertag;
     self.pendingRequests = [[NSMutableArray alloc] init];
     self.achievementsUnsorted = [[NSMutableArray alloc] init];
     self.friendProfilesUnsorted = [[NSMutableArray alloc] init];

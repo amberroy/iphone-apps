@@ -17,6 +17,7 @@ NSString * const ParseClientDidInitNotification = @"ParseClientDidInitNotificati
 @property NSMutableDictionary *commentsForGamertagForGame;
 @property NSMutableDictionary *likesForGamertagForGame;
 @property NSMutableDictionary *invitationsForGamertag;
+@property NSMutableDictionary *usersForGamertag;
 
 // Used internally during initialization.
 @property NSMutableArray *pendingRequests;
@@ -61,6 +62,16 @@ static BOOL IsOfflineMode;
 +(BOOL)isOfflineMode { return IsOfflineMode; }
 +(void)setIsOfflineMode:(BOOL)isOfflineMode { IsOfflineMode = isOfflineMode; }
 
+- (void) registerInstallation
+{
+    NSString *gamertag = [User currentUser].gamertag;
+    if (gamertag) {
+        [[PFInstallation currentInstallation] setObject:gamertag forKey:@"gamertag"];
+        [[PFInstallation currentInstallation] saveEventually];
+        NSLog(@"Registering this Parse Installation to gamertag %@", gamertag);
+    }
+}
+
 - (void) initInstance:(Profile *)userProfile withProfiles:(NSArray *)friendProfiles
 {
     self.userGamertag = userProfile.gamertag;
@@ -71,6 +82,8 @@ static BOOL IsOfflineMode;
     self.pendingRequests = [[NSMutableArray alloc] init];
     self.commentsForGamertagForGame = [[NSMutableDictionary alloc] init];
     self.likesForGamertagForGame = [[NSMutableDictionary alloc] init];
+    self.invitationsForGamertag = [[NSMutableDictionary alloc] init];
+    self.usersForGamertag = [[NSMutableDictionary alloc] init];
     
     NSMutableArray *profiles = [[NSMutableArray alloc] initWithArray:friendProfiles];
     [profiles insertObject:userProfile atIndex:0];
@@ -80,6 +93,7 @@ static BOOL IsOfflineMode;
             
             [self fetchCommentsWithGamertag:profile.gamertag withGame:game];
             [self fetchLikesWithGamertag:profile.gamertag withGame:game];
+            [self fetchUserWithGamertag:profile.gamertag];
         }
     }
     [self fetchInvitations];
@@ -176,12 +190,9 @@ static BOOL IsOfflineMode;
 
 - (void) fetchInvitations
 {
-    NSString *gamertag = [User currentUser].gamerTag;
+    NSString *gamertag = [User currentUser].gamertag;
     PFQuery *query = [PFQuery queryWithClassName:[Invitation parseClassName]];
     [query whereKey:@"senderGamertag" equalTo:gamertag];
-    
-    // Pass the result array into the block (accessing the dict gives us Parse warning).
-    self.invitationsForGamertag = [[NSMutableDictionary alloc] init];
     
     [self.pendingRequests addObject:query];
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
@@ -197,6 +208,43 @@ static BOOL IsOfflineMode;
         [self.pendingRequests removeObject:query];
         [self checkPendingRequests];
     }];
+}
+
+- (void) fetchUserWithGamertag:(NSString *)gamertag
+{
+    PFQuery *query = [PFQuery queryWithClassName:[User parseClassName]];
+    [query whereKey:@"gamertag" equalTo:gamertag];
+    
+    [self.pendingRequests addObject:query];
+    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if (!error) {
+            for (User *user in objects) {
+                if (!self.usersForGamertag[gamertag]) {
+                    self.usersForGamertag[gamertag] = user;
+                } else {
+                    // Somehow we have two user objects with this gamertag, delete extras.
+                    // Shouldn't happen but Parse will allow it (no unique constraints).
+                    NSLog(@"Warning: multiple user objects saved for %@", gamertag);
+                    [self deleteUser:user];
+                    continue;
+                }
+            }
+            if ([objects count] > 0) {
+                NSLog(@"User %@ has used our app", gamertag);
+            } else {
+                NSLog(@"User %@ has not used our app", gamertag);
+                if ([[User currentUser].gamertag isEqualToString:gamertag]) {
+                    [self saveUser:[User currentUser]];
+                }
+            }
+        } else {
+            NSLog(@"ParseClient download error for %@ Invitations: %@", gamertag, [error userInfo][@"error"]);
+        }
+        [self.pendingRequests removeObject:query];
+        [self checkPendingRequests];
+    }];
+    
+    
 }
 
 -(void)checkPendingRequests
@@ -291,6 +339,17 @@ static BOOL IsOfflineMode;
         }
     }];
 }
+- (void) saveUser:(User *)user
+{
+    self.usersForGamertag[user.gamertag] = user;
+    [user saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if (succeeded) {
+            NSLog(@"Saved User %@", user.gamertag);
+        } else {
+            NSLog(@"Error saving User %@", user.gamertag);
+        }
+    }];
+}
 
 - (void) deleteComment:(Comment *)comment
 {
@@ -330,6 +389,17 @@ static BOOL IsOfflineMode;
     }];
 }
 
+- (void) deleteUser:(User *)user
+{
+    [self.usersForGamertag removeObjectForKey:user.gamertag];
+    [user deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if (succeeded) {
+            NSLog(@"Deleted User %@", user.gamertag);
+        } else {
+            NSLog(@"Error deleting User %@", user.gamertag);
+        }
+    }];
+}
 
 + (void)sendPushNotification:(NSString *)action withAchievement:(Achievement *)achievement
 {
@@ -337,7 +407,7 @@ static BOOL IsOfflineMode;
     [pushQuery whereKey:@"deviceType" equalTo:@"ios"];
     [pushQuery whereKey:@"gamertag" equalTo:achievement.gamertag];
     NSString *message = [NSString stringWithFormat:@"%@ %@ your achievement %@: %@",
-                         [User currentUser].gamerTag, action, achievement.game.name, achievement.name];
+                         [User currentUser].gamertag, action, achievement.game.name, achievement.name];
     //[PFPush sendPushMessageToQueryInBackground:pushQuery withMessage:message];
     NSDictionary *data = [NSDictionary dictionaryWithObjectsAndKeys:
                           message, @"alert",

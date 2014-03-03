@@ -34,7 +34,7 @@
         // Show current user's Profile
         self.profile = [[XboxLiveClient instance] userProfile];
     }
-    self.isCurrentUser = [self.profile.gamertag isEqualToString:[User currentUser].gamerTag];
+    self.isCurrentUser = [self.profile.gamertag isEqualToString:[User currentUser].gamertag];
     if (!self.isCurrentUser) {
         // Hide the Settings button if this profile is not for the current user.
         self.navigationItem.rightBarButtonItem.image = nil;
@@ -166,7 +166,7 @@
     NSString *subject = [NSString stringWithFormat:@"join me on XBoxBuddy"];
     NSString *body = [NSString stringWithFormat:
                       @"Hello %@,\nJoin me on XboxBuddy, the new iPhone app for Xbox gamers.\n\n-%@",
-                      self.profile.gamertag, [User currentUser].gamerTag];
+                      self.profile.gamertag, [User currentUser].gamertag];
         
     MFMailComposeViewController *mailComposer = [[MFMailComposeViewController alloc] init];
     mailComposer.mailComposeDelegate = self;

@@ -21,7 +21,7 @@
     self = [super init];
     if (self) {
         self.recipientGamertag = gamertag;
-        self.senderGamertag = [User currentUser].gamerTag;
+        self.senderGamertag = [User currentUser].gamertag;
         self.dateSent = [NSDate date];
     }
     return self;

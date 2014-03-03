@@ -50,7 +50,7 @@
     self.timestamp.text = [Achievement timeAgoWithDate:commentObj.timestamp];
     
     // Only show delete button if current user authored this comment.
-    if ([self.commentObj.authorGamertag isEqual:[User currentUser].gamerTag]) {
+    if ([self.commentObj.authorGamertag isEqual:[User currentUser].gamertag]) {
         UITableView *tv = (UITableView *) self.superview.superview;
         AchievementViewController *vc = (AchievementViewController *) tv.dataSource;
         [self.deleteButton addTarget:vc action:@selector(deleteButtonPressed:) forControlEvents:UIControlEventTouchUpInside];

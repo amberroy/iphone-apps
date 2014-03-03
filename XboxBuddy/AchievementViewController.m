@@ -43,6 +43,8 @@
 
 @implementation AchievementViewController
 
+static const int AlertViewCommentDeleteTag = 0;
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -116,7 +118,7 @@
     self.likes = [[ParseClient instance] likesForAchievement:self.achievement];
     self.currentUserLike = nil;
     for (Like *like in self.likes) {
-        if ([like.authorGamertag isEqualToString:[User currentUser].gamerTag]) {
+        if ([like.authorGamertag isEqualToString:[User currentUser].gamertag]) {
             self.currentUserLike = like;
             break;
         }
@@ -139,7 +141,7 @@
         [parseClient saveLike:like];
         
         // Don't send notification if user liked their own achievement.
-        if (![self.achievement.gamertag isEqualToString:[User currentUser].gamerTag]) {
+        if (![self.achievement.gamertag isEqualToString:[User currentUser].gamertag]) {
             [ParseClient sendPushNotification:@"liked" withAchievement:self.achievement];
         }
     } else {
@@ -183,7 +185,7 @@
     [[ParseClient instance] saveComment:comment];
     
     // Don't send notification if user commented on their own achievement.
-    if (![self.achievement.gamertag isEqualToString:[User currentUser].gamerTag]) {
+    if (![self.achievement.gamertag isEqualToString:[User currentUser].gamertag]) {
         [ParseClient sendPushNotification:@"commented on" withAchievement:self.achievement];
     }
     
@@ -193,8 +195,12 @@
     textField.frame = self.textFieldFrame;
     self.currentUserImage.frame = self.userImageFrame;
     
+    // TODO: If friend is not using our app, show alert offering to invite them.
+    
+    
     return YES;
 }
+
 
 #pragma mark - Table view data source
 
@@ -225,16 +231,19 @@
     NSString *message = @"Delete this comment?";
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Confirm Delete"
             message:message delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Delete", nil];
+    alert.tag = AlertViewCommentDeleteTag;
     [alert show];
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    if (buttonIndex != alertView.cancelButtonIndex) {
-        [self.comments removeObject:self.commentPendingDelete];
-        [self.tableView reloadData];
-        
-        [[ParseClient instance] deleteComment:self.commentPendingDelete];
+    if (alertView.tag == AlertViewCommentDeleteTag) {
+        if (buttonIndex != alertView.cancelButtonIndex) {
+            [self.comments removeObject:self.commentPendingDelete];
+            [self.tableView reloadData];
+            
+            [[ParseClient instance] deleteComment:self.commentPendingDelete];
+        }
     }
 }
 

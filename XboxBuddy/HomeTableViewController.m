@@ -81,7 +81,7 @@
         NSString *gamertag = notificationPayload[@"gamertag"];
         NSString *gameName = notificationPayload[@"gameName"];
         NSString *achievementName = notificationPayload[@"achievementName"];
-        NSString *userGamertag = [User currentUser].gamerTag;
+        NSString *userGamertag = [User currentUser].gamertag;
         if ([gamertag isEqualToString:userGamertag]) {
             Achievement *achievement = [[XboxLiveClient instance] achievementWithGamertag:gamertag withGameName:gameName withAchievementName:achievementName];
             if (achievement) {

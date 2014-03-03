@@ -42,5 +42,4 @@ extern NSString *const XboxLiveClientDidInitNotification;
 +(BOOL)isDemoMode;
 +(void)setIsDemoMode:(BOOL)isDemoMode;
 
-
 @end

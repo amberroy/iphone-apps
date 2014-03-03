@@ -38,10 +38,11 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(xboxLiveClientDidInit) name:XboxLiveClientDidInitNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(parseClientDidInit) name:ParseClientDidInitNotification object:nil];
     
-    // Add Parse keys.
+    // Add Parse keys and register classes that we want to save to the cloud.
     [Comment registerSubclass];
     [Like registerSubclass];
     [Invitation registerSubclass];
+    [User registerSubclass];
     [Parse setApplicationId:@"XBQ1N1MT6o7rz71junys5aguU8vlJ8J5mCjUbVE9"
                   clientKey:@"Ychj0QYNppyWNBFD9GUJoFE8AxhEldW75hoNdwff"];
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
@@ -125,12 +126,7 @@
 - (void)userDidLogin {
     self.window.rootViewController = self.currentVC;
     [[XboxLiveClient instance] initInstance];
-    
-    if ([User currentUser].gamerTag) {
-        [[PFInstallation currentInstallation] setObject:[User currentUser].gamerTag forKey:@"gamertag"];
-        [[PFInstallation currentInstallation] saveEventually];
-        NSLog(@"Registering this Parse Installation to gamertag %@", [User currentUser].gamerTag);
-    }
+    [[ParseClient instance] registerInstallation];
 }
 
 - (void)userDidLogout {

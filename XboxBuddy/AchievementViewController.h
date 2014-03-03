@@ -7,9 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <MessageUI/MessageUI.h>
 #import "Achievement.h"
 
-@interface AchievementViewController : UIViewController <UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate>
+@interface AchievementViewController : UIViewController <UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate, MFMailComposeViewControllerDelegate>
 
 @property (nonatomic, strong) Achievement *achievement;
 

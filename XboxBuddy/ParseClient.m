@@ -32,6 +32,7 @@ NSString * const ParseClientDidInitNotification = @"ParseClientDidInitNotificati
 - (void) fetchCommentsWithGamertag:(NSString*)gamertag withGame:(Game *)game;
 - (void) fetchLikesWithGamertag:(NSString *)gamertag withGame:(Game *)game;
 - (void) fetchInvitations;
+- (void) fetchUserWithGamertag:(NSString *)gamertag;
 
 @end
 
@@ -292,6 +293,11 @@ static BOOL IsOfflineMode;
 - (Invitation *) invitationForGamertag:(NSString *)gamertag
 {
     return self.invitationsForGamertag[gamertag];
+}
+
+- (User *) userForGamertag:(NSString *)gamertag
+{
+    return self.usersForGamertag[gamertag];
 }
 
 - (void) saveComment:(Comment *)comment

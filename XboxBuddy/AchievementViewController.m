@@ -33,6 +33,7 @@
 @property NSMutableArray *likes;
 @property NSMutableArray *comments;
 @property Like *currentUserLike;
+@property BOOL isCurrentUserAchievement;
 
 @property CGRect textFieldFrame;
 @property CGRect userImageFrame;
@@ -43,7 +44,10 @@
 
 @implementation AchievementViewController
 
-static const int AlertViewCommentDeleteTag = 0;
+typedef NS_ENUM(NSInteger, AlertViewTag) {
+    AlertViewDeleteCommentTag,
+    AlertViewInviteFriendTag,
+};
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -66,6 +70,7 @@ static const int AlertViewCommentDeleteTag = 0;
     self.achievementPoints.text = [NSString stringWithFormat:@"%ld G", (long)self.achievement.points];
     self.achievementDescription.text = self.achievement.detail;
     self.achievementEarnedOn.text = [Achievement timeAgoWithDate:self.achievement.earnedOn];
+    self.isCurrentUserAchievement = [self.achievement.gamertag isEqualToString:[User currentUser].gamertag];
     
     UIImage *gamerpicImage;
     NSString *gamerpicPath = [XboxLiveClient filePathForImageUrl:self.achievement.gamerpicImageUrl];
@@ -141,7 +146,7 @@ static const int AlertViewCommentDeleteTag = 0;
         [parseClient saveLike:like];
         
         // Don't send notification if user liked their own achievement.
-        if (![self.achievement.gamertag isEqualToString:[User currentUser].gamertag]) {
+        if (!self.isCurrentUserAchievement) {
             [ParseClient sendPushNotification:@"liked" withAchievement:self.achievement];
         }
     } else {
@@ -185,7 +190,7 @@ static const int AlertViewCommentDeleteTag = 0;
     [[ParseClient instance] saveComment:comment];
     
     // Don't send notification if user commented on their own achievement.
-    if (![self.achievement.gamertag isEqualToString:[User currentUser].gamertag]) {
+    if (!self.isCurrentUserAchievement) {
         [ParseClient sendPushNotification:@"commented on" withAchievement:self.achievement];
     }
     
@@ -195,7 +200,18 @@ static const int AlertViewCommentDeleteTag = 0;
     textField.frame = self.textFieldFrame;
     self.currentUserImage.frame = self.userImageFrame;
     
-    // TODO: If friend is not using our app, show alert offering to invite them.
+    NSString *friendGamertag = self.achievement.gamertag;
+    User *friendUserObj = [[ParseClient instance] userForGamertag:friendGamertag];
+    Invitation *friendInvitation = [[ParseClient instance] invitationForGamertag:friendGamertag];
+    if (!self.isCurrentUserAchievement && !friendUserObj && !friendInvitation) {
+        
+        // If friend is not using our app and hasn't been invited, show alert offering to invite them.
+        NSString *message = [NSString stringWithFormat:@"%@ won't see your comment until they install this app.  Send a quick invitation.", friendGamertag];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Invite Friend"
+                message:message delegate:self cancelButtonTitle:@"Not now" otherButtonTitles:@"OK", nil];
+        alert.tag = AlertViewInviteFriendTag;
+        [alert show];
+    }
     
     
     return YES;
@@ -222,6 +238,7 @@ static const int AlertViewCommentDeleteTag = 0;
     return cell;
 }
 
+
 #pragma mark - UITableViewCell buttons
 -(void)deleteButtonPressed:(UIButton *)sender
 {
@@ -231,21 +248,76 @@ static const int AlertViewCommentDeleteTag = 0;
     NSString *message = @"Delete this comment?";
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Confirm Delete"
             message:message delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Delete", nil];
-    alert.tag = AlertViewCommentDeleteTag;
+    alert.tag = AlertViewDeleteCommentTag;
     [alert show];
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    if (alertView.tag == AlertViewCommentDeleteTag) {
-        if (buttonIndex != alertView.cancelButtonIndex) {
-            [self.comments removeObject:self.commentPendingDelete];
-            [self.tableView reloadData];
+    
+    switch (alertView.tag) {
             
-            [[ParseClient instance] deleteComment:self.commentPendingDelete];
-        }
+        case AlertViewDeleteCommentTag:
+            if (buttonIndex != alertView.cancelButtonIndex) {
+                [self.comments removeObject:self.commentPendingDelete];
+                [self.tableView reloadData];
+                
+                [[ParseClient instance] deleteComment:self.commentPendingDelete];
+            }
+            break;
+            
+        case AlertViewInviteFriendTag:
+            if (buttonIndex != alertView.cancelButtonIndex) {
+                [self presentMail];
+            }
+            break;
     }
 }
 
+- (void) presentMail
+{
+    NSString *subject = [NSString stringWithFormat:@"join me on XBoxBuddy"];
+    NSString *body = [NSString stringWithFormat:
+                      @"Hello %@,\nJoin me on XboxBuddy, the new iPhone app for Xbox gamers.\n\n-%@",
+                      self.achievement.gamertag, [User currentUser].gamertag];
+    
+    MFMailComposeViewController *mailComposer = [[MFMailComposeViewController alloc] init];
+    mailComposer.mailComposeDelegate = self;
+    [mailComposer setSubject:subject];
+    [mailComposer setMessageBody:body isHTML:NO];
+    [self presentViewController:mailComposer animated:YES completion:nil];
+}
+
+- (void)mailComposeController:(MFMailComposeViewController *)controller
+          didFinishWithResult:(MFMailComposeResult)result
+                        error:(NSError *)error
+{
+    
+    switch (result) {
+        case MFMailComposeResultCancelled:
+            NSLog(@"Mail compose result: Cancalled");
+            break;
+        case MFMailComposeResultSaved:
+            NSLog(@"Mail compose result: Saved");
+            break;
+        case MFMailComposeResultSent: {
+            NSLog(@"Mail compose result: Sent");
+            Invitation *invitation = [[Invitation alloc] initWithRecipient:self.achievement.gamertag];
+            [[ParseClient instance] saveInvitation:invitation];
+            break;
+        }
+        case MFMailComposeResultFailed:
+            NSLog(@"Mail compose result: Failed");
+            break;
+        default:
+            break;
+    }
+    
+    if (error) {
+        NSLog(@"Error sending mail: %@", error);
+    }
+    
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
 
 @end

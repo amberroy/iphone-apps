@@ -30,14 +30,17 @@
 
 @property (weak, nonatomic) IBOutlet UIView *achievementBackgroundView;
 @property (weak, nonatomic) IBOutlet UITextField *commentTextField;
+@property (weak, nonatomic) IBOutlet UIView *textFieldBackgroundView;
 
 @property NSMutableArray *likes;
 @property NSMutableArray *comments;
 @property Like *currentUserLike;
 @property BOOL isCurrentUserAchievement;
 
-@property CGRect textFieldFrame;
-@property CGRect userImageFrame;
+//@property CGRect textFieldFrame;
+//@property CGRect userImageFrame;
+@property CGRect originalTextFieldBackgroundFrame;
+@property CGRect originalTableViewFrame;
 
 @property Comment *commentPendingDelete;
 
@@ -113,6 +116,10 @@ typedef NS_ENUM(NSInteger, AlertViewTag) {
     UIView *v = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 1)];
     v.backgroundColor = [UIColor clearColor];
     [self.tableView setTableFooterView:v];
+    
+    // Remember original location of views.
+    self.originalTextFieldBackgroundFrame = self.textFieldBackgroundView.frame;
+    self.originalTableViewFrame = self.tableView.frame;
     
     [self reloadLikes];
     
@@ -200,7 +207,7 @@ typedef NS_ENUM(NSInteger, AlertViewTag) {
     if (!self.isCurrentUserAchievement && !friendUserObj && !friendInvitation) {
         
         // If friend is not using our app and hasn't been invited, show alert offering to invite them.
-        NSString *message = [NSString stringWithFormat:@"%@ won't see your comment until they install this app.  Send a quick invitation.", friendGamertag];
+        NSString *message = [NSString stringWithFormat:@"%@ won't see your comment until they install this app.  Send email invitation.", friendGamertag];
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Invite Friend"
                 message:message delegate:self cancelButtonTitle:@"Not now" otherButtonTitles:@"OK", nil];
         alert.tag = AlertViewInviteFriendTag;
@@ -216,25 +223,34 @@ typedef NS_ENUM(NSInteger, AlertViewTag) {
 {
     // Keep textField visible when keyboard is displayed.
     // Hide tableView and move textField up to where the table was.
+//    [self.tableView setHidden:YES];
+//    CGRect tableFrame = self.tableView.frame;
+//    CGRect textFrame = textField.frame;
+//    CGRect imageFrame = self.currentUserImage.frame;
+//    self.textFieldFrame = textFrame;
+//    self.userImageFrame = imageFrame;
+//    textFrame.origin.y = tableFrame.origin.y;
+//    imageFrame.origin.y = tableFrame.origin.y;
+//    textField.frame = textFrame;
+//    self.currentUserImage.frame = imageFrame;
+    
     [self.tableView setHidden:YES];
-    CGRect tableFrame = self.tableView.frame;
-    CGRect textFrame = textField.frame;
-    CGRect imageFrame = self.currentUserImage.frame;
-    self.textFieldFrame = textFrame;
-    self.userImageFrame = imageFrame;
-    textFrame.origin.y = tableFrame.origin.y;
-    imageFrame.origin.y = tableFrame.origin.y;
-    textField.frame = textFrame;
-    self.currentUserImage.frame = imageFrame;
+    CGRect newFrame = self.textFieldBackgroundView.frame;
+    newFrame.origin.y = self.originalTableViewFrame.origin.y;
+    self.textFieldBackgroundView.frame = newFrame;
+    
 }
 
 - (void) resetTextFieldLocation:(UITextField *)textField
 {
-    // Show table view and move image and textField back to original locations.
+//    // Show table view and move image and textField back to original locations.
+//    [self.tableView setHidden:NO];
+//    [self.tableView reloadData];
+//    textField.frame = self.textFieldFrame;
+//    self.currentUserImage.frame = self.userImageFrame;
+    
     [self.tableView setHidden:NO];
-    [self.tableView reloadData];
-    textField.frame = self.textFieldFrame;
-    self.currentUserImage.frame = self.userImageFrame;
+    self.textFieldBackgroundView.frame = self.originalTextFieldBackgroundFrame;
     
     // Clear bar button and text input.
     self.navigationItem.rightBarButtonItem = nil;

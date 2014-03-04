@@ -22,6 +22,7 @@ NSString * const ParseClientDidInitNotification = @"ParseClientDidInitNotificati
 // Used internally during initialization.
 @property NSMutableArray *pendingRequests;
 @property BOOL isInitializationError;
+@property BOOL isInitializationComplete;
 @property NSString *userGamertag;
 @property NSDate *startInit;
 @property NSDate *endInit;
@@ -62,6 +63,11 @@ static BOOL IsOfflineMode;
 
 +(BOOL)isOfflineMode { return IsOfflineMode; }
 +(void)setIsOfflineMode:(BOOL)isOfflineMode { IsOfflineMode = isOfflineMode; }
+
+- (BOOL) isInitialized
+{
+    return self.isInitializationComplete;
+}
 
 - (void) registerInstallation
 {
@@ -267,6 +273,7 @@ static BOOL IsOfflineMode;
 {
     self.endInit = [NSDate date];
     self.secondsToInit = [self.endInit timeIntervalSinceDate:self.startInit];
+    self.isInitializationComplete = YES;
     
     NSLog(@"ParseClient initialized %@for %@ with %i comments and %i likes (%0.f seconds)",
           (IsOfflineMode) ? @"in OFFLINE MODE " : @"", self.userGamertag, self.totalComments, self.totalLikes, self.secondsToInit);

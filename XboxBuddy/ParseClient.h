@@ -24,6 +24,8 @@ extern NSString * const ParseClientDidInitNotification;
 
 - (void) initInstance:(Profile *)userProfile withProfiles:(NSArray *)friendProfiles;
 
+- (BOOL) isInitialized;
+
 - (NSMutableArray *) commentsForAchievement:(Achievement *)achievement;
 - (NSMutableArray *) likesForAchievement:(Achievement *)achievement;
 - (Invitation *) invitationForGamertag:(NSString *)gamertag;

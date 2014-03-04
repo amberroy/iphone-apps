@@ -414,7 +414,6 @@ static BOOL IsOfflineMode;
     [pushQuery whereKey:@"gamertag" equalTo:achievement.gamertag];
     NSString *message = [NSString stringWithFormat:@"%@ %@ your achievement %@: %@",
                          [User currentUser].gamertag, action, achievement.game.name, achievement.name];
-    //[PFPush sendPushMessageToQueryInBackground:pushQuery withMessage:message];
     NSDictionary *data = [NSDictionary dictionaryWithObjectsAndKeys:
                           message, @"alert",
                           //@"Increment", @"badge",

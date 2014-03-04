@@ -54,7 +54,8 @@ NSString *const SwipeWithOptionsCellEnclosingTableViewDidBeginScrollingNotificat
     UIButton *likeButton = [UIButton buttonWithType:UIButtonTypeCustom];
     likeButton.backgroundColor = greenColor;
     likeButton.frame = CGRectMake(0, 0, optionViewWidth / 2.0f, CGRectGetHeight(self.bounds));
-    [likeButton setImage:[UIImage imageNamed:@"like_outline-32.png"] forState:UIControlStateNormal];
+    [likeButton setImage:[UIImage imageNamed:@"icon_like.png"] forState:UIControlStateNormal];
+    likeButton.imageEdgeInsets = UIEdgeInsetsMake(33, 25, 33, 7);
     [likeButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [likeButton addTarget:self action:@selector(userPressedLikeButton:) forControlEvents:UIControlEventTouchUpInside];
     [self.scrollViewButtonView addSubview:likeButton];
@@ -63,7 +64,8 @@ NSString *const SwipeWithOptionsCellEnclosingTableViewDidBeginScrollingNotificat
     UIButton *commentButton = [UIButton buttonWithType:UIButtonTypeCustom];
     commentButton.backgroundColor = greenColor;
     commentButton.frame = CGRectMake(optionViewWidth / 2.0f, 0, optionViewWidth / 2.0f, CGRectGetHeight(self.bounds));
-    [commentButton setImage:[UIImage imageNamed:@"like_outline-32.png"] forState:UIControlStateNormal];
+    [commentButton setImage:[UIImage imageNamed:@"icon_comment.png"] forState:UIControlStateNormal];
+    commentButton.imageEdgeInsets = UIEdgeInsetsMake(37, 17, 32, 22);
     [commentButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [commentButton addTarget:self action:@selector(userPressedCommentButton:) forControlEvents:UIControlEventTouchUpInside];
     [self.scrollViewButtonView addSubview:commentButton];

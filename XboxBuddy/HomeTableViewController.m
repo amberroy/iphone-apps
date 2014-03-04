@@ -11,6 +11,8 @@
 #import "Achievement.h"
 #import "AchievementCell.h"
 #import "AppDelegate.h"
+#import "ParseClient.h"
+#import <Parse/Parse.h>
 
 @interface HomeTableViewController ()
 
@@ -140,6 +142,7 @@
 
     AchievementCell *cell = (AchievementCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     cell.delegate = self;
+    cell.accessoryType = UITableViewCellAccessoryNone;
     
     if ([self.achievements count] == 0) {
         self.spinner.center = cell.center;
@@ -170,7 +173,8 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
 
-    if ([segue.identifier isEqualToString:@"showAchievementDetail"]) {
+    if ([segue.identifier isEqualToString:@"showAchievementDetail"] ||
+        [segue.identifier isEqualToString:@"showAchievementDetailFocusComment"]) {
 
         UITableViewCell *selectedCell = (UITableViewCell *)sender;
         NSIndexPath *indexPath = [self.tableView indexPathForCell:selectedCell];
@@ -179,10 +183,18 @@
 
         achieveViewController.achievement = achievement;
         achieveViewController.hidesBottomBarWhenPushed = YES;
+        
+        if ([segue.identifier isEqualToString:@"showAchievementDetailFocusComment"]) {
+            achieveViewController.focusCommentTextField = YES;
+        } else {
+            achieveViewController.focusCommentTextField = NO;
+        }
     }
 }
 
 #pragma mark - SwipeWithOptionsCellDelegate Methods
+
+// TODO: add initial fill with liked items
 
 -(void)cellDidSelect:(SwipeWithOptionsCell *)cell {
     [self performSegueWithIdentifier: @"showAchievementDetail" sender:cell];
@@ -193,8 +205,7 @@
 }
 
 -(void)cellDidSelectLike:(SwipeWithOptionsCell *)cell {
-    /*
-    // TODO: unlike
+    
     NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
     Achievement *achievement = self.achievements[indexPath.row];
     
@@ -206,8 +217,8 @@
     if (![achievement.gamertag isEqualToString:[User currentUser].gamertag]) {
         [ParseClient sendPushNotification:@"liked" withAchievement:achievement];
     }
-    [cell.likeButton setImage:[UIImage imageNamed:@"like-26.png"] forState:UIControlStateNormal];
-     */
+    [cell.likeButton setImage:[UIImage imageNamed:@"icon_likeFilled.png"] forState:UIControlStateNormal];
+    
 }
 
 -(void)dealloc {

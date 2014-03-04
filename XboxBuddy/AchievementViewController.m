@@ -28,6 +28,7 @@
 @property (weak, nonatomic) IBOutlet UIImageView *currentUserImage;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 
+@property (weak, nonatomic) IBOutlet UIView *headerBackgroundView;
 @property (weak, nonatomic) IBOutlet UIView *achievementBackgroundView;
 @property (weak, nonatomic) IBOutlet UITextField *commentTextField;
 @property (weak, nonatomic) IBOutlet UIView *textFieldBackgroundView;
@@ -36,11 +37,12 @@
 @property NSMutableArray *comments;
 @property Like *currentUserLike;
 @property BOOL isCurrentUserAchievement;
+@property BOOL isTallScreen;
 
-//@property CGRect textFieldFrame;
-//@property CGRect userImageFrame;
 @property CGRect originalTextFieldBackgroundFrame;
 @property CGRect originalTableViewFrame;
+@property CGRect originalHeaderViewFrame;
+@property CGRect originalAchievementViewFrame;
 
 @property Comment *commentPendingDelete;
 
@@ -53,6 +55,7 @@ typedef NS_ENUM(NSInteger, AlertViewTag) {
     AlertViewDeleteCommentTag,
     AlertViewInviteFriendTag,
 };
+
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -67,6 +70,7 @@ typedef NS_ENUM(NSInteger, AlertViewTag) {
 {
     [super viewDidLoad];
     [HomeTableViewController customizeNavigationBar:self];
+    self.isTallScreen = [UIScreen mainScreen].bounds.size.height > 500; // TODO: Move to util file.
 
     self.gamerTag.text = self.achievement.gamertag;
     self.gameName.text = [NSString stringWithFormat:@"%@", self.achievement.game.name];
@@ -120,6 +124,8 @@ typedef NS_ENUM(NSInteger, AlertViewTag) {
     // Remember original location of views.
     self.originalTextFieldBackgroundFrame = self.textFieldBackgroundView.frame;
     self.originalTableViewFrame = self.tableView.frame;
+    self.originalHeaderViewFrame = self.headerBackgroundView.frame;
+    self.originalAchievementViewFrame = self.achievementBackgroundView.frame;
     
     [self reloadLikes];
     
@@ -180,8 +186,8 @@ typedef NS_ENUM(NSInteger, AlertViewTag) {
 - (void) cancelComment
 {
     // Remove Cancel button.
-    [self resetTextFieldLocation:self.commentTextField];
     [self.commentTextField resignFirstResponder];
+    [self resetTextFieldLocation:self.commentTextField];
 }
 
 
@@ -223,34 +229,32 @@ typedef NS_ENUM(NSInteger, AlertViewTag) {
 {
     // Keep textField visible when keyboard is displayed.
     // Hide tableView and move textField up to where the table was.
-//    [self.tableView setHidden:YES];
-//    CGRect tableFrame = self.tableView.frame;
-//    CGRect textFrame = textField.frame;
-//    CGRect imageFrame = self.currentUserImage.frame;
-//    self.textFieldFrame = textFrame;
-//    self.userImageFrame = imageFrame;
-//    textFrame.origin.y = tableFrame.origin.y;
-//    imageFrame.origin.y = tableFrame.origin.y;
-//    textField.frame = textFrame;
-//    self.currentUserImage.frame = imageFrame;
-    
     [self.tableView setHidden:YES];
     CGRect newFrame = self.textFieldBackgroundView.frame;
-    newFrame.origin.y = self.originalTableViewFrame.origin.y;
+    if (self.isTallScreen) {
+        newFrame.origin.y = self.originalTableViewFrame.origin.y;
+    } else {
+        newFrame.origin.y = self.originalTableViewFrame.origin.y;
+        [self.headerBackgroundView setHidden:YES];
+        CGRect achievementFrame = self.achievementBackgroundView.frame;
+        achievementFrame.origin.y = 25;
+        float diff = self.originalAchievementViewFrame.origin.y - achievementFrame.origin.y;
+        self.achievementBackgroundView.frame = achievementFrame;
+        newFrame.origin.y = self.originalTableViewFrame.origin.y - diff;
+    }
     self.textFieldBackgroundView.frame = newFrame;
     
 }
 
 - (void) resetTextFieldLocation:(UITextField *)textField
 {
-//    // Show table view and move image and textField back to original locations.
-//    [self.tableView setHidden:NO];
-//    [self.tableView reloadData];
-//    textField.frame = self.textFieldFrame;
-//    self.currentUserImage.frame = self.userImageFrame;
-    
+    // Show table view and move image and textField back to original locations.
     [self.tableView setHidden:NO];
     self.textFieldBackgroundView.frame = self.originalTextFieldBackgroundFrame;
+    if (!self.isTallScreen) {
+        [self.headerBackgroundView setHidden:NO];
+        self.achievementBackgroundView.frame = self.originalAchievementViewFrame;
+    }
     
     // Clear bar button and text input.
     self.navigationItem.rightBarButtonItem = nil;

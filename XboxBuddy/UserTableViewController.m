@@ -8,11 +8,13 @@
 
 #import "UserTableViewController.h"
 #import "AchievementViewController.h"
-#import "UserAchievementCell.h"
 #import "Achievement.h"
 #import "HomeTableViewController.h"
 #import "ParseClient.h"
 #import "Invitation.h"
+#import "AchievementCell.h"
+#import "ParseClient.h"
+#import <Parse/Parse.h>
 
 @interface UserTableViewController ()
 
@@ -55,7 +57,7 @@
     
     // Setup the view.
     self.gamertag.text = self.profile.gamertag;
-    self.gamerscore.text = [NSString stringWithFormat:@"%i G", self.profile.gamerscore];
+    self.gamerscore.text = [NSString stringWithFormat:@"%li G", (long)self.profile.gamerscore];
     UIImage *gamerpicImage;
     NSString *gamerpicPath = [XboxLiveClient filePathForImageUrl:self.profile.gamerpicImageUrl];
     if ([[NSFileManager defaultManager] fileExistsAtPath:gamerpicPath]) {
@@ -113,8 +115,11 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     static NSString *CellIdentifier = @"UserAchievementCell";
+    
+    AchievementCell *cell = (AchievementCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+    cell.delegate = self;
+    cell.accessoryType = UITableViewCellAccessoryNone;
 
-    UserAchievementCell *cell = (UserAchievementCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     Achievement *achievementObj = self.achievements[indexPath.row];
     [cell initWithAchievement:achievementObj];
     
@@ -125,8 +130,8 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
 
-    if ([segue.identifier isEqualToString:@"showAchievementDetail"]) {
-
+    if ([segue.identifier isEqualToString:@"showAchievementDetail"] ||
+        [segue.identifier isEqualToString:@"showAchievementDetailFocusComment"]) {
         UITableViewCell *selectedCell = (UITableViewCell *)sender;
         NSIndexPath *indexPath = [self.tableView indexPathForCell:selectedCell];
         Achievement *achievement = self.achievements[indexPath.row];
@@ -134,6 +139,12 @@
 
         achieveViewController.achievement = achievement;
         achieveViewController.hidesBottomBarWhenPushed = YES;
+        
+        if ([segue.identifier isEqualToString:@"showAchievementDetailFocusComment"]) {
+            achieveViewController.focusCommentTextField = YES;
+        } else {
+            achieveViewController.focusCommentTextField = NO;
+        }
     }
 }
 
@@ -208,5 +219,29 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
+#pragma mark - SwipeWithOptionsCellDelegate Methods
+
+-(void)cellDidSelect:(SwipeWithOptionsCell *)cell {
+    [self performSegueWithIdentifier: @"showAchievementDetail" sender:cell];
+}
+
+-(void)cellDidSelectComment:(SwipeWithOptionsCell *)cell {
+    [self performSegueWithIdentifier: @"showAchievementDetailFocusComment" sender:cell];
+}
+
+-(void)cellDidSelectLike:(SwipeWithOptionsCell *)cell {
+     NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
+     Achievement *achievement = self.achievements[indexPath.row];
+     
+     ParseClient *parseClient = [ParseClient instance];
+     
+     Like *like = [[Like alloc] initWithAchievement:achievement];
+     [parseClient saveLike:like];
+     
+     if (![achievement.gamertag isEqualToString:[User currentUser].gamertag]) {
+     [ParseClient sendPushNotification:@"liked" withAchievement:achievement];
+     }
+     [cell.likeButton setImage:[UIImage imageNamed:@"icon_likeFilled.png"] forState:UIControlStateNormal];
+}
 
 @end

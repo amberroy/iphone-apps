@@ -56,12 +56,20 @@ typedef NS_ENUM(NSInteger, AlertViewTag) {
     AlertViewInviteFriendTag,
 };
 
+- (id)initWithCoder:(NSCoder *)aDecoder {
+    self = [super initWithCoder:aDecoder];
+    if (self) {
+        self.focusCommentTextField = NO;
+    }
+    return self;
+}
+
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        // Custom initialization
+        self.focusCommentTextField = NO;
     }
     return self;
 }
@@ -113,8 +121,8 @@ typedef NS_ENUM(NSInteger, AlertViewTag) {
     self.currentUserImage.image = userImage;
     
     // Add border around achievement.
-    self.achievementBackgroundView.layer.borderColor = [UIColor blackColor].CGColor;
-    self.achievementBackgroundView.layer.borderWidth = 1.0f;
+    //self.achievementBackgroundView.layer.borderColor = [UIColor blackColor].CGColor;
+    //self.achievementBackgroundView.layer.borderWidth = 1.0f;
     
     // Don't show separators for empty rows in comments table.
     UIView *v = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 1)];
@@ -128,8 +136,20 @@ typedef NS_ENUM(NSInteger, AlertViewTag) {
     self.originalAchievementViewFrame = self.achievementBackgroundView.frame;
     
     [self reloadLikes];
-    
 }
+
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    if (self.focusCommentTextField) {
+        [self performSelector:@selector(focusComment) withObject:nil afterDelay:0.05];
+    }
+}
+
+- (void)focusComment {
+    [self.commentTextField becomeFirstResponder];
+}
+
 
 - (void)reloadLikes
 {

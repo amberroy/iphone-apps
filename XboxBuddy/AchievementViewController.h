@@ -13,6 +13,7 @@
 @interface AchievementViewController : UIViewController <UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate, MFMailComposeViewControllerDelegate>
 
 @property (nonatomic, strong) Achievement *achievement;
+@property (nonatomic, assign) BOOL focusCommentTextField;
 
 -(void)deleteButtonPressed:(UIButton *)sender;
 

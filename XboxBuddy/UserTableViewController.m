@@ -13,6 +13,8 @@
 #import "ParseClient.h"
 #import "Invitation.h"
 #import "AchievementCell.h"
+#import "ParseClient.h"
+#import <Parse/Parse.h>
 
 @interface UserTableViewController ()
 
@@ -116,6 +118,7 @@
     
     AchievementCell *cell = (AchievementCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     cell.delegate = self;
+    cell.accessoryType = UITableViewCellAccessoryNone;
 
     Achievement *achievementObj = self.achievements[indexPath.row];
     [cell initWithAchievement:achievementObj];
@@ -127,8 +130,8 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
 
-    if ([segue.identifier isEqualToString:@"showAchievementDetail"]) {
-
+    if ([segue.identifier isEqualToString:@"showAchievementDetail"] ||
+        [segue.identifier isEqualToString:@"showAchievementDetailFocusComment"]) {
         UITableViewCell *selectedCell = (UITableViewCell *)sender;
         NSIndexPath *indexPath = [self.tableView indexPathForCell:selectedCell];
         Achievement *achievement = self.achievements[indexPath.row];
@@ -136,6 +139,12 @@
 
         achieveViewController.achievement = achievement;
         achieveViewController.hidesBottomBarWhenPushed = YES;
+        
+        if ([segue.identifier isEqualToString:@"showAchievementDetailFocusComment"]) {
+            achieveViewController.focusCommentTextField = YES;
+        } else {
+            achieveViewController.focusCommentTextField = NO;
+        }
     }
 }
 
@@ -221,8 +230,6 @@
 }
 
 -(void)cellDidSelectLike:(SwipeWithOptionsCell *)cell {
-    /*
-     // TODO: unlike
      NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
      Achievement *achievement = self.achievements[indexPath.row];
      
@@ -234,8 +241,7 @@
      if (![achievement.gamertag isEqualToString:[User currentUser].gamertag]) {
      [ParseClient sendPushNotification:@"liked" withAchievement:achievement];
      }
-     [cell.likeButton setImage:[UIImage imageNamed:@"like-26.png"] forState:UIControlStateNormal];
-     */
+     [cell.likeButton setImage:[UIImage imageNamed:@"icon_likeFilled.png"] forState:UIControlStateNormal];
 }
 
 @end

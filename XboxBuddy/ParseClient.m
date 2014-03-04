@@ -126,7 +126,7 @@ static BOOL IsOfflineMode;
                 }
                 [gameDict[comment.achievementID] addObject:comment];
             }
-            int count = [objects count];
+            int count = (int)[objects count];
             self.totalComments += count;
             if (count > 0) {
                 NSLog(@"Added %i comments for %@ for game %@", count, gamertag, game.name);
@@ -175,7 +175,7 @@ static BOOL IsOfflineMode;
                 [authors addObject:like.authorGamertag];
                 [gameDict[like.achievementID] addObject:like];
             }
-            int count = [objects count];
+            int count = (int)[objects count];
             self.totalLikes += count;
             if (count > 0) {
                 NSLog(@"Added %i likes for %@ for game %@", count, gamertag, game.name);
@@ -201,7 +201,7 @@ static BOOL IsOfflineMode;
             for (Invitation *invitation in objects) {
                 self.invitationsForGamertag[invitation.recipientGamertag] = invitation;
             }
-            int count = [objects count];
+            int count = (int)[objects count];
             NSLog(@"Added %i Invitations for %@", count, gamertag);
         } else {
             NSLog(@"ParseClient download error for %@ Invitations: %@", gamertag, [error userInfo][@"error"]);

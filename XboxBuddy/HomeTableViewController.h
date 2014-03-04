@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SwipeWithOptionsCell.h"
 
-@interface HomeTableViewController : UITableViewController
+@interface HomeTableViewController : UITableViewController<SwipeWithOptionsCellDelegate>
 
 +(void)customizeNavigationBar:(UIViewController *)viewController;
 

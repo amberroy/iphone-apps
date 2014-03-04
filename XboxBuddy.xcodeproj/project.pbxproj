@@ -7,7 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2681874818A206A3003D281B /* UserAchievementCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2681874718A206A3003D281B /* UserAchievementCell.m */; };
+		265A640818C5AB48008C172F /* SwipeWithOptionsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 265A640718C5AB48008C172F /* SwipeWithOptionsCell.m */; };
+		265A640B18C5AD22008C172F /* AchievementCellContentView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 265A640A18C5AD22008C172F /* AchievementCellContentView.xib */; };
+		265A641018C5AF50008C172F /* AchievementCellContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 265A640F18C5AF50008C172F /* AchievementCellContentView.m */; };
+		265A641318C5BB47008C172F /* AchievementCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 265A641218C5BB47008C172F /* AchievementCell.m */; };
 		2681874B18A20701003D281B /* UserTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2681874A18A20701003D281B /* UserTableViewController.m */; };
 		2681874E18A213A2003D281B /* FriendsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2681874D18A213A2003D281B /* FriendsTableViewController.m */; };
 		2681875418A213E8003D281B /* FriendCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2681875318A213E8003D281B /* FriendCell.m */; };
@@ -17,7 +20,6 @@
 		268187AB18A3649A003D281B /* TempHomeIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 268187A818A3649A003D281B /* TempHomeIcon.png */; };
 		268187AC18A3649A003D281B /* TempFriendsIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 268187A918A3649A003D281B /* TempFriendsIcon.png */; };
 		268187AD18A3649A003D281B /* TempUserIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 268187AA18A3649A003D281B /* TempUserIcon.png */; };
-		26D2F6661899E8FD00EFB93A /* HomeCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 26D2F6651899E8FD00EFB93A /* HomeCell.m */; };
 		26D2F66B1899F18700EFB93A /* HomeTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 26D2F66A1899F18700EFB93A /* HomeTableViewController.m */; };
 		26D2F6741899F27200EFB93A /* AchievementViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 26D2F6721899F27200EFB93A /* AchievementViewController.m */; };
 		26D2F6781899F2A300EFB93A /* Achievement.m in Sources */ = {isa = PBXBuildFile; fileRef = 26D2F6771899F2A300EFB93A /* Achievement.m */; };
@@ -73,8 +75,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		2681874618A206A3003D281B /* UserAchievementCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserAchievementCell.h; sourceTree = "<group>"; };
-		2681874718A206A3003D281B /* UserAchievementCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserAchievementCell.m; sourceTree = "<group>"; };
+		265A640618C5AB48008C172F /* SwipeWithOptionsCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SwipeWithOptionsCell.h; sourceTree = "<group>"; };
+		265A640718C5AB48008C172F /* SwipeWithOptionsCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SwipeWithOptionsCell.m; sourceTree = "<group>"; };
+		265A640A18C5AD22008C172F /* AchievementCellContentView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AchievementCellContentView.xib; sourceTree = "<group>"; };
+		265A640C18C5AD2E008C172F /* AchievementCellContentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AchievementCellContentView.h; sourceTree = "<group>"; };
+		265A640F18C5AF50008C172F /* AchievementCellContentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AchievementCellContentView.m; sourceTree = "<group>"; };
+		265A641118C5BB47008C172F /* AchievementCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AchievementCell.h; sourceTree = "<group>"; };
+		265A641218C5BB47008C172F /* AchievementCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AchievementCell.m; sourceTree = "<group>"; };
 		2681874918A20701003D281B /* UserTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserTableViewController.h; sourceTree = "<group>"; };
 		2681874A18A20701003D281B /* UserTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserTableViewController.m; sourceTree = "<group>"; };
 		2681874C18A213A2003D281B /* FriendsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriendsTableViewController.h; sourceTree = "<group>"; };
@@ -87,8 +94,6 @@
 		268187A818A3649A003D281B /* TempHomeIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TempHomeIcon.png; sourceTree = "<group>"; };
 		268187A918A3649A003D281B /* TempFriendsIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TempFriendsIcon.png; sourceTree = "<group>"; };
 		268187AA18A3649A003D281B /* TempUserIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TempUserIcon.png; sourceTree = "<group>"; };
-		26D2F6641899E8FD00EFB93A /* HomeCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HomeCell.h; sourceTree = "<group>"; };
-		26D2F6651899E8FD00EFB93A /* HomeCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HomeCell.m; sourceTree = "<group>"; };
 		26D2F6691899F18700EFB93A /* HomeTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HomeTableViewController.h; sourceTree = "<group>"; };
 		26D2F66A1899F18700EFB93A /* HomeTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HomeTableViewController.m; sourceTree = "<group>"; };
 		26D2F6711899F27200EFB93A /* AchievementViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AchievementViewController.h; sourceTree = "<group>"; };
@@ -168,8 +173,8 @@
 				9654F4B118B83A880035025F /* CFNetwork.framework in Frameworks */,
 				9654F4AF18B83A7E0035025F /* AudioToolbox.framework in Frameworks */,
 				962084521899B915006AD8E9 /* CoreGraphics.framework in Frameworks */,
-				962084541899B915006AD8E9 /* UIKit.framework in Frameworks */,
 				9654F4AD18B8357D0035025F /* Parse.framework in Frameworks */,
+				962084541899B915006AD8E9 /* UIKit.framework in Frameworks */,
 				962084501899B915006AD8E9 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -187,6 +192,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		265A640918C5AD0C008C172F /* xib */ = {
+			isa = PBXGroup;
+			children = (
+				265A640A18C5AD22008C172F /* AchievementCellContentView.xib */,
+			);
+			name = xib;
+			sourceTree = "<group>";
+		};
 		2681875518A2214B003D281B /* Images */ = {
 			isa = PBXGroup;
 			children = (
@@ -207,12 +220,14 @@
 		26D2F67D189AD45F00EFB93A /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				265A641118C5BB47008C172F /* AchievementCell.h */,
+				265A641218C5BB47008C172F /* AchievementCell.m */,
+				265A640F18C5AF50008C172F /* AchievementCellContentView.m */,
+				265A640C18C5AD2E008C172F /* AchievementCellContentView.h */,
+				265A640618C5AB48008C172F /* SwipeWithOptionsCell.h */,
+				265A640718C5AB48008C172F /* SwipeWithOptionsCell.m */,
 				969B202E18BF15D500968D36 /* CommentCell.h */,
 				969B202F18BF15D500968D36 /* CommentCell.m */,
-				26D2F6641899E8FD00EFB93A /* HomeCell.h */,
-				26D2F6651899E8FD00EFB93A /* HomeCell.m */,
-				2681874618A206A3003D281B /* UserAchievementCell.h */,
-				2681874718A206A3003D281B /* UserAchievementCell.m */,
 				2681875218A213E8003D281B /* FriendCell.h */,
 				2681875318A213E8003D281B /* FriendCell.m */,
 			);
@@ -262,6 +277,7 @@
 		962084551899B915006AD8E9 /* XboxBuddy */ = {
 			isa = PBXGroup;
 			children = (
+				265A640918C5AD0C008C172F /* xib */,
 				2681875518A2214B003D281B /* Images */,
 				966456641899E3B100E5C691 /* AppDelegate */,
 				966456651899E40C00E5C691 /* Controllers */,
@@ -455,6 +471,7 @@
 				96AEFAD318C1B25400A27EED /* TempGamerImage4.png in Resources */,
 				96AEFAD118C1B03500A27EED /* TempGamerImage3.png in Resources */,
 				2681875B18A22CDF003D281B /* TempAchievementImage.jpg in Resources */,
+				265A640B18C5AD22008C172F /* AchievementCellContentView.xib in Resources */,
 				962084621899B915006AD8E9 /* Images.xcassets in Resources */,
 				2681875D18A22CDF003D281B /* TempBoxArt.jpg in Resources */,
 				96AEFAD518C2741700A27EED /* TempGamerImage5.png in Resources */,
@@ -478,17 +495,18 @@
 			files = (
 				26D2F66B1899F18700EFB93A /* HomeTableViewController.m in Sources */,
 				26D2F6781899F2A300EFB93A /* Achievement.m in Sources */,
-				26D2F6661899E8FD00EFB93A /* HomeCell.m in Sources */,
 				2681875418A213E8003D281B /* FriendCell.m in Sources */,
 				9654F4C218B9527C0035025F /* Comment.m in Sources */,
+				265A641318C5BB47008C172F /* AchievementCell.m in Sources */,
 				962084601899B915006AD8E9 /* AppDelegate.m in Sources */,
-				2681874818A206A3003D281B /* UserAchievementCell.m in Sources */,
 				26F13BE618B0055B005C1ECE /* SignedOutViewController.m in Sources */,
+				265A640818C5AB48008C172F /* SwipeWithOptionsCell.m in Sources */,
 				9654F4CA18BA5F120035025F /* ParseClient.m in Sources */,
 				2681874E18A213A2003D281B /* FriendsTableViewController.m in Sources */,
 				26F13BF018B2996A005C1ECE /* LoginViewController.m in Sources */,
 				26F13BE918B28CD1005C1ECE /* User.m in Sources */,
 				9664566A1899E49600E5C691 /* XboxLiveClient.m in Sources */,
+				265A641018C5AF50008C172F /* AchievementCellContentView.m in Sources */,
 				2681874B18A20701003D281B /* UserTableViewController.m in Sources */,
 				9693F762189F032B00D3C80A /* Profile.m in Sources */,
 				9654F4CD18BA6B860035025F /* Game.m in Sources */,
@@ -625,6 +643,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/amber/Xcodeproj/XboxBuddy,
+					/Users/cwang/Desktop/codepath/xboxbuddy,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "XboxBuddy/XboxBuddy-Prefix.pch";
@@ -646,6 +665,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/amber/Xcodeproj/XboxBuddy,
+					/Users/cwang/Desktop/codepath/xboxbuddy,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "XboxBuddy/XboxBuddy-Prefix.pch";

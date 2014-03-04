@@ -9,7 +9,7 @@
 #import "HomeTableViewController.h"
 #import "AchievementViewController.h"
 #import "Achievement.h"
-#import "HomeCell.h"
+#import "AchievementCell.h"
 #import "AppDelegate.h"
 
 @interface HomeTableViewController ()
@@ -136,9 +136,10 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *CellIdentifier = @"HomeCell";
+    static NSString *CellIdentifier = @"HomeAchievementCell";
 
-    HomeCell *cell = (HomeCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+    AchievementCell *cell = (AchievementCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+    cell.delegate = self;
     
     if ([self.achievements count] == 0) {
         self.spinner.center = cell.center;
@@ -180,6 +181,35 @@
         achieveViewController.hidesBottomBarWhenPushed = YES;
     }
 }
+
+#pragma mark - SwipeWithOptionsCellDelegate Methods
+
+-(void)cellDidSelect:(SwipeWithOptionsCell *)cell {
+    [self performSegueWithIdentifier: @"showAchievementDetail" sender:cell];
+}
+
+-(void)cellDidSelectComment:(SwipeWithOptionsCell *)cell {
+    [self performSegueWithIdentifier: @"showAchievementDetailFocusComment" sender:cell];
+}
+
+-(void)cellDidSelectLike:(SwipeWithOptionsCell *)cell {
+    /*
+    // TODO: unlike
+    NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
+    Achievement *achievement = self.achievements[indexPath.row];
+    
+    ParseClient *parseClient = [ParseClient instance];
+    
+    Like *like = [[Like alloc] initWithAchievement:achievement];
+    [parseClient saveLike:like];
+    
+    if (![achievement.gamertag isEqualToString:[User currentUser].gamertag]) {
+        [ParseClient sendPushNotification:@"liked" withAchievement:achievement];
+    }
+    [cell.likeButton setImage:[UIImage imageNamed:@"like-26.png"] forState:UIControlStateNormal];
+     */
+}
+
 -(void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }

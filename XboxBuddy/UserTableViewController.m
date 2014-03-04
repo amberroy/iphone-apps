@@ -8,11 +8,11 @@
 
 #import "UserTableViewController.h"
 #import "AchievementViewController.h"
-#import "UserAchievementCell.h"
 #import "Achievement.h"
 #import "HomeTableViewController.h"
 #import "ParseClient.h"
 #import "Invitation.h"
+#import "AchievementCell.h"
 
 @interface UserTableViewController ()
 
@@ -55,7 +55,7 @@
     
     // Setup the view.
     self.gamertag.text = self.profile.gamertag;
-    self.gamerscore.text = [NSString stringWithFormat:@"%i G", self.profile.gamerscore];
+    self.gamerscore.text = [NSString stringWithFormat:@"%li G", (long)self.profile.gamerscore];
     UIImage *gamerpicImage;
     NSString *gamerpicPath = [XboxLiveClient filePathForImageUrl:self.profile.gamerpicImageUrl];
     if ([[NSFileManager defaultManager] fileExistsAtPath:gamerpicPath]) {
@@ -113,8 +113,10 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     static NSString *CellIdentifier = @"UserAchievementCell";
+    
+    AchievementCell *cell = (AchievementCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+    cell.delegate = self;
 
-    UserAchievementCell *cell = (UserAchievementCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     Achievement *achievementObj = self.achievements[indexPath.row];
     [cell initWithAchievement:achievementObj];
     
@@ -208,5 +210,32 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
+#pragma mark - SwipeWithOptionsCellDelegate Methods
+
+-(void)cellDidSelect:(SwipeWithOptionsCell *)cell {
+    [self performSegueWithIdentifier: @"showAchievementDetail" sender:cell];
+}
+
+-(void)cellDidSelectComment:(SwipeWithOptionsCell *)cell {
+    [self performSegueWithIdentifier: @"showAchievementDetailFocusComment" sender:cell];
+}
+
+-(void)cellDidSelectLike:(SwipeWithOptionsCell *)cell {
+    /*
+     // TODO: unlike
+     NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
+     Achievement *achievement = self.achievements[indexPath.row];
+     
+     ParseClient *parseClient = [ParseClient instance];
+     
+     Like *like = [[Like alloc] initWithAchievement:achievement];
+     [parseClient saveLike:like];
+     
+     if (![achievement.gamertag isEqualToString:[User currentUser].gamertag]) {
+     [ParseClient sendPushNotification:@"liked" withAchievement:achievement];
+     }
+     [cell.likeButton setImage:[UIImage imageNamed:@"like-26.png"] forState:UIControlStateNormal];
+     */
+}
 
 @end

@@ -1,40 +1,48 @@
 //
-//  HomeCell.m
+//  AchievementCellContentView.m
 //  XboxBuddy
 //
-//  Created by Christine Wang on 1/29/14.
+//  Created by Christine Wang on 3/2/14.
 //  Copyright (c) 2014 XboxBuddy. All rights reserved.
 //
 
-#import "HomeCell.h"
-#import "Achievement.h"
+#import "AchievementCellContentView.h"
 
-@interface HomeCell ()
+@implementation AchievementCellContentView
 
-@property Achievement *achievementObj;
-
-@end
-
-@implementation HomeCell
-
-- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
+-(id)initWithCoder:(NSCoder *)aDecoder
 {
-    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+    self = [super initWithCoder:aDecoder];
     if (self) {
-        // Initialization code
+        [self setup];
     }
     return self;
 }
 
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated
+- (id)initWithFrame:(CGRect)frame
 {
-    [super setSelected:selected animated:animated];
-
-    // Configure the view for the selected state
+    self = [super initWithFrame:frame];
+    if (self) {
+        [self setup];
+    }
+    return self;
 }
 
-- (void)initWithAchievement:(Achievement *)achievementObj
-{
+- (void)setup {
+    // TODO: add this back in in place of loading nib in Achievement cell
+    // Figure out why this crashes
+    /*
+    NSBundle *mainBundle = [NSBundle mainBundle];
+    
+    NSArray *views = [mainBundle loadNibNamed:@"AchievementCellContentView"
+                                        owner:nil
+                                      options:nil];
+    [self addSubview:views[0]];
+    */
+}
+
+-(void)initWithAchievement:(Achievement *)achievementObj {
+    
     if (!achievementObj.gamertag) {
         self.gamerTag.text = nil;
         self.achievementPoints.text = nil;
@@ -43,7 +51,6 @@
         return;
     }
     
-    self.achievementObj = achievementObj;
     UIImage *gamerpicImage;
     NSString *gamerpicPath = [XboxLiveClient filePathForImageUrl:achievementObj.gamerpicImageUrl];
     if ([[NSFileManager defaultManager] fileExistsAtPath:gamerpicPath]) {
@@ -65,10 +72,18 @@
     self.achievementImage.image = achievemntImage;
     
     self.gamerTag.text = achievementObj.gamertag;
-    self.achievementPoints.text = [NSString stringWithFormat:@"%i G achievement", achievementObj.points];
+    self.achievementPoints.text = [NSString stringWithFormat:@"%ld G achievement", achievementObj.points];
     self.gameName.text = [NSString stringWithFormat:@"%@", achievementObj.game.name];
     self.achievementEarnedOn.text = [Achievement timeAgoWithDate:achievementObj.earnedOn];
-    
 }
+
+/*
+// Only override drawRect: if you perform custom drawing.
+// An empty implementation adversely affects performance during animation.
+- (void)drawRect:(CGRect)rect
+{
+    // Drawing code
+}
+*/
 
 @end

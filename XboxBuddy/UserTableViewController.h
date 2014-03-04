@@ -9,8 +9,9 @@
 #import <UIKit/UIKit.h>
 #import <MessageUI/MessageUI.h>
 #import "Profile.h"
+#import "SwipeWithOptionsCell.h"
 
-@interface UserTableViewController : UITableViewController <MFMailComposeViewControllerDelegate>
+@interface UserTableViewController : UITableViewController <MFMailComposeViewControllerDelegate, SwipeWithOptionsCellDelegate>
 
 @property (nonatomic, strong) Profile *profile;
 

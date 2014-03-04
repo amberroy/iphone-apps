@@ -671,6 +671,7 @@
                         <outlet property="achievementImage" destination="WSZ-Wf-8bx" id="PoK-5i-mFq"/>
                         <outlet property="achievementName" destination="FDz-Fd-cyy" id="FPM-d4-baB"/>
                         <outlet property="achievementPoints" destination="EnC-mI-c7e" id="I9a-Dk-W32"/>
+                        <outlet property="commentTextField" destination="DzQ-vR-1MO" id="Zld-eg-doH"/>
                         <outlet property="currentUserImage" destination="JXA-su-1tj" id="tq2-br-DYQ"/>
                         <outlet property="gameName" destination="9GM-Lw-OvK" id="RHR-Vp-uKV"/>
                         <outlet property="gamerImage" destination="LrP-SN-KMh" id="1Fz-mw-h7N"/>

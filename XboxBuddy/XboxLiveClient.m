@@ -449,14 +449,14 @@ static BOOL IsDemoMode;
 {
     int unlockedCount = 0;
     NSString *gamertag = responseData[@"Player"][@"Gamertag"];
-    NSString *gameName = responseData[@"Game"][@"Name"];
+    NSDictionary *gameDict = responseData[@"Game"];
     
     if (responseData[@"Achievements"] != [NSNull null]) {
     
         NSMutableArray *achievements = [[NSMutableArray alloc] initWithArray: responseData[@"Achievements"]];
         
         if (IsDemoMode) {
-            achievements = [self prepAchievementsForDemo:achievements withGamertag:gamertag withGameName:gameName];
+            achievements = [self prepAchievementsForDemo:achievements withGamertag:gamertag withGame:gameDict];
         }
         
         for (NSDictionary *achievement in achievements) {
@@ -481,7 +481,7 @@ static BOOL IsDemoMode;
             }
         }
     }
-    NSLog(@"Added %i achievements for %@ for game %@", unlockedCount, gamertag, gameName);
+    NSLog(@"Added %i achievements for %@ for game %@", unlockedCount, gamertag, gameDict[@"Name"]);
 }
 
 -(void)processImage:(NSString *)savedImagePath
@@ -792,7 +792,7 @@ static BOOL IsDemoMode;
     return gameDicts;
 }
 
-- (NSMutableArray *)prepAchievementsForDemo:(NSMutableArray *)achievementDicts withGamertag:gamertag withGameName:gameName
+- (NSMutableArray *)prepAchievementsForDemo:(NSMutableArray *)achievementDicts withGamertag:gamertag withGame:gameDict
 {
     // Simulate each gamer getting an achievement every week, starting yesterday.
     static int hoursAgoIncrement = (7 * 24);
@@ -807,10 +807,10 @@ static BOOL IsDemoMode;
             
             long unlocked = [mdict[@"EarnedOn-UNIX"] boolValue];
             if (unlocked) {
-                // Add random offset so gamers are not always in same order.
-                int randomOffset = arc4random() % hoursAgoIncrement;
-                int timeAgoInSeconds = (hoursAgo * 3600) + (randomOffset * 3600);
-                hoursAgo += hoursAgoIncrement + randomOffset;
+                // Use deterministic but random-looking offset to make achievements less evenly spaced.
+                int offset = [gameDict[@"ID"] intValue] % hoursAgoIncrement;
+                int timeAgoInSeconds = (hoursAgo * 3600) + (offset * 3600);
+                hoursAgo += hoursAgoIncrement + offset;
                 NSTimeInterval interval = [[NSDate date] timeIntervalSince1970];
                 NSDate *earnedOn = [NSDate dateWithTimeIntervalSince1970:interval - timeAgoInSeconds];
                 mdict[@"EarnedOn-UNIX"] = [NSString stringWithFormat:@"%f", [earnedOn timeIntervalSince1970]];

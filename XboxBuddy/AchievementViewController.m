@@ -29,6 +29,7 @@
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 
 @property (weak, nonatomic) IBOutlet UIView *achievementBackgroundView;
+@property (weak, nonatomic) IBOutlet UITextField *commentTextField;
 
 @property NSMutableArray *likes;
 @property NSMutableArray *comments;
@@ -39,6 +40,7 @@
 @property CGRect userImageFrame;
 
 @property Comment *commentPendingDelete;
+
 
 @end
 
@@ -162,21 +164,19 @@ typedef NS_ENUM(NSInteger, AlertViewTag) {
 
 -(BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
-    // Keep textField visible when keyboard is displayed.
-    // Hide tableView and move textField up to where the table was.
-    [self.tableView setHidden:YES];
-    CGRect tableFrame = self.tableView.frame;
-    CGRect textFrame = textField.frame;
-    CGRect imageFrame = self.currentUserImage.frame;
-    self.textFieldFrame = textFrame;
-    self.userImageFrame = imageFrame;
-    textFrame.origin.y = tableFrame.origin.y;
-    imageFrame.origin.y = tableFrame.origin.y;
-    textField.frame = textFrame;
-    self.currentUserImage.frame = imageFrame;
+    [self moveTextFieldLocation:textField];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonSystemItemCancel target:self action:@selector(cancelComment)];
     
     return YES;
 }
+
+- (void) cancelComment
+{
+    // Remove Cancel button.
+    [self resetTextFieldLocation:self.commentTextField];
+    [self.commentTextField resignFirstResponder];
+}
+
 
 -(BOOL)textFieldShouldReturn:(UITextField *)textField
 {
@@ -194,12 +194,6 @@ typedef NS_ENUM(NSInteger, AlertViewTag) {
         [ParseClient sendPushNotification:@"commented on" withAchievement:self.achievement];
     }
     
-    // Show table view and move image and textField back to original locations.
-    [self.tableView setHidden:NO];
-    [self.tableView reloadData];
-    textField.frame = self.textFieldFrame;
-    self.currentUserImage.frame = self.userImageFrame;
-    
     NSString *friendGamertag = self.achievement.gamertag;
     User *friendUserObj = [[ParseClient instance] userForGamertag:friendGamertag];
     Invitation *friendInvitation = [[ParseClient instance] invitationForGamertag:friendGamertag];
@@ -213,8 +207,38 @@ typedef NS_ENUM(NSInteger, AlertViewTag) {
         [alert show];
     }
     
+    [self resetTextFieldLocation:self.commentTextField];
     
     return YES;
+}
+
+- (void) moveTextFieldLocation:(UITextField *)textField
+{
+    // Keep textField visible when keyboard is displayed.
+    // Hide tableView and move textField up to where the table was.
+    [self.tableView setHidden:YES];
+    CGRect tableFrame = self.tableView.frame;
+    CGRect textFrame = textField.frame;
+    CGRect imageFrame = self.currentUserImage.frame;
+    self.textFieldFrame = textFrame;
+    self.userImageFrame = imageFrame;
+    textFrame.origin.y = tableFrame.origin.y;
+    imageFrame.origin.y = tableFrame.origin.y;
+    textField.frame = textFrame;
+    self.currentUserImage.frame = imageFrame;
+}
+
+- (void) resetTextFieldLocation:(UITextField *)textField
+{
+    // Show table view and move image and textField back to original locations.
+    [self.tableView setHidden:NO];
+    [self.tableView reloadData];
+    textField.frame = self.textFieldFrame;
+    self.currentUserImage.frame = self.userImageFrame;
+    
+    // Clear bar button and text input.
+    self.navigationItem.rightBarButtonItem = nil;
+    textField.text = nil;
 }
 
 

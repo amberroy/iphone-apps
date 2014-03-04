@@ -754,12 +754,19 @@ static BOOL IsDemoMode;
 {
     // Replace friends who have private histories with gamers who are public.
     NSDictionary *swapFriends = @{ @"Laprunminta": @"Freelancer",
-                                   @"UnabatedLake1": @"Ariock II"};
+                                   @"UnabatedLake1": @"Ariock II",
+                                   @"Nightweezle": [NSNull null]
+                                 };
     
     NSMutableArray *result = [[NSMutableArray alloc] init];
     for (NSString *gamertag in friendGamertags) {
         if (swapFriends[gamertag]) {
-            [result addObject:swapFriends[gamertag]];
+            if (swapFriends[gamertag] != [NSNull null]) {
+                [result addObject:swapFriends[gamertag]];
+            } else {
+                // Ignore this friend, don't include in friends list.
+                continue;
+            }
         } else {
             [result addObject:gamertag];
         }
@@ -813,11 +820,25 @@ static BOOL IsDemoMode;
                 hoursAgo += hoursAgoIncrement + offset;
                 NSTimeInterval interval = [[NSDate date] timeIntervalSince1970];
                 NSDate *earnedOn = [NSDate dateWithTimeIntervalSince1970:interval - timeAgoInSeconds];
-                mdict[@"EarnedOn-UNIX"] = [NSString stringWithFormat:@"%f", [earnedOn timeIntervalSince1970]];
+                mdict[@"EarnedOn-UNIX"] = [NSString stringWithFormat:@"%.0f", [earnedOn timeIntervalSince1970]];
                 [result addObject:mdict];
             }
         }
     }
+    
+    if ([result count] > 0) {
+        for (NSDictionary *dict in self.recentGamesWithGamertag[gamertag]) {
+            if ([dict[@"Name"] isEqualToString:gameDict[@"Name"]]) {
+                NSMutableDictionary *mdict = [[NSMutableDictionary alloc] initWithDictionary:dict];
+                mdict[@"Progress"] = [[NSMutableDictionary alloc] initWithDictionary:dict[@"Progress"]];
+                mdict[@"Progress"][@"LastPlayed-UNIX"] = result[0][@"EarnedOn-UNIX"];
+                int index = [self.recentGamesWithGamertag[gamertag] indexOfObject:dict];
+                [self.recentGamesWithGamertag[gamertag] replaceObjectAtIndex:index withObject:mdict];
+                break;
+            }
+        }
+    }
+
     return result;
 }
 

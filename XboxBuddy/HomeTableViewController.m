@@ -12,13 +12,13 @@
 #import "AchievementCell.h"
 #import "AppDelegate.h"
 #import "ParseClient.h"
-#import <Parse/Parse.h>
 
 @interface HomeTableViewController ()
 
 @property (nonatomic, strong) NSArray *achievements;
 
 @property UIActivityIndicatorView *spinner;
+@property AppDelegate *appDelegate;
 
 @end
 
@@ -72,34 +72,41 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    self.appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     
+    // Special case for launching from Push Notification.
+    if (self.appDelegate.didLaunchWithNotification && [[ParseClient instance] isInitialized]) {
+        [self processNotification];
+    }
+    
+}
+
+- (void) processNotification
+{
     // Before loading table, check for special case: App launched from Push Notification.
-    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    if (appDelegate.didLaunchWithNotification) {
-        appDelegate.didLaunchWithNotification = NO;
+    self.appDelegate.didLaunchWithNotification = NO;
     
-        // Extract Achievement from payload.
-        NSDictionary *notificationPayload = appDelegate.notificationPayload;
-        NSString *gamertag = notificationPayload[@"gamertag"];
-        NSString *gameName = notificationPayload[@"gameName"];
-        NSString *achievementName = notificationPayload[@"achievementName"];
-        NSString *userGamertag = [User currentUser].gamertag;
-        if ([gamertag isEqualToString:userGamertag]) {
-            Achievement *achievement = [[XboxLiveClient instance] achievementWithGamertag:gamertag withGameName:gameName withAchievementName:achievementName];
-            if (achievement) {
-                NSLog(@"Push notification processed, found Achievement: %@:%@:%@", gamertag, gameName, achievementName);
-                
-                // Show AchievementDetail immediately.
-                UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-                AchievementViewController *avc = [storyboard instantiateViewControllerWithIdentifier:@"AchievementViewController"];
-                avc.achievement = achievement;
-                [self.navigationController pushViewController:avc animated:YES];
-            } else {
-                NSLog(@"Ignoring Push notification, achievemnt not found: %@:%@:%@", gamertag, gameName, achievementName);
-            }
+    // Extract Achievement from payload.
+    NSDictionary *notificationPayload = self.appDelegate.notificationPayload;
+    NSString *gamertag = notificationPayload[@"gamertag"];
+    NSString *gameName = notificationPayload[@"gameName"];
+    NSString *achievementName = notificationPayload[@"achievementName"];
+    NSString *userGamertag = [User currentUser].gamertag;
+    if ([gamertag isEqualToString:userGamertag]) {
+        Achievement *achievement = [[XboxLiveClient instance] achievementWithGamertag:gamertag withGameName:gameName withAchievementName:achievementName];
+        if (achievement) {
+            NSLog(@"Push notification processed, found Achievement: %@:%@:%@", gamertag, gameName, achievementName);
+            
+            // Show AchievementDetail immediately.
+            UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+            AchievementViewController *avc = [storyboard instantiateViewControllerWithIdentifier:@"AchievementViewController"];
+            avc.achievement = achievement;
+            [self.navigationController pushViewController:avc animated:YES];
         } else {
-            NSLog(@"Ignoring Push notification, sent to %@ but current user is %@", gamertag, userGamertag);
+            NSLog(@"Ignoring Push notification, achievemnt not found: %@:%@:%@", gamertag, gameName, achievementName);
         }
+    } else {
+        NSLog(@"Ignoring Push notification, sent to %@ but current user is %@", gamertag, userGamertag);
     }
     
 }
@@ -159,13 +166,25 @@
 }
 
 - (void)reloadTable:(NSNotification *)notification {
+    
+    // All clients initialized!
     self.achievements = [[XboxLiveClient instance] achievements];
     [self.tableView reloadData];
+    
+    // Special case for launching from Push Notification.
+    if (self.appDelegate.didLaunchWithNotification && [[ParseClient instance] isInitialized]) {
+        [self processNotification];
+    }
 }
 
 - (void)setUp
 {
-    self.achievements = [[XboxLiveClient instance] achievements];
+    // If ParseClient not done initializing, don't load data from XboxLiveClient,
+    // but call reloadData anyway which will start the spinner animation.
+    if ([[ParseClient instance] isInitialized]) {
+        self.achievements = [[XboxLiveClient instance] achievements];
+    }
+    
     [self.tableView reloadData];
 }
 

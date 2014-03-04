@@ -72,7 +72,7 @@
     self.achievementImage.image = achievemntImage;
     
     self.gamerTag.text = achievementObj.gamertag;
-    self.achievementPoints.text = [NSString stringWithFormat:@"%ld G achievement", achievementObj.points];
+    self.achievementPoints.text = [NSString stringWithFormat:@"%ld G achievement", (long)achievementObj.points];
     self.gameName.text = [NSString stringWithFormat:@"%@", achievementObj.game.name];
     self.achievementEarnedOn.text = [Achievement timeAgoWithDate:achievementObj.earnedOn];
 }

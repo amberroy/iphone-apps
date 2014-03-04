@@ -230,15 +230,19 @@
     
     ParseClient *parseClient = [ParseClient instance];
     
-    Like *like = [[Like alloc] initWithAchievement:achievement];
-    [parseClient saveLike:like];
-    
-    if (![achievement.gamertag isEqualToString:[User currentUser].gamertag]) {
-        [ParseClient sendPushNotification:@"liked" withAchievement:achievement];
+    if (!cell.currentUserLike) {
+        Like *like = [[Like alloc] initWithAchievement:achievement];
+        [parseClient saveLike:like];
+        if (![achievement.gamertag isEqualToString:[User currentUser].gamertag]) {
+            [ParseClient sendPushNotification:@"liked" withAchievement:achievement];
+        }
+    } else {
+        // Un-like
+        [parseClient deleteLike:cell.currentUserLike];
     }
-    [cell.likeButton setImage:[UIImage imageNamed:@"icon_likeFilled.png"] forState:UIControlStateNormal];
-    
+    // Cell will update the icon to reflect the new "like" state.
 }
+
 
 -(void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];

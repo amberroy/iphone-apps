@@ -26,10 +26,8 @@
 
 + (void)customizeNavigationBar:(UIViewController *)viewController
 {
-    UIColor *green = [UIColor colorWithRed:0.0/255.0
-                                     green:147.0/255.0
-                                      blue:69.0/255.0 alpha:1.0];
-    
+   // UIColor *green = [UIColor colorWithRed:0.0/255.0 green:147.0/255.0 blue:69.0/255.0 alpha:1.0];
+    UIColor *green =[ UIColor colorWithRed: 0.176 green: 0.569 blue: 0.275 alpha: 1.000 ];
     //UIColor *backgroundColor = [UIColor darkGrayColor];
     UIColor *textColor = [UIColor blackColor];
     //UIColor *borderColor = [UIColor blackColor];
@@ -46,7 +44,8 @@
     //navigationBar.translucent = NO;
     //navigationBar.barTintColor = backgroundColor;
     navigationBar.tintColor = green;
-    navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: textColor};
+    navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: textColor,
+                                          NSFontAttributeName:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f]};
     UIBarButtonItem *barButtonItem = [UIBarButtonItem appearanceWhenContainedIn:[UINavigationBar class], nil];
     [barButtonItem setTitleTextAttributes:@{NSForegroundColorAttributeName: green} forState:UIControlStateNormal];
     

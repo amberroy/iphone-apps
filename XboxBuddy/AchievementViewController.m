@@ -257,7 +257,7 @@ typedef NS_ENUM(NSInteger, AlertViewTag) {
         newFrame.origin.y = self.originalTableViewFrame.origin.y;
         [self.headerBackgroundView setHidden:YES];
         CGRect achievementFrame = self.achievementBackgroundView.frame;
-        achievementFrame.origin.y = 25;
+        achievementFrame.origin.y = 55;
         float diff = self.originalAchievementViewFrame.origin.y - achievementFrame.origin.y;
         self.achievementBackgroundView.frame = achievementFrame;
         newFrame.origin.y = self.originalTableViewFrame.origin.y - diff;

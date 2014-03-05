@@ -40,8 +40,9 @@ NSString *const SwipeWithOptionsCellEnclosingTableViewDidBeginScrollingNotificat
 }
 
 - (void)setup {
-    UIColor *greenColor = [UIColor colorWithRed:0.0/255.0 green:147.0/255.0 blue:69.0/255.0 alpha:1.0];
-    
+    //UIColor *greenColor =[ UIColor colorWithRed: 0.188 green: 0.620 blue: 0.290 alpha: 0.90 ];
+    UIColor *greenColor = [ UIColor colorWithRed: 0.231 green: 0.588 blue: 0.314 alpha: 1.000 ];
+
     UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.bounds), CGRectGetHeight(self.bounds))];
     scrollView.contentSize = CGSizeMake(CGRectGetWidth(self.bounds) + optionViewWidth, CGRectGetHeight(self.bounds));
     scrollView.delegate = self;

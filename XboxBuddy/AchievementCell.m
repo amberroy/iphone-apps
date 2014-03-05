@@ -53,7 +53,9 @@
     if (achievementObj.gamertag) {
         self.achievementObj = achievementObj;
     }
+    [super setAchievementObj:achievementObj];
     [self.cellContentView initWithAchievement:achievementObj];
+    
 }
 
 @end

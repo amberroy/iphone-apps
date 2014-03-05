@@ -34,13 +34,14 @@
                         <constraint firstAttribute="width" constant="182" id="wSa-PW-IT2"/>
                     </constraints>
                     <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="12"/>
+                    <color key="textColor" red="0.23921570181846619" green="0.58823531866073608" blue="0.30980393290519714" alpha="1" colorSpace="deviceRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Diablo III" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="x9k-E3-daJ">
-                    <rect key="frame" x="73" y="50" width="55" height="17"/>
+                    <rect key="frame" x="73" y="49" width="51" height="16"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="14"/>
-                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="13"/>
+                    <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <imageView autoresizesSubviews="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="jfW-oC-xGa">
@@ -52,10 +53,10 @@
                     </constraints>
                 </imageView>
                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="30 G achievement" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="d1C-fT-kn3">
-                    <rect key="frame" x="73" y="32" width="114" height="17"/>
+                    <rect key="frame" x="73" y="32" width="106" height="16"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="14"/>
-                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="13"/>
+                    <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                     <nil key="highlightedColor"/>
                 </label>
             </subviews>
@@ -70,7 +71,7 @@
                 <constraint firstItem="d1C-fT-kn3" firstAttribute="top" secondItem="z6j-b9-nrN" secondAttribute="bottom" constant="5" id="IJI-No-MhD"/>
                 <constraint firstItem="z6j-b9-nrN" firstAttribute="top" secondItem="MAc-hf-ifN" secondAttribute="top" constant="12" id="OTD-5M-4qR"/>
                 <constraint firstItem="d1C-fT-kn3" firstAttribute="leading" secondItem="jfW-oC-xGa" secondAttribute="trailing" constant="17" id="XF2-AM-COI"/>
-                <constraint firstItem="TIf-C5-pRM" firstAttribute="top" secondItem="x9k-E3-daJ" secondAttribute="bottom" constant="6" id="Zdd-VF-cit"/>
+                <constraint firstItem="TIf-C5-pRM" firstAttribute="top" secondItem="x9k-E3-daJ" secondAttribute="bottom" constant="8" id="Zdd-VF-cit"/>
                 <constraint firstItem="a1l-Jw-lkK" firstAttribute="top" secondItem="MAc-hf-ifN" secondAttribute="top" constant="27" id="h4T-sS-AMT"/>
                 <constraint firstAttribute="trailing" secondItem="a1l-Jw-lkK" secondAttribute="trailing" constant="13" id="uGy-fa-nkJ"/>
             </constraints>

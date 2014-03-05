@@ -7,6 +7,7 @@
 //
 
 #import "SwipeWithOptionsCell.h"
+#import "ParseClient.h"
 
 NSString *const SwipeWithOptionsCellEnclosingTableViewDidBeginScrollingNotification = @"SwipeWithOptionsCellEnclosingTableViewDidScrollNotification";
 
@@ -17,6 +18,8 @@ NSString *const SwipeWithOptionsCellEnclosingTableViewDidBeginScrollingNotificat
 @property (nonatomic, weak) UIScrollView *scrollView;
 @property (nonatomic, weak) UIView *scrollViewButtonView;
 @property (nonatomic, weak) UILabel *scrollViewLabel;
+
+@property BOOL didUpdateHeartIcon;
 
 @end
 
@@ -37,8 +40,9 @@ NSString *const SwipeWithOptionsCellEnclosingTableViewDidBeginScrollingNotificat
 }
 
 - (void)setup {
-    UIColor *greenColor = [UIColor colorWithRed:0.0/255.0 green:147.0/255.0 blue:69.0/255.0 alpha:1.0];
-    
+    //UIColor *greenColor =[ UIColor colorWithRed: 0.188 green: 0.620 blue: 0.290 alpha: 0.90 ];
+    UIColor *greenColor = [ UIColor colorWithRed: 0.231 green: 0.588 blue: 0.314 alpha: 1.000 ];
+
     UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.bounds), CGRectGetHeight(self.bounds))];
     scrollView.contentSize = CGSizeMake(CGRectGetWidth(self.bounds) + optionViewWidth, CGRectGetHeight(self.bounds));
     scrollView.delegate = self;
@@ -87,11 +91,30 @@ NSString *const SwipeWithOptionsCellEnclosingTableViewDidBeginScrollingNotificat
     [self.scrollViewContentView addGestureRecognizer:tapGestureRecognizer];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(enclosingTableViewDidScroll) name:SwipeWithOptionsCellEnclosingTableViewDidBeginScrollingNotification  object:nil];
+    
+}
+
+- (void)updateHeartIcon
+{
+    NSArray *likes = [[ParseClient instance] likesForAchievement:self.achievementObj];
+    self.currentUserLike = nil;
+    for (Like *like in likes) {
+        if ([like.authorGamertag isEqualToString:[User currentUser].gamertag]) {
+            self.currentUserLike = like;
+            break;
+        }
+    }
+    if (self.currentUserLike) {
+        [self.likeButton setImage:[UIImage imageNamed:@"icon_likeFilled.png"] forState:UIControlStateNormal];
+    } else {
+        [self.likeButton setImage:[UIImage imageNamed:@"icon_like.png"] forState:UIControlStateNormal];
+    }
 }
 
 - (void)enclosingTableViewDidScroll {
     [self.scrollView setContentOffset:CGPointZero animated:YES];
 }
+
 
 #pragma mark - Private Methods 
 
@@ -102,6 +125,7 @@ NSString *const SwipeWithOptionsCellEnclosingTableViewDidBeginScrollingNotificat
 
 - (void)userPressedLikeButton:(id)sender {
     [self.delegate cellDidSelectLike:self];
+    [self updateHeartIcon];
 }
 
 - (void)userTappedCell:(id)sender {
@@ -151,8 +175,20 @@ NSString *const SwipeWithOptionsCellEnclosingTableViewDidBeginScrollingNotificat
 }
 
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    
     if (scrollView.contentOffset.x < 0) {
         scrollView.contentOffset = CGPointZero;
+    } else if (scrollView.contentOffset.x > 20) {
+        
+        // Only update the heart icon when user starts swiping this cell.
+        if (!self.didUpdateHeartIcon ) {
+            [self updateHeartIcon];
+            self.didUpdateHeartIcon = YES;
+        }
+    } else if (scrollView.contentOffset.x == 0) {
+        
+        // Cell closed, update next time it's opened.
+        self.didUpdateHeartIcon = NO;
     }
     self.scrollViewButtonView.frame = CGRectMake(scrollView.contentOffset.x + (CGRectGetWidth(self.bounds) - optionViewWidth), 0.0f, optionViewWidth, CGRectGetHeight(self.bounds));
 }

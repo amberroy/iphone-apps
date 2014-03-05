@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Like.h"
 
 @class SwipeWithOptionsCell;
 
@@ -26,5 +27,10 @@ extern NSString *const SwipeWithOptionsCellEnclosingTableViewDidBeginScrollingNo
 @property (nonatomic, weak) UIView *scrollViewContentView;
 @property (nonatomic, weak) UIButton *likeButton;
 @property (nonatomic, weak) UIButton *commentButton;
+
+@property Achievement *achievementObj;
+@property Like *currentUserLike;
+
+- (void)updateHeartIcon;
 
 @end

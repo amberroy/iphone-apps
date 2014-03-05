@@ -13,6 +13,14 @@
 		263FA0CF18C5E21100F72D41 /* icon_like@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 263FA0CB18C5E21100F72D41 /* icon_like@2x.png */; };
 		263FA0D218C6434F00F72D41 /* icon_likeFilled.png in Resources */ = {isa = PBXBuildFile; fileRef = 263FA0D018C6434F00F72D41 /* icon_likeFilled.png */; };
 		263FA0D318C6434F00F72D41 /* icon_likeFilled2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 263FA0D118C6434F00F72D41 /* icon_likeFilled2x.png */; };
+		263FA0DA18C6BE5C00F72D41 /* icon_group.png in Resources */ = {isa = PBXBuildFile; fileRef = 263FA0D418C6BE5C00F72D41 /* icon_group.png */; };
+		263FA0DB18C6BE5C00F72D41 /* icon_group@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 263FA0D518C6BE5C00F72D41 /* icon_group@2x.png */; };
+		263FA0DC18C6BE5C00F72D41 /* icon_home.png in Resources */ = {isa = PBXBuildFile; fileRef = 263FA0D618C6BE5C00F72D41 /* icon_home.png */; };
+		263FA0DD18C6BE5C00F72D41 /* icon_home@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 263FA0D718C6BE5C00F72D41 /* icon_home@2x.png */; };
+		263FA0DE18C6BE5C00F72D41 /* icon_user.png in Resources */ = {isa = PBXBuildFile; fileRef = 263FA0D818C6BE5C00F72D41 /* icon_user.png */; };
+		263FA0DF18C6BE5C00F72D41 /* icon_user@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 263FA0D918C6BE5C00F72D41 /* icon_user@2x.png */; };
+		263FA0E218C6C41400F72D41 /* icon_settings.png in Resources */ = {isa = PBXBuildFile; fileRef = 263FA0E018C6C41400F72D41 /* icon_settings.png */; };
+		263FA0E318C6C41400F72D41 /* icon_settings@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 263FA0E118C6C41400F72D41 /* icon_settings@2x.png */; };
 		265A640818C5AB48008C172F /* SwipeWithOptionsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 265A640718C5AB48008C172F /* SwipeWithOptionsCell.m */; };
 		265A640B18C5AD22008C172F /* AchievementCellContentView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 265A640A18C5AD22008C172F /* AchievementCellContentView.xib */; };
 		265A641018C5AF50008C172F /* AchievementCellContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 265A640F18C5AF50008C172F /* AchievementCellContentView.m */; };
@@ -87,6 +95,14 @@
 		263FA0CB18C5E21100F72D41 /* icon_like@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon_like@2x.png"; sourceTree = "<group>"; };
 		263FA0D018C6434F00F72D41 /* icon_likeFilled.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_likeFilled.png; sourceTree = "<group>"; };
 		263FA0D118C6434F00F72D41 /* icon_likeFilled2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_likeFilled2x.png; sourceTree = "<group>"; };
+		263FA0D418C6BE5C00F72D41 /* icon_group.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_group.png; sourceTree = "<group>"; };
+		263FA0D518C6BE5C00F72D41 /* icon_group@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon_group@2x.png"; sourceTree = "<group>"; };
+		263FA0D618C6BE5C00F72D41 /* icon_home.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_home.png; sourceTree = "<group>"; };
+		263FA0D718C6BE5C00F72D41 /* icon_home@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon_home@2x.png"; sourceTree = "<group>"; };
+		263FA0D818C6BE5C00F72D41 /* icon_user.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_user.png; sourceTree = "<group>"; };
+		263FA0D918C6BE5C00F72D41 /* icon_user@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon_user@2x.png"; sourceTree = "<group>"; };
+		263FA0E018C6C41400F72D41 /* icon_settings.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_settings.png; sourceTree = "<group>"; };
+		263FA0E118C6C41400F72D41 /* icon_settings@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon_settings@2x.png"; sourceTree = "<group>"; };
 		265A640618C5AB48008C172F /* SwipeWithOptionsCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SwipeWithOptionsCell.h; sourceTree = "<group>"; };
 		265A640718C5AB48008C172F /* SwipeWithOptionsCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SwipeWithOptionsCell.m; sourceTree = "<group>"; };
 		265A640A18C5AD22008C172F /* AchievementCellContentView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AchievementCellContentView.xib; sourceTree = "<group>"; };
@@ -215,6 +231,14 @@
 		2681875518A2214B003D281B /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				263FA0E018C6C41400F72D41 /* icon_settings.png */,
+				263FA0E118C6C41400F72D41 /* icon_settings@2x.png */,
+				263FA0D418C6BE5C00F72D41 /* icon_group.png */,
+				263FA0D518C6BE5C00F72D41 /* icon_group@2x.png */,
+				263FA0D618C6BE5C00F72D41 /* icon_home.png */,
+				263FA0D718C6BE5C00F72D41 /* icon_home@2x.png */,
+				263FA0D818C6BE5C00F72D41 /* icon_user.png */,
+				263FA0D918C6BE5C00F72D41 /* icon_user@2x.png */,
 				263FA0D018C6434F00F72D41 /* icon_likeFilled.png */,
 				263FA0D118C6434F00F72D41 /* icon_likeFilled2x.png */,
 				263FA0C818C5E21100F72D41 /* icon_comment.png */,
@@ -486,18 +510,26 @@
 				268187AB18A3649A003D281B /* TempHomeIcon.png in Resources */,
 				263FA0CE18C5E21100F72D41 /* icon_like.png in Resources */,
 				9620847F1899B9C1006AD8E9 /* Main.storyboard in Resources */,
+				263FA0DC18C6BE5C00F72D41 /* icon_home.png in Resources */,
 				9620845A1899B915006AD8E9 /* InfoPlist.strings in Resources */,
+				263FA0DA18C6BE5C00F72D41 /* icon_group.png in Resources */,
+				263FA0E318C6C41400F72D41 /* icon_settings@2x.png in Resources */,
 				96AEFAD018C1B03500A27EED /* TempGamerImage2.png in Resources */,
 				2681875C18A22CDF003D281B /* TempGamerImage.png in Resources */,
+				263FA0DF18C6BE5C00F72D41 /* icon_user@2x.png in Resources */,
 				96AEFAD318C1B25400A27EED /* TempGamerImage4.png in Resources */,
 				263FA0D318C6434F00F72D41 /* icon_likeFilled2x.png in Resources */,
+				263FA0DE18C6BE5C00F72D41 /* icon_user.png in Resources */,
+				263FA0DD18C6BE5C00F72D41 /* icon_home@2x.png in Resources */,
 				96AEFAD118C1B03500A27EED /* TempGamerImage3.png in Resources */,
 				2681875B18A22CDF003D281B /* TempAchievementImage.jpg in Resources */,
+				263FA0DB18C6BE5C00F72D41 /* icon_group@2x.png in Resources */,
 				265A640B18C5AD22008C172F /* AchievementCellContentView.xib in Resources */,
 				263FA0CD18C5E21100F72D41 /* icon_comment@2x.png in Resources */,
 				962084621899B915006AD8E9 /* Images.xcassets in Resources */,
 				2681875D18A22CDF003D281B /* TempBoxArt.jpg in Resources */,
 				263FA0CC18C5E21100F72D41 /* icon_comment.png in Resources */,
+				263FA0E218C6C41400F72D41 /* icon_settings.png in Resources */,
 				96AEFAD518C2741700A27EED /* TempGamerImage5.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -663,7 +695,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Amber Roy (VCV2AFU3JZ)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/amber/Xcodeproj/XboxBuddy,
@@ -673,7 +705,7 @@
 				GCC_PREFIX_HEADER = "XboxBuddy/XboxBuddy-Prefix.pch";
 				INFOPLIST_FILE = "XboxBuddy/XboxBuddy-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "22E523B7-6B35-4620-BC1A-42C6512315BE";
+				PROVISIONING_PROFILE = "640929BB-6C87-41CE-A296-AC9B6949D931";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
@@ -685,7 +717,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Amber Roy (VCV2AFU3JZ)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/amber/Xcodeproj/XboxBuddy,
@@ -695,7 +727,7 @@
 				GCC_PREFIX_HEADER = "XboxBuddy/XboxBuddy-Prefix.pch";
 				INFOPLIST_FILE = "XboxBuddy/XboxBuddy-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "22E523B7-6B35-4620-BC1A-42C6512315BE";
+				PROVISIONING_PROFILE = "640929BB-6C87-41CE-A296-AC9B6949D931";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};

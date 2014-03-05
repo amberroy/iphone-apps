@@ -252,9 +252,9 @@ typedef NS_ENUM(NSInteger, AlertViewTag) {
     [self.tableView setHidden:YES];
     CGRect newFrame = self.textFieldBackgroundView.frame;
     if (self.isTallScreen) {
-        newFrame.origin.y = self.originalTableViewFrame.origin.y;
+        newFrame.origin.y = self.originalTableViewFrame.origin.y + 15;
     } else {
-        newFrame.origin.y = self.originalTableViewFrame.origin.y;
+        newFrame.origin.y = self.originalTableViewFrame.origin.y + 15;
         [self.headerBackgroundView setHidden:YES];
         CGRect achievementFrame = self.achievementBackgroundView.frame;
         achievementFrame.origin.y = 55;

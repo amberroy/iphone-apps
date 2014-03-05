@@ -187,11 +187,13 @@
             </objects>
             <point key="canvasLocation" x="-2899" y="909"/>
         </scene>
-        <!--Navigation Controller - Home-->
+        <!--Navigation Controller-->
         <scene sceneID="VUn-F3-p8Q">
             <objects>
                 <navigationController definesPresentationContext="YES" id="KWQ-vs-00K" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Home" image="TempHomeIcon.png" id="EMd-G2-Shk"/>
+                    <tabBarItem key="tabBarItem" title="" image="icon_home.png" id="EMd-G2-Shk">
+                        <inset key="imageInsets" minX="-1" minY="5" maxX="-1" maxY="-5"/>
+                    </tabBarItem>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="gew-Bw-PWP">
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -260,7 +262,7 @@
                         </prototypes>
                     </tableView>
                     <navigationItem key="navigationItem" title="Profile" id="58t-kU-QtM">
-                        <barButtonItem key="rightBarButtonItem" image="settings-24-transparent-bg" id="y9g-JF-VP8">
+                        <barButtonItem key="rightBarButtonItem" image="icon_settings.png" id="y9g-JF-VP8">
                             <color key="tintColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                             <connections>
                                 <action selector="rightBarButton:" destination="SHc-GH-60s" id="3QP-wH-9a6"/>
@@ -722,11 +724,13 @@
             </objects>
             <point key="canvasLocation" x="-2323" y="-16"/>
         </scene>
-        <!--Navigation Controller - Friends-->
+        <!--Navigation Controller-->
         <scene sceneID="7sp-c3-Ldu">
             <objects>
                 <navigationController definesPresentationContext="YES" id="KV2-Gu-xx4" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Friends" image="TempFriendsIcon.png" id="ffF-cN-vzG"/>
+                    <tabBarItem key="tabBarItem" title="" image="icon_group.png" id="ffF-cN-vzG">
+                        <inset key="imageInsets" minX="-2" minY="4" maxX="-2" maxY="-6"/>
+                    </tabBarItem>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="h19-9A-tLs">
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -738,11 +742,13 @@
             </objects>
             <point key="canvasLocation" x="-2921" y="-16"/>
         </scene>
-        <!--Navigation Controller - Me-->
+        <!--Navigation Controller-->
         <scene sceneID="LXi-Fh-onS">
             <objects>
                 <navigationController definesPresentationContext="YES" id="Mqb-fE-bb9" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Me" image="TempUserIcon.png" id="CVG-uH-uGD"/>
+                    <tabBarItem key="tabBarItem" title="" image="icon_user.png" id="CVG-uH-uGD">
+                        <inset key="imageInsets" minX="-2" minY="4" maxX="-2" maxY="-6"/>
+                    </tabBarItem>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="S7p-TN-4ho">
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -756,12 +762,12 @@
         </scene>
     </scenes>
     <resources>
-        <image name="TempFriendsIcon.png" width="24" height="24"/>
-        <image name="TempHomeIcon.png" width="24" height="24"/>
-        <image name="TempUserIcon.png" width="24" height="24"/>
         <image name="XboxBuddyLogotype-01" width="320" height="300"/>
+        <image name="icon_group.png" width="25" height="25"/>
+        <image name="icon_home.png" width="25" height="25"/>
+        <image name="icon_settings.png" width="25" height="25"/>
+        <image name="icon_user.png" width="25" height="25"/>
         <image name="like_outline-26" width="26" height="26"/>
-        <image name="settings-24-transparent-bg" width="24" height="24"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
@@ -769,7 +775,7 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="zGZ-SM-8Lv"/>
         <segue reference="gsa-K0-7IE"/>
+        <segue reference="tyC-Rm-lT7"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -444,9 +444,6 @@
                                 <rect key="frame" x="0.0" y="281" width="320" height="231"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="231" id="CfE-gx-fSd"/>
-                                </constraints>
                                 <prototypes>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" rowHeight="60" id="zhU-lu-ggp" customClass="CommentCell">
                                         <rect key="frame" x="0.0" y="22" width="320" height="60"/>
@@ -580,13 +577,10 @@
                             <constraint firstAttribute="trailing" secondItem="4FR-ZZ-a4i" secondAttribute="trailing" id="HPH-l9-xLx"/>
                             <constraint firstItem="bw2-4R-SWL" firstAttribute="leading" secondItem="VPs-Sg-Oyq" secondAttribute="leading" id="Il6-JZ-F72"/>
                             <constraint firstItem="lJU-qM-qzA" firstAttribute="top" secondItem="4FR-ZZ-a4i" secondAttribute="bottom" id="O3F-kO-2yy"/>
-                            <constraint firstItem="lji-0Z-Pdi" firstAttribute="top" secondItem="JeU-xs-R9P" secondAttribute="bottom" id="OpZ-ac-ykI"/>
                             <constraint firstItem="JeU-xs-R9P" firstAttribute="leading" secondItem="VPs-Sg-Oyq" secondAttribute="leading" id="TNR-i3-Qct"/>
                             <constraint firstItem="4FR-ZZ-a4i" firstAttribute="leading" secondItem="VPs-Sg-Oyq" secondAttribute="leading" id="VRa-OE-8mc"/>
-                            <constraint firstItem="JeU-xs-R9P" firstAttribute="top" secondItem="lJU-qM-qzA" secondAttribute="bottom" id="fUT-Uq-s1q"/>
                             <constraint firstItem="4FR-ZZ-a4i" firstAttribute="top" secondItem="bw2-4R-SWL" secondAttribute="bottom" id="iqk-x1-ke6"/>
                             <constraint firstItem="lJU-qM-qzA" firstAttribute="leading" secondItem="VPs-Sg-Oyq" secondAttribute="leading" id="j25-PU-Jg6"/>
-                            <constraint firstItem="lji-0Z-Pdi" firstAttribute="top" secondItem="JeU-xs-R9P" secondAttribute="bottom" id="xYP-Ri-w1h"/>
                             <constraint firstAttribute="trailing" secondItem="JeU-xs-R9P" secondAttribute="trailing" id="zx6-jK-VfC"/>
                         </constraints>
                     </view>

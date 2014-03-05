@@ -400,7 +400,7 @@
                                         </constraints>
                                     </imageView>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Kill Diablo in Normal mode without dying more than five times and without using magic." textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="197" translatesAutoresizingMaskIntoConstraints="NO" id="Gws-ZB-S3x">
-                                        <rect key="frame" x="14" y="40" width="197" height="50"/>
+                                        <rect key="frame" x="14" y="45" width="197" height="50"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="50" id="A93-5E-165"/>
@@ -410,7 +410,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="50 G" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EnC-mI-c7e">
-                                        <rect key="frame" x="125" y="94" width="86" height="35"/>
+                                        <rect key="frame" x="125" y="99" width="86" height="35"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="35" id="KJ4-Mn-Gx3"/>
@@ -435,7 +435,7 @@
                                     <constraint firstItem="2Rb-zO-Asm" firstAttribute="leading" secondItem="75W-Da-h8C" secondAttribute="trailing" constant="2" id="ThQ-Xm-XDV"/>
                                     <constraint firstItem="FDz-Fd-cyy" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="4FR-ZZ-a4i" secondAttribute="leading" constant="10" id="XkI-Cd-HWv"/>
                                     <constraint firstItem="EnC-mI-c7e" firstAttribute="top" secondItem="Gws-ZB-S3x" secondAttribute="bottom" constant="4" id="YEz-mi-wte"/>
-                                    <constraint firstItem="Gws-ZB-S3x" firstAttribute="top" secondItem="FDz-Fd-cyy" secondAttribute="bottom" constant="-5" id="aVc-Rj-Ky3"/>
+                                    <constraint firstItem="Gws-ZB-S3x" firstAttribute="top" secondItem="FDz-Fd-cyy" secondAttribute="bottom" id="aVc-Rj-Ky3"/>
                                     <constraint firstItem="WSZ-Wf-8bx" firstAttribute="top" secondItem="4FR-ZZ-a4i" secondAttribute="top" constant="30" id="k5n-ST-lu8"/>
                                     <constraint firstAttribute="trailing" secondItem="WSZ-Wf-8bx" secondAttribute="trailing" constant="19" id="vw1-Bx-XJA"/>
                                 </constraints>

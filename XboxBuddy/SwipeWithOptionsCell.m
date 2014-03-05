@@ -39,6 +39,14 @@ NSString *const SwipeWithOptionsCellEnclosingTableViewDidBeginScrollingNotificat
     return self;
 }
 
+- (id)initWithFrame:(CGRect)frame {
+    self = [super initWithFrame:frame];
+    if (self) {
+        [self setup];
+    }
+    return self;
+}
+
 - (void)setup {
     //UIColor *greenColor =[ UIColor colorWithRed: 0.188 green: 0.620 blue: 0.290 alpha: 0.90 ];
     UIColor *greenColor = [ UIColor colorWithRed: 0.231 green: 0.588 blue: 0.314 alpha: 1.000 ];
@@ -145,6 +153,8 @@ NSString *const SwipeWithOptionsCellEnclosingTableViewDidBeginScrollingNotificat
     self.scrollView.frame = CGRectMake(0, 0, CGRectGetWidth(self.bounds), CGRectGetHeight(self.bounds));
     self.scrollViewButtonView.frame = CGRectMake(CGRectGetWidth(self.bounds) - optionViewWidth, 0, optionViewWidth, CGRectGetHeight(self.bounds));
     self.scrollViewContentView.frame = CGRectMake(0, 0, CGRectGetWidth(self.bounds), CGRectGetHeight(self.bounds));
+    
+    [self.scrollView setContentOffset:CGPointZero animated:NO];
 }
 
 - (void)prepareForReuse {

@@ -706,8 +706,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Amber Roy (VCV2AFU3JZ)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Amber Roy (VCV2AFU3JZ)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/amber/Xcodeproj/XboxBuddy,
@@ -717,7 +717,7 @@
 				GCC_PREFIX_HEADER = "XboxBuddy/XboxBuddy-Prefix.pch";
 				INFOPLIST_FILE = "XboxBuddy/XboxBuddy-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "640929BB-6C87-41CE-A296-AC9B6949D931";
+				PROVISIONING_PROFILE = "22E523B7-6B35-4620-BC1A-42C6512315BE";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
@@ -728,8 +728,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Amber Roy (VCV2AFU3JZ)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Amber Roy (VCV2AFU3JZ)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/amber/Xcodeproj/XboxBuddy,
@@ -739,7 +739,7 @@
 				GCC_PREFIX_HEADER = "XboxBuddy/XboxBuddy-Prefix.pch";
 				INFOPLIST_FILE = "XboxBuddy/XboxBuddy-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "640929BB-6C87-41CE-A296-AC9B6949D931";
+				PROVISIONING_PROFILE = "22E523B7-6B35-4620-BC1A-42C6512315BE";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
